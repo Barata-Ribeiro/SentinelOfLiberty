@@ -1,0 +1,16 @@
+name: sentinel-of-liberty
+
+services:
+  sentinel-of-liberty_database:
+    image: 'postgres:latest'
+    container_name: 'sentinel-of-liberty_database'
+    restart: 'always'
+    environment:
+      POSTGRES_DB: sentinel-of-liberty_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
