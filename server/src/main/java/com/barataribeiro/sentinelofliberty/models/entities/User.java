@@ -14,9 +14,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.UUID;
+import java.util.*;
 
 @Builder
 @AllArgsConstructor
@@ -79,12 +77,24 @@ public class User implements UserDetails, Serializable {
     @Column(name = "website")
     private String website;
 
+    // Settings
+
     @Column(updatable = false)
     @CreationTimestamp
     private Instant createdAt;
 
     @UpdateTimestamp
     private Instant updatedAt;
+
+    // Associations
+
+    @Builder.Default
+    @JsonIgnore
+    @ToString.Exclude
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<Article> articles = new LinkedHashSet<>();
+
+    // UserDetails methods
 
     @Override
     @JsonIgnore
