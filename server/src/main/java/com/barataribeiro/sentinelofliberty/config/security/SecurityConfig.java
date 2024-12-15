@@ -1,5 +1,6 @@
 package com.barataribeiro.sentinelofliberty.config.security;
 
+import com.barataribeiro.sentinelofliberty.services.security.impl.SecurityFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class SecurityConfig {
     private static final String[] AUTH_WHITELIST = {
             // -- Swagger UI v2
@@ -47,7 +48,7 @@ public class SecurityConfig {
             "frame-ancestors 'self'; img-src 'self' data:; " +
             "object-src 'none'; script-src 'self'; style-src " +
             "'self' https:; upgrade-insecure-requests";
-    
+
     private final SecurityFilter securityFilter;
 
     @Value("${api.security.argon2.salt}")
