@@ -1,5 +1,8 @@
 package com.barataribeiro.sentinelofliberty.services.security.impl;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.barataribeiro.sentinelofliberty.repositories.TokenRepository;
+import com.barataribeiro.sentinelofliberty.services.security.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,11 +13,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -22,6 +31,8 @@ import java.io.IOException;
 public class SecurityFilter extends OncePerRequestFilter {
     private final RequestAttributeSecurityContextRepository filterRepository =
             new RequestAttributeSecurityContextRepository();
+    private final TokenService tokenService;
+    private final TokenRepository tokenRepository;
 
     @Override
     protected void doFilterInternal(final @NonNull HttpServletRequest request,
@@ -34,9 +45,41 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         log.atInfo().log("Filtering request...");
 
-        // TODO: Implement security filter logic
+        String token = recoverToken(request);
+        if (token == null || token.isBlank()) {
+            log.atWarn().log("Token not found in servlet request");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
 
-        log.atInfo().log("Request filtered, continuing...");
+        DecodedJWT decodedJWT = tokenService.validateToken(token);
+        if (decodedJWT == null) {
+            log.atWarn().log("Invalid token");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        String jti = decodedJWT.getId();
+        if (jti != null && tokenRepository.existsById(jti)) {
+            log.atWarn().log("Token {} has been blacklisted", jti);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        String username = decodedJWT.getSubject();
+        String role = decodedJWT.getClaim("role").asString();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(username, null, authorities);
+
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+        SecurityContextHolder.setContext(context);
+        filterRepository.saveContext(context, request, response);
+
+        log.atInfo().log("User {} authenticated with role {}. Request filtered, continuing...", username, role);
 
         filterChain.doFilter(request, response);
     }
