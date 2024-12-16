@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -18,7 +20,10 @@ import java.util.Set;
 @Table(name = "tb_categories", indexes = {
         @Index(name = "idx_category_name_unq", columnList = "name", unique = true)
 })
-public class Category {
+public class Category implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(updatable = false, nullable = false, unique = true)
