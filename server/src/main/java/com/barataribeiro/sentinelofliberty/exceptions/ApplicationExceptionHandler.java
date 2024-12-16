@@ -67,5 +67,14 @@ public class ApplicationExceptionHandler {
         return problemDetail;
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    protected ProblemDetail handleIllegalArgumentException(@NotNull IllegalArgumentException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problemDetail.setTitle("Invalid Request");
+        problemDetail.setDetail(ex.getMessage());
+        log.atError().log("Invalid request: {}", ex.getMessage());
+        return problemDetail;
+    }
+
     private record InvalidParam(String fieldName, String reason) {}
 }
