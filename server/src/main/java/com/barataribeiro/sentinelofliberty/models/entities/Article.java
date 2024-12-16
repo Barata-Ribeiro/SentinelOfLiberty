@@ -5,6 +5,8 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -21,7 +23,10 @@ import java.util.Set;
 }, uniqueConstraints = {
         @UniqueConstraint(name = "uc_article_title_slug", columnNames = {"title", "slug"})
 })
-public class Article {
+public class Article implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false, unique = true)
@@ -51,11 +56,15 @@ public class Article {
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
 
+
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "tb_articles_categories",
                joinColumns = @JoinColumn(name = "articles_id"),
                inverseJoinColumns = @JoinColumn(name = "categories_id"))
     private Set<Category> categories = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<Comment> comments = new LinkedHashSet<>();
 
     @Column(updatable = false)
     @CreationTimestamp
@@ -63,4 +72,6 @@ public class Article {
 
     @UpdateTimestamp
     private Instant updatedAt;
+
+
 }
