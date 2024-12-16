@@ -3,6 +3,7 @@ package com.barataribeiro.sentinelofliberty.services.security.impl;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.barataribeiro.sentinelofliberty.repositories.TokenRepository;
 import com.barataribeiro.sentinelofliberty.services.security.TokenService;
+import com.barataribeiro.sentinelofliberty.utils.ApplicationConstants;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -38,9 +40,10 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(final @NonNull HttpServletRequest request,
                                     final @NonNull HttpServletResponse response,
                                     final @NonNull FilterChain filterChain) throws ServletException, IOException {
-        if (request.getServletPath().startsWith("/api/v1/auth/") || request.getServletPath().contains("/ws")) {
+        if (isWhitelistedPath(request)) {
             log.atInfo().log("Skipping filter for path: {}", request.getServletPath());
             filterChain.doFilter(request, response);
+            return;
         }
 
         log.atInfo().log("Filtering request...");
@@ -82,6 +85,16 @@ public class SecurityFilter extends OncePerRequestFilter {
         log.atInfo().log("User {} authenticated with role {}. Request filtered, continuing...", username, role);
 
         filterChain.doFilter(request, response);
+    }
+
+    private @NotNull Boolean isWhitelistedPath(HttpServletRequest request) {
+        for (String path : ApplicationConstants.getAuthWhitelist()) {
+            if (new AntPathRequestMatcher(path).matches(request)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private @Nullable String recoverToken(@NotNull HttpServletRequest request) {

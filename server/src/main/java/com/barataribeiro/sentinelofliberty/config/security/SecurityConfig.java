@@ -1,6 +1,7 @@
 package com.barataribeiro.sentinelofliberty.config.security;
 
 import com.barataribeiro.sentinelofliberty.services.security.impl.SecurityFilter;
+import com.barataribeiro.sentinelofliberty.utils.ApplicationConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,30 +26,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity(securedEnabled = true)
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class SecurityConfig {
-    private static final String[] AUTH_WHITELIST = {
-            // -- Swagger UI v2
-            "/v2/api-docs",
-            "/swagger-resources",
-            "/swagger-resources/**",
-            "/configuration/ui",
-            "/configuration/security",
-            "/swagger-ui.html",
-            "/webjars/**",
-            // -- Swagger UI v3 (OpenAPI)
-            "/api-docs/**",
-            "/v3/api-docs/**",
-            "/swagger-ui/**",
-            // -- Application
-            "/ws/**",
-            "/api/v1/auth/**",
-            };
-
-    private static final String CONTENT_SECURITY_POLICY_VALUE = "default-src 'self'; base-uri 'self'; " +
-            "font-src 'self' https: data:; form-action 'self'; " +
-            "frame-ancestors 'self'; img-src 'self' data:; " +
-            "object-src 'none'; script-src 'self'; style-src " +
-            "'self' https:; upgrade-insecure-requests";
-
     private final SecurityFilter securityFilter;
 
     @Value("${api.security.argon2.salt}")
@@ -69,11 +46,12 @@ public class SecurityConfig {
             .headers(headers -> headers
                     .httpStrictTransportSecurity(Customizer.withDefaults())
                     .xssProtection(Customizer.withDefaults())
-                    .contentSecurityPolicy(csp -> csp.policyDirectives(CONTENT_SECURITY_POLICY_VALUE))
+                    .contentSecurityPolicy(
+                            csp -> csp.policyDirectives(ApplicationConstants.CONTENT_SECURITY_POLICY_VALUE))
                     .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
-                    .permissionsPolicyHeader(policy -> policy.policy("geolocation=(), microphone=(), camera=()")))
+                    .permissionsPolicy(policy -> policy.policy("geolocation=(), microphone=(), camera=()")))
             .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers(AUTH_WHITELIST).permitAll()
+                    .requestMatchers(ApplicationConstants.getAuthWhitelist()).permitAll()
                     .anyRequest().authenticated())
             .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
 
