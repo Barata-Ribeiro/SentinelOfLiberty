@@ -79,6 +79,16 @@ public class User implements UserDetails, Serializable {
 
     // Settings
 
+    @Builder.Default
+    @Column(name = "is_private", columnDefinition = "BOOLEAN default 'false'", nullable = false)
+    private boolean isPrivate = false;
+
+    @Builder.Default
+    @Column(name = "is_verified", columnDefinition = "BOOLEAN default 'false'", nullable = false)
+    private boolean isVerified = false;
+
+    // Timestamps
+
     @Column(updatable = false)
     @CreationTimestamp
     private Instant createdAt;
