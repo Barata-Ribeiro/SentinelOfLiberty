@@ -3,6 +3,9 @@ package com.barataribeiro.sentinelofliberty.services.impl;
 import com.barataribeiro.sentinelofliberty.builders.UserMapper;
 import com.barataribeiro.sentinelofliberty.dtos.authentication.LoginRequestDTO;
 import com.barataribeiro.sentinelofliberty.dtos.authentication.LoginResponseDTO;
+import com.barataribeiro.sentinelofliberty.dtos.authentication.RegistrationRequestDTO;
+import com.barataribeiro.sentinelofliberty.dtos.user.UserSecurityDTO;
+import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityAlreadyExistsException;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.IllegalRequestException;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.InvalidCredentialsException;
@@ -12,10 +15,12 @@ import com.barataribeiro.sentinelofliberty.repositories.UserRepository;
 import com.barataribeiro.sentinelofliberty.services.AuthService;
 import com.barataribeiro.sentinelofliberty.services.security.impl.TokenServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.text.StringEscapeUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Map;
@@ -49,5 +54,26 @@ public class AuthServiceImpl implements AuthService {
 
         return new LoginResponseDTO(userMapper.toUserSecurityDTO(user), accessToken.getKey(), accessToken.getValue(),
                                     refreshToken.getKey(), refreshToken.getValue());
+    }
+
+    @Override
+    @Transactional
+    public UserSecurityDTO register(@NotNull RegistrationRequestDTO body) {
+        String username = StringEscapeUtils.escapeHtml4(body.getUsername().toLowerCase().strip());
+        String displayName = StringEscapeUtils.escapeHtml4(body.getDisplayName().strip());
+        String email = StringEscapeUtils.escapeHtml4(body.getEmail().strip());
+
+        if (userRepository.existsByUsernameOrEmailAllIgnoreCase(username, email)) {
+            throw new EntityAlreadyExistsException(User.class.getSimpleName());
+        }
+
+        User user = User.builder()
+                        .username(username)
+                        .email(email)
+                        .password(passwordEncoder.encode(body.getPassword()))
+                        .displayName(displayName)
+                        .build();
+
+        return userMapper.toUserSecurityDTO(userRepository.saveAndFlush(user));
     }
 }
