@@ -3,9 +3,11 @@ package com.barataribeiro.sentinelofliberty.controllers;
 import com.barataribeiro.sentinelofliberty.models.entities.User;
 import com.barataribeiro.sentinelofliberty.models.enums.Roles;
 import com.barataribeiro.sentinelofliberty.repositories.UserRepository;
+import com.barataribeiro.sentinelofliberty.utils.ConcurrencyTestUtil;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -27,6 +31,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 class AuthControllerTestIT {
     private static final String BASE_URL = "/api/v1/auth";
     private final MockMvc mockMvc;
+    @Autowired private UserRepository userRepository;
 
     @BeforeAll
     public static void createTestingUser(@Autowired @NotNull PasswordEncoder passwordEncoder,
@@ -42,6 +47,7 @@ class AuthControllerTestIT {
     }
 
     @Test
+    @DisplayName("Test login with valid request body")
     void testLoginWithValidRequestBodyAndValidUser() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/login")
                                               .contentType("application/json")
@@ -53,6 +59,7 @@ class AuthControllerTestIT {
     }
 
     @Test
+    @DisplayName("Test login with valid request body and invalid user")
     void testLoginWithValidRequestBodyAndInvalidUser() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/login")
                                               .contentType("application/json")
@@ -66,6 +73,7 @@ class AuthControllerTestIT {
     }
 
     @Test
+    @DisplayName("Test login with invalid request body")
     void testLoginWithValidRequestBody() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/login")
                                               .contentType("application/json")
@@ -77,6 +85,7 @@ class AuthControllerTestIT {
     }
 
     @Test
+    @DisplayName("Test login with empty request body")
     void testLoginWithEmptyRequestBody() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/login")
                                               .contentType("application/json")
@@ -92,6 +101,7 @@ class AuthControllerTestIT {
     }
 
     @Test
+    @DisplayName("Test login with invalid boolean value")
     void testLoginWithInvalidBooleanValue() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                                 .post(BASE_URL + "/login")
@@ -102,5 +112,24 @@ class AuthControllerTestIT {
                .andExpect(MockMvcResultMatchers.jsonPath("$.detail")
                                                .value("Invalid boolean value, expected 'true' or 'false' but got: " +
                                                               "test"));
+    }
+
+    @Test
+    @DisplayName("Test registration where high-concurrency is expected and user already exists")
+    void testRegistrationWithConcurrency() {
+        ConcurrencyTestUtil.doAsyncAndConcurrently(10, () -> {
+            mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/register")
+                                                  .contentType("application/json")
+                                                  .content(
+                                                          "{\"username\": \"jasonbourne\", " +
+                                                                  "\"email\": \"jasonbourne@cia.com\", " +
+                                                                  "\"password\": \"q@7$eEMvmVz7!fDn\", " +
+                                                                  "\"displayName\": \"Jason Bourne\"}"))
+                   .andExpect(MockMvcResultMatchers.status().isCreated())
+                   .andDo(MockMvcResultHandlers.print());
+        });
+
+        Long userCount = userRepository.countByUsername(("jasonbourne"));
+        assertEquals(1, userCount, "Only one instance of the user should exist in the database");
     }
 }
