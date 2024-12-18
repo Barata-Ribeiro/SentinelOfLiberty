@@ -47,8 +47,8 @@ class AuthControllerTestIT {
     }
 
     @Test
-    @DisplayName("Test login with valid request body")
-    void testLoginWithValidRequestBodyAndValidUser() throws Exception {
+    @DisplayName("Test login with valid request body and an existing user attempts to login with valid credentials")
+    void testLoginWithValidCredentials() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/login")
                                               .contentType("application/json")
                                               .content(
@@ -59,8 +59,8 @@ class AuthControllerTestIT {
     }
 
     @Test
-    @DisplayName("Test login with valid request body and invalid user")
-    void testLoginWithValidRequestBodyAndInvalidUser() throws Exception {
+    @DisplayName("Test login with valid request body and an existing user attempts to login with invalid credentials")
+    void testLoginWithInvalidCredentials() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/login")
                                               .contentType("application/json")
                                               .content(
@@ -73,8 +73,8 @@ class AuthControllerTestIT {
     }
 
     @Test
-    @DisplayName("Test login with invalid request body")
-    void testLoginWithValidRequestBody() throws Exception {
+    @DisplayName("Test login scenarios where user does not exist; the body is empty; or the boolean value is invalid")
+    void testInvalidLoginScenarios() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/login")
                                               .contentType("application/json")
                                               .content(
@@ -82,11 +82,7 @@ class AuthControllerTestIT {
                                                               "\"rememberMe\": true}"))
                .andDo(MockMvcResultHandlers.print())
                .andExpect(MockMvcResultMatchers.status().isNotFound());
-    }
 
-    @Test
-    @DisplayName("Test login with empty request body")
-    void testLoginWithEmptyRequestBody() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/login")
                                               .contentType("application/json")
                                               .content("{}"))
@@ -98,11 +94,7 @@ class AuthControllerTestIT {
                .andExpect(MockMvcResultMatchers
                                   .jsonPath("$.invalid-params[?(@.fieldName == 'password')].reason")
                                   .value("must not be blank"));
-    }
 
-    @Test
-    @DisplayName("Test login with invalid boolean value")
-    void testLoginWithInvalidBooleanValue() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                                 .post(BASE_URL + "/login")
                                 .contentType("application/json")
@@ -115,19 +107,17 @@ class AuthControllerTestIT {
     }
 
     @Test
-    @DisplayName("Test registration where high-concurrency is expected and user already exists")
+    @DisplayName("Test registration where high-concurrency is expected and the user is registered only once")
     void testRegistrationWithConcurrency() {
-        ConcurrencyTestUtil.doAsyncAndConcurrently(10, () -> {
-            mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/register")
-                                                  .contentType("application/json")
-                                                  .content(
-                                                          "{\"username\": \"jasonbourne\", " +
-                                                                  "\"email\": \"jasonbourne@cia.com\", " +
-                                                                  "\"password\": \"q@7$eEMvmVz7!fDn\", " +
-                                                                  "\"displayName\": \"Jason Bourne\"}"))
-                   .andExpect(MockMvcResultMatchers.status().isCreated())
-                   .andDo(MockMvcResultHandlers.print());
-        });
+        ConcurrencyTestUtil.doAsyncAndConcurrently(10, () -> mockMvc
+                .perform(MockMvcRequestBuilders.post(BASE_URL + "/register")
+                                               .contentType("application/json")
+                                               .content("{\"username\": \"jasonbourne\", " +
+                                                                "\"email\": \"jasonbourne@cia.com\", " +
+                                                                "\"password\": \"q@7$eEMvmVz7!fDn\", " +
+                                                                "\"displayName\": \"Jason Bourne\"}"))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andDo(MockMvcResultHandlers.print()));
 
         Long userCount = userRepository.countByUsername(("jasonbourne"));
         assertEquals(1, userCount, "Only one instance of the user should exist in the database");
