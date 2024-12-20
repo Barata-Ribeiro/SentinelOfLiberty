@@ -1,5 +1,6 @@
 package com.barataribeiro.sentinelofliberty.services.impl;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.barataribeiro.sentinelofliberty.builders.UserMapper;
 import com.barataribeiro.sentinelofliberty.dtos.authentication.LoginRequestDTO;
 import com.barataribeiro.sentinelofliberty.dtos.authentication.LoginResponseDTO;
@@ -75,5 +76,24 @@ public class AuthServiceImpl implements AuthService {
                         .build();
 
         return userMapper.toUserSecurityDTO(userRepository.saveAndFlush(user));
+    }
+
+    @Override
+    @Transactional
+    public LoginResponseDTO refreshToken(String refreshToken) {
+        DecodedJWT decodedJWT = tokenService.validateToken(refreshToken);
+
+        if (decodedJWT == null) {
+            throw new InvalidCredentialsException("The token provided is invalid.");
+        }
+
+        String username = decodedJWT.getSubject();
+        User user = userRepository.findByUsername(username)
+                                  .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName()));
+
+        Map.Entry<String, Instant> accessTokenEntry = tokenService.generateAccessToken(user);
+
+        return new LoginResponseDTO(userMapper.toUserSecurityDTO(user), accessTokenEntry.getKey(),
+                                    accessTokenEntry.getValue(), null, null);
     }
 }

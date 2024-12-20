@@ -4,6 +4,7 @@ import com.barataribeiro.sentinelofliberty.models.entities.User;
 import com.barataribeiro.sentinelofliberty.models.enums.Roles;
 import com.barataribeiro.sentinelofliberty.repositories.UserRepository;
 import com.barataribeiro.sentinelofliberty.utils.ConcurrencyTestUtil;
+import com.jayway.jsonpath.JsonPath;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
@@ -121,5 +122,36 @@ class AuthControllerTestIT {
 
         Long userCount = userRepository.countByUsername(("jasonbourne"));
         assertEquals(1, userCount, "Only one instance of the user should exist in the database");
+    }
+
+    @Test
+    @DisplayName("Test token refresh flow with both valid and invalid refresh tokens")
+    void testTokenRefreshFlow() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/refresh-token")
+                                              .header("X-Refresh-Token", "invalid-token"))
+               .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+               .andDo(MockMvcResultHandlers.print())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.detail")
+                                               .value("The token provided is invalid."));
+
+        mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/login")
+                                              .contentType("application/json")
+                                              .content(
+                                                      "{\"username\": \"testuser\", \"password\": \"testpassword\", " +
+                                                              "\"rememberMe\": true}"))
+               .andExpect(MockMvcResultMatchers.status().isOk())
+               .andDo(MockMvcResultHandlers.print())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.data.accessToken").exists())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.data.refreshToken").exists())
+               .andDo(result -> {
+                   String responseBody = result.getResponse().getContentAsString();
+                   String refreshToken = JsonPath.read(responseBody, "$.data.refreshToken");
+                   mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/refresh-token")
+                                                         .header("X-Refresh-Token", refreshToken))
+                          .andExpect(MockMvcResultMatchers.status().isOk())
+                          .andDo(MockMvcResultHandlers.print())
+                          .andExpect(MockMvcResultMatchers.jsonPath("$.data.accessToken").exists())
+                          .andExpect(MockMvcResultMatchers.jsonPath("$.data.refreshToken").doesNotExist());
+               });
     }
 }

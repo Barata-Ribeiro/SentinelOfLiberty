@@ -13,10 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -48,5 +45,16 @@ public class AuthController {
         LoginResponseDTO response = authService.login(body);
         return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
                                                               "You have successfully logged in", response));
+    }
+
+    @Operation(summary = "Refresh access token",
+               description = "This endpoint allows a logged in user to refresh their access token by providing their" +
+                       " valid refresh token.")
+    @PostMapping("/refresh-token")
+    public ResponseEntity<ApplicationResponseDTO<LoginResponseDTO>> refreshToken(@RequestHeader("X-Refresh-Token")
+                                                                                 String refreshToken) {
+        LoginResponseDTO response = authService.refreshToken(refreshToken);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully refreshed your token", response));
     }
 }
