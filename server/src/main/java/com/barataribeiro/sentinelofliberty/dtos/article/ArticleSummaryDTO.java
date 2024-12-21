@@ -1,6 +1,6 @@
 package com.barataribeiro.sentinelofliberty.dtos.article;
 
-import com.barataribeiro.sentinelofliberty.models.entities.AuthorDTO;
+import com.barataribeiro.sentinelofliberty.dtos.user.AuthorDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
