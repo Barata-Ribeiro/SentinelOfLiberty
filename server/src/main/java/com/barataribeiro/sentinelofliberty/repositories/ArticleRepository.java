@@ -18,4 +18,5 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     @Query("SELECT a FROM Article a WHERE a.createdAt <= :creationDateTime")
     Set<Article> findAllWithCreationDateTimeBefore(@Param("creationDateTime") Instant creationDateTime);
 
+    Set<Article> findTop10ByOrderByCreatedAtDesc();
 }

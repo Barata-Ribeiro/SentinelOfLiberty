@@ -3,6 +3,7 @@ package com.barataribeiro.sentinelofliberty.services.impl;
 import com.barataribeiro.sentinelofliberty.builders.ArticleMapper;
 import com.barataribeiro.sentinelofliberty.dtos.article.ArticleDTO;
 import com.barataribeiro.sentinelofliberty.dtos.article.ArticleRequestDTO;
+import com.barataribeiro.sentinelofliberty.dtos.article.ArticleSummaryDTO;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
 import com.barataribeiro.sentinelofliberty.models.entities.Article;
 import com.barataribeiro.sentinelofliberty.models.entities.Category;
@@ -19,7 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.Principal;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,14 +35,15 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     @Transactional
     public ArticleDTO createArticle(@NotNull ArticleRequestDTO body, @NotNull Authentication authentication) {
-        Principal principal = (Principal) authentication.getPrincipal();
-        User author = userRepository.findByUsername(principal.getName())
+        User author = userRepository.findByUsername(authentication.getName())
                                     .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName()));
 
         Article article = Article.builder()
                                  .title(body.getTitle())
                                  .subTitle(body.getSubTitle())
                                  .content(body.getContent())
+                                 .summary(StringNormalizer.toSummary(body.getContent(), 100))
+                                 .references(body.getReferences())
                                  .slug(StringNormalizer.toSlug(body.getTitle()))
                                  .author(author)
                                  .build();
@@ -64,6 +65,12 @@ public class ArticleServiceImpl implements ArticleService {
         categoryRepository.saveAll(categories);
 
         return articleMapper.toArticleDTO(articleRepository.saveAndFlush(article));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Set<ArticleSummaryDTO> getLatestArticles() {
+        return articleMapper.toArticleSummaryDTOs(articleRepository.findTop10ByOrderByCreatedAtDesc());
     }
 
     private Category getNewCategory(String category, Article article) {
