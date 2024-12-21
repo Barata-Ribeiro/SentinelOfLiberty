@@ -23,6 +23,7 @@ public final class ApplicationConstants {
             "/h2-console/**",
             "/ws/**",
             "/api/v1/auth/**",
+            "/api/v1/articles/public/**",
             };
 
     private ApplicationConstants() {
