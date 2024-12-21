@@ -2,6 +2,7 @@ package com.barataribeiro.sentinelofliberty.dtos.article;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
@@ -27,6 +28,13 @@ public class ArticleRequestDTO {
          regexp = "((((https?|ftps?|gopher|telnet|nntp)://)|(mailto:|news:))([-%()_.!~*';/?:@&=+$,A-Za-z0-9])+)")
     private String mediaUrl;
 
-    @NotBlank
-    private List<String> categories;
+    @NotEmpty
+    @Size(min = 1, message = "At least one reference must be provided.")
+    private List<@NotBlank @URL(message = "Invalid URL format.",
+                                regexp = "((((https?|ftps?|gopher|telnet|nntp)://)|(mailto:|news:))([-%()_.!~*';" +
+                                        "/?:@&=+$,A-Za-z0-9])+)") String> references;
+
+    @NotEmpty
+    @Size(min = 1, message = "At least one category must be provided.")
+    private List<@NotBlank String> categories;
 }

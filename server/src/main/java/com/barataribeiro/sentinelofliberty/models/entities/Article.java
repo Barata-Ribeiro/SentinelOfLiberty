@@ -8,6 +8,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -41,6 +43,12 @@ public class Article implements Serializable {
     @Lob
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
+
+    @Column(nullable = false)
+    private String summary;
+
+    @ElementCollection
+    private Collection<String> references = new ArrayList<>();
 
     @Column(name = "media_url")
     private String mediaUrl;

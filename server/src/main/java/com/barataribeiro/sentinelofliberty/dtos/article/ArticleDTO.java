@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -18,15 +19,18 @@ import java.util.Set;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ArticleDTO implements Serializable {
-    Long id;
-    String title;
-    String subTitle;
-    String content;
-    String mediaUrl;
-    String slug;
-    Boolean wasEdit;
-    UserProfileDTO author;
-    Set<CategoryDTO> categories;
-    Instant createdAt;
-    Instant updatedAt;
+    private Long id;
+    private String title;
+    private String subTitle;
+    private String content;
+    private String summary;
+    private Collection<String> references;
+    private String mediaUrl;
+    private String slug;
+    private Boolean wasEdit;
+    private UserProfileDTO author;
+    private Set<CategoryDTO> categories;
+    private Instant createdAt;
+    private Instant updatedAt;
+
 }
