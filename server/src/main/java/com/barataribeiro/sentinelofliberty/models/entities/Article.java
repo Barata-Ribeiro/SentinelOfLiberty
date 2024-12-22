@@ -47,6 +47,7 @@ public class Article implements Serializable {
     @Column(nullable = false)
     private String summary;
 
+    @Builder.Default
     @ElementCollection
     private Collection<String> references = new ArrayList<>();
 
@@ -65,13 +66,16 @@ public class Article implements Serializable {
     private User author;
 
 
+    @Builder.Default
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "tb_articles_categories",
                joinColumns = @JoinColumn(name = "articles_id"),
                inverseJoinColumns = @JoinColumn(name = "categories_id"))
     private Set<Category> categories = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @Builder.Default
+    @ToString.Exclude
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments = new LinkedHashSet<>();
 
     @Column(updatable = false)
