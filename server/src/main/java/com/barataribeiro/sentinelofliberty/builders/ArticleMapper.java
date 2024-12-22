@@ -26,7 +26,10 @@ public class ArticleMapper {
         modelMapper.addMappings(new PropertyMap<Article, ArticleSummaryDTO>() {
             @Override
             protected void configure() {
-                map().setCommentsCount((long) source.getComments().size());
+                using(ctx -> {
+                    Set<?> comments = (Set<?>) ctx.getSource();
+                    return comments == null ? 0L : comments.size();
+                }).map(source.getComments(), destination.getCommentsCount());
             }
         });
     }
