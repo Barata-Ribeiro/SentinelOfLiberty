@@ -23,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -128,7 +129,7 @@ public class ArticleServiceImpl implements ArticleService {
                 .builder()
                 .name(category)
                 .description("No description provided")
-                .articles(Set.of(article))
+                .articles(new LinkedHashSet<>(Set.of(article)))
                 .build();
     }
 }
