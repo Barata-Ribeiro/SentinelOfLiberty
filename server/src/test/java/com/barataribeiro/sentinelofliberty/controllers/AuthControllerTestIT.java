@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants.VALID_LOGIN_PAYLOAD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
@@ -52,9 +53,7 @@ class AuthControllerTestIT {
     void testLoginWithValidCredentials() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/login")
                                               .contentType("application/json")
-                                              .content(
-                                                      "{\"username\": \"testuser\", \"password\": \"testpassword\", " +
-                                                              "\"rememberMe\": true}"))
+                                              .content(VALID_LOGIN_PAYLOAD))
                .andExpect(MockMvcResultMatchers.status().isOk())
                .andDo(MockMvcResultHandlers.print());
     }
@@ -136,9 +135,7 @@ class AuthControllerTestIT {
 
         mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/login")
                                               .contentType("application/json")
-                                              .content(
-                                                      "{\"username\": \"testuser\", \"password\": \"testpassword\", " +
-                                                              "\"rememberMe\": true}"))
+                                              .content(VALID_LOGIN_PAYLOAD))
                .andExpect(MockMvcResultMatchers.status().isOk())
                .andDo(MockMvcResultHandlers.print())
                .andExpect(MockMvcResultMatchers.jsonPath("$.data.accessToken").exists())
