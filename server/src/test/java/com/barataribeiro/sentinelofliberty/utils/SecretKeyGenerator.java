@@ -1,11 +1,13 @@
-package com.barataribeiro.sentinelofliberty;
+package com.barataribeiro.sentinelofliberty.utils;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.security.SecureRandom;
 
+@Disabled
 public class SecretKeyGenerator {
 
     Logger logger = LoggerFactory.getLogger(SecretKeyGenerator.class);

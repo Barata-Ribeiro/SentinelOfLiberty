@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+
 public final class ConcurrencyTestUtil {
 
     public static void doAsyncAndConcurrently(int times, ThrowingRunnable runnable) {
