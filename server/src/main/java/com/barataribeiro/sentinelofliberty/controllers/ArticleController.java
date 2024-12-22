@@ -4,6 +4,7 @@ import com.barataribeiro.sentinelofliberty.dtos.ApplicationResponseDTO;
 import com.barataribeiro.sentinelofliberty.dtos.article.ArticleDTO;
 import com.barataribeiro.sentinelofliberty.dtos.article.ArticleRequestDTO;
 import com.barataribeiro.sentinelofliberty.dtos.article.ArticleSummaryDTO;
+import com.barataribeiro.sentinelofliberty.dtos.article.ArticleUpdateRequestDTO;
 import com.barataribeiro.sentinelofliberty.services.ArticleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -48,5 +49,19 @@ public class ArticleController {
         return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
                                                               "You have successfully retrieved the latest articles",
                                                               response));
+    }
+
+    @PatchMapping("/{articleId}")
+    @Operation(summary = "Update an article",
+               description = "This endpoint allows an admin to update an article by providing the article ID and the " +
+                       "fields to update.")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ApplicationResponseDTO<ArticleDTO>> updateArticle(@PathVariable Long articleId,
+                                                                            @RequestBody @Valid
+                                                                            ArticleUpdateRequestDTO body,
+                                                                            Authentication authentication) {
+        ArticleDTO response = articleService.updateArticle(articleId, body, authentication);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully updated the article", response));
     }
 }
