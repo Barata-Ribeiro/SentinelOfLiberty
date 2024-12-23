@@ -5,6 +5,7 @@ import com.barataribeiro.sentinelofliberty.models.enums.Roles;
 import com.barataribeiro.sentinelofliberty.repositories.ArticleRepository;
 import com.barataribeiro.sentinelofliberty.repositories.CategoryRepository;
 import com.barataribeiro.sentinelofliberty.repositories.UserRepository;
+import com.barataribeiro.sentinelofliberty.utils.ConcurrencyTestUtil;
 import com.jayway.jsonpath.JsonPath;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +24,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -93,6 +95,7 @@ class ArticleControllerTestIT {
 
     @Test
     @Order(2)
+    @Transactional
     @DisplayName("Test update article with valid request body and an authenticated admin attempts to update an article")
     void testUpdateArticle() throws Exception {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
@@ -112,5 +115,34 @@ class ArticleControllerTestIT {
         assertTrue(categoryRepository.findByName("test")
                                      .map(category -> category.getArticles().isEmpty())
                                      .orElse(false));
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("Test concurrent creation of multiple requests and only one should exist in the database")
+    void testConcurrentCreateArticle() {
+        ConcurrencyTestUtil.doAsyncAndConcurrently(10, () -> mockMvc
+                .perform(MockMvcRequestBuilders.post(BASE_URL)
+                                               .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                               .contentType(MediaType.APPLICATION_JSON)
+                                               .content(NEW_ARTICLE_PAYLOAD))
+                .andExpect(MockMvcResultMatchers.status().isConflict())
+                .andDo(MockMvcResultHandlers.print()));
+
+        assertEquals(1, articleRepository.countByTitle("Test Article"),
+                     "Only one instance of the article should exist in the database");
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("Test delete article where an authenticated admin attempts to delete an article")
+    void testDeleteArticle() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                                .delete(BASE_URL + "/" + createdArticleId)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
+               .andExpect(MockMvcResultMatchers.status().isNoContent())
+               .andDo(MockMvcResultHandlers.print());
+
+        assertTrue(articleRepository.findById(createdArticleId).isEmpty());
     }
 }
