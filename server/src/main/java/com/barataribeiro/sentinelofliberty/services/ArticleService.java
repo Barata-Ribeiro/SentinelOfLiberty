@@ -10,9 +10,13 @@ import org.springframework.security.core.Authentication;
 import java.util.Set;
 
 public interface ArticleService {
-    ArticleDTO createArticle(ArticleRequestDTO body, Authentication authentication);
+    ArticleDTO getArticle(Long articleId);
 
     Set<ArticleSummaryDTO> getLatestArticles();
 
+    ArticleDTO createArticle(ArticleRequestDTO body, Authentication authentication);
+
     ArticleDTO updateArticle(Long articleId, @Valid ArticleUpdateRequestDTO body, Authentication authentication);
+
+    void deleteArticle(Long articleId, Authentication authentication);
 }

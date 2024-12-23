@@ -38,6 +38,21 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepository articleRepository;
 
     @Override
+    @Transactional(readOnly = true)
+    public ArticleDTO getArticle(Long articleId) {
+        return articleMapper.toArticleDTO(articleRepository
+                                                  .findById(articleId)
+                                                  .orElseThrow(() -> new EntityNotFoundException(
+                                                          Article.class.getSimpleName())));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Set<ArticleSummaryDTO> getLatestArticles() {
+        return articleMapper.toArticleSummaryDTOs(articleRepository.findTop10ByOrderByCreatedAtDesc());
+    }
+
+    @Override
     @Transactional
     public ArticleDTO createArticle(@NotNull ArticleRequestDTO body, @NotNull Authentication authentication) {
         User author = userRepository.findByUsername(authentication.getName())
@@ -62,12 +77,6 @@ public class ArticleServiceImpl implements ArticleService {
         categoryRepository.saveAll(categories);
 
         return articleMapper.toArticleDTO(articleRepository.saveAndFlush(article));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Set<ArticleSummaryDTO> getLatestArticles() {
-        return articleMapper.toArticleSummaryDTOs(articleRepository.findTop10ByOrderByCreatedAtDesc());
     }
 
     @Override
@@ -110,6 +119,20 @@ public class ArticleServiceImpl implements ArticleService {
         });
 
         return articleMapper.toArticleDTO(articleRepository.saveAndFlush(article));
+    }
+
+    @Override
+    @Transactional
+    public void deleteArticle(Long articleId, @NotNull Authentication authentication) {
+        Article article = articleRepository
+                .findById(articleId)
+                .orElseThrow(() -> new EntityNotFoundException(Article.class.getSimpleName()));
+
+        if (!article.getAuthor().getUsername().equals(authentication.getName())) {
+            throw new IllegalRequestException("You are not the author of this article.");
+        }
+
+        articleRepository.delete(article);
     }
 
     private @NotNull Set<Category> getNewCategories(@NotNull List<@NotBlank String> categories, Article article) {

@@ -24,8 +24,27 @@ import java.util.Set;
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 @Tag(name = "Article", description = "Article endpoints")
 public class ArticleController {
-
     private final ArticleService articleService;
+
+    @GetMapping("/public/latest")
+    @Operation(summary = "Get the latest articles",
+               description = "This endpoint allows a user to get the latest articles, summarised. These articles are " +
+                       "usually suggested to be displayed on the homepage.")
+    public ResponseEntity<ApplicationResponseDTO<Set<ArticleSummaryDTO>>> getLatestArticles() {
+        Set<ArticleSummaryDTO> response = articleService.getLatestArticles();
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully retrieved the latest articles",
+                                                              response));
+    }
+
+    @GetMapping("/public/{articleId}")
+    @Operation(summary = "Get an article",
+               description = "This endpoint allows a user to get an article by providing the article ID.")
+    public ResponseEntity<ApplicationResponseDTO<ArticleDTO>> getArticle(@PathVariable Long articleId) {
+        ArticleDTO response = articleService.getArticle(articleId);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully retrieved the article", response));
+    }
 
     @Operation(summary = "Create an article",
                description = "This endpoint allows an admin to create an article by providing the title, content, " +
@@ -40,17 +59,6 @@ public class ArticleController {
                                                                 "You have successfully created an article", response));
     }
 
-    @GetMapping("/public/latest")
-    @Operation(summary = "Get the latest articles",
-               description = "This endpoint allows a user to get the latest articles, summarised. These articles are " +
-                       "usually suggested to be displayed on the homepage.")
-    public ResponseEntity<ApplicationResponseDTO<Set<ArticleSummaryDTO>>> getLatestArticles() {
-        Set<ArticleSummaryDTO> response = articleService.getLatestArticles();
-        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
-                                                              "You have successfully retrieved the latest articles",
-                                                              response));
-    }
-
     @PatchMapping("/{articleId}")
     @Operation(summary = "Update an article",
                description = "This endpoint allows an admin to update an article by providing the article ID and the " +
@@ -63,5 +71,18 @@ public class ArticleController {
         ArticleDTO response = articleService.updateArticle(articleId, body, authentication);
         return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
                                                               "You have successfully updated the article", response));
+    }
+
+    @DeleteMapping("/{articleId}")
+    @Operation(summary = "Delete an article",
+               description = "This endpoint allows an admin that is also the owner of the article, to delete it by " +
+                       "providing the article ID.")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ApplicationResponseDTO<String>> deleteArticle(@PathVariable Long articleId,
+                                                                        Authentication authentication) {
+        articleService.deleteArticle(articleId, authentication);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                             .body(new ApplicationResponseDTO<>(HttpStatus.NO_CONTENT, HttpStatus.NO_CONTENT.value(),
+                                                                "You have successfully deleted the article", null));
     }
 }
