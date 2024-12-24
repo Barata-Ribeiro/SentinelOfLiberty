@@ -58,7 +58,7 @@ public class Article implements Serializable {
     private String slug;
 
     @Builder.Default
-    @Column(name = "was_edit", nullable = false)
+    @Column(name = "was_edit", columnDefinition = "BOOLEAN default 'false'", nullable = false)
     private Boolean wasEdit = false;
 
     @ManyToOne(optional = false)
@@ -84,6 +84,4 @@ public class Article implements Serializable {
 
     @UpdateTimestamp
     private Instant updatedAt;
-
-
 }
