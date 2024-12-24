@@ -110,6 +110,12 @@ public class User implements UserDetails, Serializable {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Comment> comments = new LinkedHashSet<>();
 
+    @Builder.Default
+    @JsonIgnore
+    @ToString.Exclude
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Notice> notices = new LinkedHashSet<>();
+
     // UserDetails methods
 
     @Override
