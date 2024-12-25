@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,6 +45,24 @@ public class ArticleController {
         ArticleDTO response = articleService.getArticle(articleId);
         return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
                                                               "You have successfully retrieved the article", response));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Get all of your (admin) articles",
+               description = "This endpoint allows an admin to get all of their articles.")
+    public ResponseEntity<ApplicationResponseDTO<Page<ArticleSummaryDTO>>> getAllOwnArticles(
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int perPage,
+            @RequestParam(defaultValue = "ASC") String direction,
+            @RequestParam(defaultValue = "createdAt") String orderBy,
+            Authentication authentication) {
+        Page<ArticleSummaryDTO> response = articleService.getAllOwnArticles(search, page, perPage, direction, orderBy,
+                                                                            authentication);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully retrieved all of your articles",
+                                                              response));
     }
 
     @Operation(summary = "Create an article",

@@ -19,6 +19,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +53,28 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional(readOnly = true)
     public Set<ArticleSummaryDTO> getLatestArticles() {
         return articleMapper.toArticleSummaryDTOs(articleRepository.findTop10ByOrderByCreatedAtDesc());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ArticleSummaryDTO> getAllOwnArticles(String search, int page, int perPage, String direction,
+                                                     String orderBy, Authentication authentication) {
+        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+        orderBy = orderBy.equalsIgnoreCase("createdAt") ? "createdAt" : orderBy;
+        PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
+
+        Page<ArticleSummaryDTO> articlesPage;
+        if (search != null && !search.isBlank()) {
+            articlesPage = articleRepository
+                    .findAllByAuthor_UsernameAndSearchParams(authentication.getName(), search, pageable)
+                    .map(articleMapper::toArticleSummaryDTO);
+        } else {
+            articlesPage = articleRepository
+                    .findAllByAuthor_Username(authentication.getName(), pageable)
+                    .map(articleMapper::toArticleSummaryDTO);
+        }
+
+        return articlesPage;
     }
 
     @Override
