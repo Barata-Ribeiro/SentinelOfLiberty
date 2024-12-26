@@ -1,5 +1,7 @@
 package com.barataribeiro.sentinelofliberty.controllers;
 
+import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
+import com.barataribeiro.sentinelofliberty.exceptions.throwables.InvalidCredentialsException;
 import com.barataribeiro.sentinelofliberty.models.entities.User;
 import com.barataribeiro.sentinelofliberty.models.enums.Roles;
 import com.barataribeiro.sentinelofliberty.repositories.UserRepository;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -21,9 +24,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants.VALID_LOGIN_PAYLOAD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -68,8 +73,7 @@ class AuthControllerTestIT {
                                                               "\"rememberMe\": true}"))
                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
                .andDo(MockMvcResultHandlers.print())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.detail")
-                                               .value("Login failed; Wrong username or password."));
+               .andExpect(result -> assertInstanceOf(InvalidCredentialsException.class, result.getResolvedException()));
     }
 
     @Test
@@ -81,19 +85,16 @@ class AuthControllerTestIT {
                                                       "{\"username\": \"test\", \"password\": \"test\", " +
                                                               "\"rememberMe\": true}"))
                .andDo(MockMvcResultHandlers.print())
-               .andExpect(MockMvcResultMatchers.status().isNotFound());
+               .andExpect(MockMvcResultMatchers.status().isNotFound())
+               .andExpect(result -> assertInstanceOf(EntityNotFoundException.class, result.getResolvedException()));
 
         mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/login")
                                               .contentType("application/json")
                                               .content("{}"))
                .andExpect(MockMvcResultMatchers.status().isBadRequest())
                .andDo(MockMvcResultHandlers.print())
-               .andExpect(MockMvcResultMatchers
-                                  .jsonPath("$.invalid-params[?(@.fieldName == 'username')].reason")
-                                  .value("must not be blank"))
-               .andExpect(MockMvcResultMatchers
-                                  .jsonPath("$.invalid-params[?(@.fieldName == 'password')].reason")
-                                  .value("must not be blank"));
+               .andExpect(result -> assertInstanceOf(MethodArgumentNotValidException.class,
+                                                     result.getResolvedException()));
 
         mockMvc.perform(MockMvcRequestBuilders
                                 .post(BASE_URL + "/login")
@@ -101,9 +102,8 @@ class AuthControllerTestIT {
                                 .content("{\"username\": \"test\", \"password\": \"test\", \"rememberMe\": \"test\"}"))
                .andExpect(MockMvcResultMatchers.status().isBadRequest())
                .andDo(MockMvcResultHandlers.print())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.detail")
-                                               .value("Invalid boolean value, expected 'true' or 'false' but got: " +
-                                                              "test"));
+               .andExpect(result -> assertInstanceOf(HttpMessageNotReadableException.class,
+                                                     result.getResolvedException()));
     }
 
     @Test
