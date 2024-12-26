@@ -18,8 +18,8 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     @Query("""
            SELECT a FROM Article a WHERE a.author.username = :username
            AND (LOWER(a.title) LIKE LOWER(CONCAT('%', :term, '%'))
-                OR LOWER(a.content) LIKE LOWER(CONCAT('%', :term, '%'))
-                OR LOWER(a.subTitle) LIKE LOWER(CONCAT('%', :term, '%')))
+                OR LOWER(a.subTitle) LIKE LOWER(CONCAT('%', :term, '%'))
+                OR a.content LIKE CONCAT('%', :term, '%'))
            """)
     Page<Article> findAllByAuthor_UsernameAndSearchParams(@Param("username") String username,
                                                           @Param("term") String term, Pageable pageable);
