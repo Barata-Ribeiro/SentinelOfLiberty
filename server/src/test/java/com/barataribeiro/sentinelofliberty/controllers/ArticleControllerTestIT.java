@@ -72,6 +72,22 @@ class ArticleControllerTestIT {
 
         String responseBody = result.getResponse().getContentAsString();
         accessToken = JsonPath.read(responseBody, "$.data.accessToken");
+
+        // Generate list of new articles
+        for (int i = 0; i < 10; i++) {
+            mockMvc.perform(post(BASE_URL)
+                                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content("""
+                                             {
+                                                 "title": "Test Article %d",
+                                                 "subTitle": "Short Test",
+                                                 "content": "This is a test article. It is a very good test article. This additional text ensures the content is at least 100 characters.",
+                                                 "references": ["https://exampleOne.com", "https://exampleTwo.com"],
+                                                 "categories": ["%s", "listTest"]
+                                             }
+                                             """.formatted(i, "testing" + i)));
+        }
     }
 
     @Test
@@ -144,5 +160,37 @@ class ArticleControllerTestIT {
                .andDo(MockMvcResultHandlers.print());
 
         assertTrue(articleRepository.findById(createdArticleId).isEmpty());
+    }
+
+    @Test
+    @DisplayName("Test get all own articles where an authenticated admin attempts to get all of their articles " +
+            "paginated")
+    void testGetAllOwnArticles() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL)
+                                              .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                              .param("page", "0")
+                                              .param("perPage", "10")
+                                              .param("direction", "ASC"))
+               .andExpect(MockMvcResultMatchers.status().isOk())
+               .andDo(MockMvcResultHandlers.print())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.data.content").isArray());
+    }
+
+    @Test
+    @DisplayName("Test get public latest articles where a user attempts to get the latest articles")
+    void testGetLatestArticles() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/public/latest"))
+               .andExpect(MockMvcResultMatchers.status().isOk())
+               .andDo(MockMvcResultHandlers.print())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.data").isArray());
+    }
+
+    @Test
+    @DisplayName("Test get public article where a user attempts to get an article")
+    void testGetArticle() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/public/1"))
+               .andExpect(MockMvcResultMatchers.status().isOk())
+               .andDo(MockMvcResultHandlers.print())
+               .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(1));
     }
 }
