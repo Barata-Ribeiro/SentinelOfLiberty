@@ -14,7 +14,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     @EntityGraph(attributePaths = {"author", "categories", "references"})
     Page<Article> findAllByAuthor_Username(String username, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"author"})
+    @EntityGraph(attributePaths = {"author", "categories", "references"})
     @Query("""
            SELECT a FROM Article a WHERE a.author.username = :username
            AND (LOWER(a.title) LIKE LOWER(CONCAT('%', :term, '%'))
