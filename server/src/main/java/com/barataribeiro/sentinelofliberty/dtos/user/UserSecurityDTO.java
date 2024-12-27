@@ -22,6 +22,8 @@ public class UserSecurityDTO implements Serializable {
     String username;
     String email;
     Roles role;
+    boolean isPrivate = false;
+    boolean isVerified = false;
     Instant createdAt;
     Instant updatedAt;
 }
