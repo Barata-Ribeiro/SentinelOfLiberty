@@ -1,5 +1,6 @@
 package com.barataribeiro.sentinelofliberty.builders;
 
+import com.barataribeiro.sentinelofliberty.dtos.user.UserProfileDTO;
 import com.barataribeiro.sentinelofliberty.dtos.user.UserSecurityDTO;
 import com.barataribeiro.sentinelofliberty.models.entities.User;
 import lombok.RequiredArgsConstructor;
@@ -14,5 +15,9 @@ public class UserMapper {
 
     public UserSecurityDTO toUserSecurityDTO(User user) {
         return modelMapper.map(user, UserSecurityDTO.class);
+    }
+
+    public UserProfileDTO toUserProfileDTO(User user) {
+        return modelMapper.map(user, UserProfileDTO.class);
     }
 }
