@@ -14,6 +14,7 @@ import com.barataribeiro.sentinelofliberty.repositories.ArticleRepository;
 import com.barataribeiro.sentinelofliberty.repositories.CategoryRepository;
 import com.barataribeiro.sentinelofliberty.repositories.UserRepository;
 import com.barataribeiro.sentinelofliberty.services.ArticleService;
+import com.barataribeiro.sentinelofliberty.utils.ApplicationConstants;
 import com.barataribeiro.sentinelofliberty.utils.StringNormalizer;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -57,10 +58,22 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<ArticleSummaryDTO> getAllArticles(int page, int perPage, String direction, String orderBy) {
+        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+        orderBy = orderBy.equalsIgnoreCase(ApplicationConstants.CREATED_AT) ? ApplicationConstants.CREATED_AT : orderBy;
+        PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
+
+        return articleRepository
+                .findAll(pageable)
+                .map(articleMapper::toArticleSummaryDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<ArticleSummaryDTO> getAllOwnArticles(String search, int page, int perPage, String direction,
                                                      String orderBy, Authentication authentication) {
         Sort.Direction sortDirection = Sort.Direction.fromString(direction);
-        orderBy = orderBy.equalsIgnoreCase("createdAt") ? "createdAt" : orderBy;
+        orderBy = orderBy.equalsIgnoreCase(ApplicationConstants.CREATED_AT) ? ApplicationConstants.CREATED_AT : orderBy;
         PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
 
         Page<ArticleSummaryDTO> articlesPage;

@@ -47,6 +47,22 @@ public class ArticleController {
                                                               "You have successfully retrieved the article", response));
     }
 
+    @GetMapping("/public")
+    @Operation(summary = "Get all articles",
+               description = "This endpoint allows an user to get all articles, summarised. These articles are " +
+                       "usually suggested to be displayed on the listing page, through infinite scrolling or " +
+                       "pagination. Regardless the author.")
+    public ResponseEntity<ApplicationResponseDTO<Page<ArticleSummaryDTO>>> getAllArticles(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int perPage,
+            @RequestParam(defaultValue = "ASC") String direction,
+            @RequestParam(defaultValue = "createdAt") String orderBy) {
+        Page<ArticleSummaryDTO> response = articleService.getAllArticles(page, perPage, direction, orderBy);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully retrieved all articles",
+                                                              response));
+    }
+
     @GetMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Get all of your (admin) articles",
