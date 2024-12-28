@@ -3,6 +3,7 @@ package com.barataribeiro.sentinelofliberty.utils;
 public final class ApplicationConstants {
     public static final String AUTH_0 = "auth0";
     public static final String CONTENT_SECURITY_POLICY_VALUE = "frame-ancestors 'self'; upgrade-insecure-requests";
+    public static final String CREATED_AT = "createdAt";
     private static final String[] AUTH_WHITELIST = {
             // -- Swagger UI v2
             "/v2/api-docs",
