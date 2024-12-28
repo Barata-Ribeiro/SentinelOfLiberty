@@ -12,6 +12,9 @@ import com.barataribeiro.sentinelofliberty.services.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +32,28 @@ public class NoticeServiceImpl implements NoticeService {
     @Transactional(readOnly = true)
     public Set<NoticeDTO> getLatestActiveNotices() {
         return noticeMapper.toNoticeDTOSet(noticeRepository.findTop5ByIsActiveTrueOrderByCreatedAtDesc());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<NoticeDTO> getAllOwnNotices(String search, int page, int perPage, String direction, String orderBy,
+                                            Authentication authentication) {
+        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+        orderBy = orderBy.equalsIgnoreCase("createdAt") ? "createdAt" : orderBy;
+        PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
+
+        Page<NoticeDTO> noticesPage;
+        if (search != null && !search.isBlank()) {
+            noticesPage = noticeRepository
+                    .findAllByUser_UsernameAndSearchParams(authentication.getName(), search, pageable)
+                    .map(noticeMapper::toNoticeDTO);
+        } else {
+            noticesPage = noticeRepository
+                    .findByUser_Username(authentication.getName(), pageable)
+                    .map(noticeMapper::toNoticeDTO);
+        }
+
+        return noticesPage;
     }
 
     @Override
