@@ -2,24 +2,16 @@ package com.barataribeiro.sentinelofliberty.controllers;
 
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.InvalidCredentialsException;
-import com.barataribeiro.sentinelofliberty.models.entities.User;
-import com.barataribeiro.sentinelofliberty.models.enums.Roles;
 import com.barataribeiro.sentinelofliberty.repositories.UserRepository;
+import com.barataribeiro.sentinelofliberty.utils.ApplicationBaseIntegrationTest;
 import com.barataribeiro.sentinelofliberty.utils.ConcurrencyTestUtil;
 import com.jayway.jsonpath.JsonPath;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -30,28 +22,12 @@ import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-@ExtendWith(SpringExtension.class)
+@DirtiesContext
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
-class AuthControllerTestIT {
+class AuthControllerTestIT extends ApplicationBaseIntegrationTest {
     private static final String BASE_URL = "/api/v1/auth";
     private final MockMvc mockMvc;
     @Autowired private UserRepository userRepository;
-
-    @BeforeAll
-    public static void createTestingUser(@Autowired @NotNull PasswordEncoder passwordEncoder,
-                                         @Autowired @NotNull UserRepository userRepository) {
-        User user = User.builder()
-                        .username("testuser")
-                        .email("testuser@example.com")
-                        .password(passwordEncoder.encode("testpassword"))
-                        .role(Roles.USER)
-                        .displayName("Test User")
-                        .build();
-        userRepository.save(user);
-    }
 
     @Test
     @DisplayName("Test login with valid request body and an existing user attempts to login with valid credentials")
