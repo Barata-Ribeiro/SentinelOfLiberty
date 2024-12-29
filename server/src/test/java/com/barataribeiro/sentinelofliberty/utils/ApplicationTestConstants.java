@@ -22,6 +22,13 @@ public final class ApplicationTestConstants {
                                                         }
                                                         """;
 
+    public static final String NEW_NOTICE_PAYLOAD = """
+                                                    {
+                                                        "title": "Test Notice",
+                                                        "message": "This is a test notice. A warning which all users should read."
+                                                    }
+                                                    """;
+
     public static final String VALID_LOGIN_PAYLOAD = """
                                                      {
                                                          "username": "testuser",
