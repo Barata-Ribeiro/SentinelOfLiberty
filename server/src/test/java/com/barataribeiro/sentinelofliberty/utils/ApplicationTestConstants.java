@@ -43,6 +43,21 @@ public final class ApplicationTestConstants {
                                                            }
                                                            """;
 
+    public static final String ADMIN_UPDATE_PROFILE_PAYLOAD = """
+                                                              {
+                                                                  "currentPassword": "testpassword",
+                                                                  "username": "testadminupdated",
+                                                                  "email": "testadminnewemail@example.com",
+                                                                  "displayName": "New Admin",
+                                                                  "fullName": "Mr New Admin",
+                                                                  "avatarUrl": "https://example.com/avatar.jpg",
+                                                                  "biography": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                                                                  "location": "New York, USA",
+                                                                  "website": "https://example.com",
+                                                                  "newPassword": "4JTH#Rf7tUtwaEi@"
+                                                              }
+                                                              """;
+
 
     private ApplicationTestConstants() {
         throw new UnsupportedOperationException("This class cannot be instantiated.");
