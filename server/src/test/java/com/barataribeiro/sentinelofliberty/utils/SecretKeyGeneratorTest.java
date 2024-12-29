@@ -7,13 +7,16 @@ import org.slf4j.LoggerFactory;
 
 import java.security.SecureRandom;
 
-@Disabled
-public class SecretKeyGenerator {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-    Logger logger = LoggerFactory.getLogger(SecretKeyGenerator.class);
+@Disabled
+class SecretKeyGeneratorTest {
+
+    Logger logger = LoggerFactory.getLogger(SecretKeyGeneratorTest.class);
 
     @Test
-    public void generateSecretKey() {
+    void generateSecretKey() {
         int keyLength = 64;
 
         SecureRandom secureRandom = new SecureRandom();
@@ -27,5 +30,9 @@ public class SecretKeyGenerator {
         }
 
         logger.info("Secret key: {}", secretKey);
+
+        assertEquals(keyLength * 2, secretKey.length());
+        assertEquals(128, secretKey.length());
+        assertTrue(secretKey.toString().matches("[0-9a-f]+"));
     }
 }
