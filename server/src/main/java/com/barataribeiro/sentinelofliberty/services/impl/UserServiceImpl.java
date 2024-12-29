@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
         boolean userBannedOrNone =
                 userToUpdate.getRole().equals(Roles.BANNED) || userToUpdate.getRole().equals(Roles.NONE);
 
-        if (passwordMatches && !userBannedOrNone) {
+        if (!passwordMatches && userBannedOrNone) {
             throw new InvalidCredentialsException("Authorization failed; Wrong credentials or account has a problem.");
         }
     }
@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
                 throw new IllegalRequestException("You already uses this username.");
             }
 
-            if (userRepository.existsByUsernameOrEmailAllIgnoreCase(s, userToUpdate.getEmail())) {
+            if (userRepository.existsByUsernameOrEmailAllIgnoreCase(s, null)) {
                 throw new IllegalRequestException("Username already in use.");
             }
 
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
                 throw new IllegalRequestException("You already uses this email.");
             }
 
-            if (userRepository.existsByUsernameOrEmailAllIgnoreCase(userToUpdate.getUsername(), s)) {
+            if (userRepository.existsByUsernameOrEmailAllIgnoreCase(null, s)) {
                 throw new IllegalRequestException("Email already in use.");
             }
 
