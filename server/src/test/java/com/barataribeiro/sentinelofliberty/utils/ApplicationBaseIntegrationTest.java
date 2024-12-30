@@ -17,13 +17,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants.VALID_ADMIN_LOGIN_PAYLOAD;
 import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants.VALID_LOGIN_PAYLOAD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -62,23 +61,21 @@ public abstract class ApplicationBaseIntegrationTest {
 
         // Authenticate and get the token
         if (accessToken == null || userAccessToken == null) {
-            mockMvc.perform(MockMvcRequestBuilders
-                                    .post("/api/v1/auth/login")
+            mockMvc.perform(post("/api/v1/auth/login")
                                     .contentType("application/json")
                                     .content(VALID_ADMIN_LOGIN_PAYLOAD))
-                   .andExpect(MockMvcResultMatchers.status().isOk())
-                   .andDo(MockMvcResultHandlers.print())
+                   .andExpect(status().isOk())
+                   .andDo(print())
                    .andDo(result -> {
                        String responseBody = result.getResponse().getContentAsString();
                        accessToken = JsonPath.read(responseBody, "$.data.accessToken");
                    });
 
-            mockMvc.perform(MockMvcRequestBuilders
-                                    .post("/api/v1/auth/login")
+            mockMvc.perform(post("/api/v1/auth/login")
                                     .contentType("application/json")
                                     .content(VALID_LOGIN_PAYLOAD))
-                   .andExpect(MockMvcResultMatchers.status().isOk())
-                   .andDo(MockMvcResultHandlers.print())
+                   .andExpect(status().isOk())
+                   .andDo(print())
                    .andDo(result -> {
                        String responseBody = result.getResponse().getContentAsString();
                        userAccessToken = JsonPath.read(responseBody, "$.data.accessToken");
@@ -99,7 +96,7 @@ public abstract class ApplicationBaseIntegrationTest {
                                                  "categories": ["%s", "listTest"]
                                              }
                                              """.formatted(i, new java.util.Random().nextInt(1000), "testing" + i)))
-                   .andDo(MockMvcResultHandlers.print());
+                   .andDo(print());
         }
     }
 

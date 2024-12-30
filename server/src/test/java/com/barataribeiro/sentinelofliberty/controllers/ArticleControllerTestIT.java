@@ -15,7 +15,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +22,10 @@ import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants
 import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants.UPDATE_ARTICLE_PAYLOAD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DirtiesContext
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -44,8 +46,8 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
                                                    .headers(authHeader())
                                                    .contentType(MediaType.APPLICATION_JSON)
                                                    .content(NEW_ARTICLE_PAYLOAD))
-                                  .andExpect(MockMvcResultMatchers.status().isCreated())
-                                  .andDo(MockMvcResultHandlers.print())
+                                  .andExpect(status().isCreated())
+                                  .andDo(print())
                                   .andReturn();
 
         String responseBody = result.getResponse().getContentAsString();
@@ -65,8 +67,8 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
                                                    .headers(authHeader())
                                                    .contentType(MediaType.APPLICATION_JSON)
                                                    .content(UPDATE_ARTICLE_PAYLOAD))
-                                  .andExpect(MockMvcResultMatchers.status().isOk())
-                                  .andDo(MockMvcResultHandlers.print())
+                                  .andExpect(status().isOk())
+                                  .andDo(print())
                                   .andReturn();
 
         String responseBody = result.getResponse().getContentAsString();
@@ -84,12 +86,12 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
     @DisplayName("Test concurrent creation of multiple requests and only one should exist in the database")
     void testConcurrentCreateArticle() {
         ConcurrencyTestUtil.doAsyncAndConcurrently(10, () -> mockMvc
-                .perform(MockMvcRequestBuilders.post(BASE_URL)
-                                               .headers(authHeader())
-                                               .contentType(MediaType.APPLICATION_JSON)
-                                               .content(NEW_ARTICLE_PAYLOAD))
-                .andExpect(MockMvcResultMatchers.status().isConflict())
-                .andDo(MockMvcResultHandlers.print()));
+                .perform(post(BASE_URL)
+                                 .headers(authHeader())
+                                 .contentType(MediaType.APPLICATION_JSON)
+                                 .content(NEW_ARTICLE_PAYLOAD))
+                .andExpect(status().isConflict())
+                .andDo(print()));
 
         assertEquals(1, articleRepository.countByTitle("Test Article"),
                      "Only one instance of the article should exist in the database");
@@ -102,8 +104,8 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders
                                 .delete(BASE_URL + "/" + createdArticleId)
                                 .headers(authHeader()))
-               .andExpect(MockMvcResultMatchers.status().isNoContent())
-               .andDo(MockMvcResultHandlers.print());
+               .andExpect(status().isNoContent())
+               .andDo(print());
 
         assertTrue(articleRepository.findById(createdArticleId).isEmpty());
     }
@@ -112,31 +114,31 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
     @DisplayName("Test get all own articles where an authenticated admin attempts to get all of their articles " +
             "paginated")
     void testGetAllOwnArticles() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL)
-                                              .headers(authHeader())
-                                              .param("page", "0")
-                                              .param("perPage", "10")
-                                              .param("direction", "ASC"))
-               .andExpect(MockMvcResultMatchers.status().isOk())
-               .andDo(MockMvcResultHandlers.print())
+        mockMvc.perform(get(BASE_URL)
+                                .headers(authHeader())
+                                .param("page", "0")
+                                .param("perPage", "10")
+                                .param("direction", "ASC"))
+               .andExpect(status().isOk())
+               .andDo(print())
                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content").isArray());
     }
 
     @Test
     @DisplayName("Test get public latest articles where a user attempts to get the latest articles")
     void testGetLatestArticles() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/public/latest"))
-               .andExpect(MockMvcResultMatchers.status().isOk())
-               .andDo(MockMvcResultHandlers.print())
+        mockMvc.perform(get(BASE_URL + "/public/latest"))
+               .andExpect(status().isOk())
+               .andDo(print())
                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isArray());
     }
 
     @Test
     @DisplayName("Test get public article where a user attempts to get an article")
     void testGetArticle() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/public/1"))
-               .andExpect(MockMvcResultMatchers.status().isOk())
-               .andDo(MockMvcResultHandlers.print())
+        mockMvc.perform(get(BASE_URL + "/public/1"))
+               .andExpect(status().isOk())
+               .andDo(print())
                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(1));
     }
 }

@@ -11,14 +11,15 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants.ADMIN_UPDATE_PROFILE_PAYLOAD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DirtiesContext
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -30,9 +31,9 @@ class UserControllerTestIT extends ApplicationBaseIntegrationTest {
     @Test
     @DisplayName("Test get user public profile with valid username")
     void testGetUserPublicProfile() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/public/profile/testuser"))
-               .andExpect(MockMvcResultMatchers.status().isOk())
-               .andDo(MockMvcResultHandlers.print())
+        mockMvc.perform(get(BASE_URL + "/public/profile/testuser"))
+               .andExpect(status().isOk())
+               .andDo(print())
                .andExpect(result -> assertEquals("testuser",
                                                  JsonPath.read(result.getResponse().getContentAsString(),
                                                                "$.data.username")));
@@ -41,9 +42,9 @@ class UserControllerTestIT extends ApplicationBaseIntegrationTest {
     @Test
     @DisplayName("Test get user public profile with invalid username")
     void testGetUserPublicProfileWithInvalidUsername() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/public/profile/invalidusername"))
-               .andExpect(MockMvcResultMatchers.status().isNotFound())
-               .andDo(MockMvcResultHandlers.print())
+        mockMvc.perform(get(BASE_URL + "/public/profile/invalidusername"))
+               .andExpect(status().isNotFound())
+               .andDo(print())
                .andExpect(result -> assertInstanceOf(EntityNotFoundException.class,
                                                      result.getResolvedException()));
     }
@@ -51,12 +52,12 @@ class UserControllerTestIT extends ApplicationBaseIntegrationTest {
     @Test
     @DisplayName("Update user profile with valid data")
     void updateUserProfileWithValidData() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/me")
-                                              .contentType("application/json")
-                                              .content(ADMIN_UPDATE_PROFILE_PAYLOAD)
-                                              .headers(authHeader()))
-               .andExpect(MockMvcResultMatchers.status().isOk())
-               .andDo(MockMvcResultHandlers.print())
+        mockMvc.perform(patch(BASE_URL + "/me")
+                                .contentType("application/json")
+                                .content(ADMIN_UPDATE_PROFILE_PAYLOAD)
+                                .headers(authHeader()))
+               .andExpect(status().isOk())
+               .andDo(print())
                .andExpect(result -> {
                    assertEquals("testadminupdated",
                                 JsonPath.read(result.getResponse().getContentAsString(), "$.data.username"));
@@ -76,12 +77,12 @@ class UserControllerTestIT extends ApplicationBaseIntegrationTest {
     })
     @DisplayName("Update user profile with invalid data")
     void updateUserProfileWithInvalidData(String payload) throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.patch(BASE_URL + "/me")
-                                              .contentType("application/json")
-                                              .content(payload)
-                                              .headers(authHeader()))
-               .andExpect(MockMvcResultMatchers.status().isBadRequest())
-               .andDo(MockMvcResultHandlers.print())
+        mockMvc.perform(patch(BASE_URL + "/me")
+                                .contentType("application/json")
+                                .content(payload)
+                                .headers(authHeader()))
+               .andExpect(status().isBadRequest())
+               .andDo(print())
                .andExpect(result -> assertInstanceOf(MethodArgumentNotValidException.class,
                                                      result.getResolvedException()));
     }

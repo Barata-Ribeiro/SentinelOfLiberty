@@ -13,8 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 
@@ -22,6 +20,8 @@ import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DirtiesContext
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -41,8 +41,8 @@ class NoticeControllerTestIT extends ApplicationBaseIntegrationTest {
                                                    .headers(authHeader())
                                                    .contentType(MediaType.APPLICATION_JSON)
                                                    .content(NEW_NOTICE_PAYLOAD))
-                                  .andExpect(MockMvcResultMatchers.status().isCreated())
-                                  .andDo(MockMvcResultHandlers.print())
+                                  .andExpect(status().isCreated())
+                                  .andDo(print())
                                   .andReturn();
 
         String responseBody = result.getResponse().getContentAsString();
@@ -57,8 +57,8 @@ class NoticeControllerTestIT extends ApplicationBaseIntegrationTest {
     @DisplayName("Test to get the latest public notices that will be displayed on the homepage")
     void testGetLatestNotice() throws Exception {
         mockMvc.perform(get(BASE_URL + "/public/latest"))
-               .andExpect(MockMvcResultMatchers.status().isOk())
-               .andDo(MockMvcResultHandlers.print())
+               .andExpect(status().isOk())
+               .andDo(print())
                .andExpect(result -> {
                    String responseBody = result.getResponse().getContentAsString();
                    assertEquals("You have successfully retrieved the latest notices",
