@@ -9,6 +9,8 @@ import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
+
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class CommentMapper {
@@ -20,8 +22,8 @@ public class CommentMapper {
             @Override
             protected void configure() {
                 using(ctx -> {
-                    Long childrenCount = (Long) ctx.getSource();
-                    return childrenCount == null ? 0L : childrenCount;
+                    Set<?> children = (Set<?>) ctx.getSource();
+                    return children == null ? 0L : (long) children.size();
                 }).map(source.getChildren(), destination.getChildrenCount());
                 map(source.getArticle().getId(), destination.getArticleId());
             }
