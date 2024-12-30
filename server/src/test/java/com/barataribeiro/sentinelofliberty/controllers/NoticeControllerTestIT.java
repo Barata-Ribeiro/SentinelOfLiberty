@@ -4,6 +4,7 @@ import com.barataribeiro.sentinelofliberty.repositories.NoticeRepository;
 import com.barataribeiro.sentinelofliberty.utils.ApplicationBaseIntegrationTest;
 import com.jayway.jsonpath.JsonPath;
 import lombok.RequiredArgsConstructor;
+import net.minidev.json.JSONArray;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -15,9 +16,11 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.List;
+
 import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants.NEW_NOTICE_PAYLOAD;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @DirtiesContext
@@ -47,5 +50,22 @@ class NoticeControllerTestIT extends ApplicationBaseIntegrationTest {
 
         assertEquals("Test Notice", JsonPath.read(responseBody, "$.data.title"));
         assertTrue(noticeRepository.existsById(createdNoticeId));
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("Test to get the latest public notices that will be displayed on the homepage")
+    void testGetLatestNotice() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/public/latest"))
+               .andExpect(MockMvcResultMatchers.status().isOk())
+               .andDo(MockMvcResultHandlers.print())
+               .andExpect(result -> {
+                   String responseBody = result.getResponse().getContentAsString();
+                   assertEquals("You have successfully retrieved the latest notices",
+                                JsonPath.read(responseBody, "$.message"));
+                   assertInstanceOf(JSONArray.class, JsonPath.read(responseBody, "$.data"));
+                   assertFalse(((List<?>) JsonPath.parse(responseBody)
+                                                  .read("$.data[?(@.id == " + createdNoticeId + ")]")).isEmpty());
+               });
     }
 }
