@@ -68,4 +68,26 @@ class NoticeControllerTestIT extends ApplicationBaseIntegrationTest {
                                                   .read("$.data[?(@.id == " + createdNoticeId + ")]")).isEmpty());
                });
     }
+
+    @Test
+    @DisplayName("Test to get all notices issued by an authenticated admin")
+    void testGetAllOwnNotices() throws Exception {
+        mockMvc.perform(get(BASE_URL)
+                                .headers(authHeader())
+                                .param("search", "Test Notice")
+                                .param("page", "0")
+                                .param("perPage", "10")
+                                .param("direction", "ASC")
+                                .param("orderBy", "createdAt"))
+               .andExpect(status().isOk())
+               .andDo(print())
+               .andExpect(result -> {
+                   String responseBody = result.getResponse().getContentAsString();
+                   assertEquals("You have successfully retrieved all of your notices",
+                                JsonPath.read(responseBody, "$.message"));
+                   assertInstanceOf(JSONArray.class, JsonPath.read(responseBody, "$.data.content"));
+                   assertFalse(((List<?>) JsonPath.parse(responseBody)
+                                                  .read("$.data.content[?(@.id == " + createdNoticeId + ")]")).isEmpty());
+               });
+    }
 }
