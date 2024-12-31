@@ -79,4 +79,15 @@ public class NoticeController {
                                                               "You have successfully updated the notice", response));
     }
 
+    @Operation(summary = "Delete a notice",
+               description = "This endpoint allows an admin to delete a notice by providing the notice ID.")
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ApplicationResponseDTO<Void>> deleteNotice(@PathVariable Long id,
+                                                                     Authentication authentication) {
+        noticeService.deleteNotice(id, authentication);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully deleted the notice", null));
+    }
+
 }
