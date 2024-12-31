@@ -6,9 +6,7 @@ import com.barataribeiro.sentinelofliberty.utils.ApplicationBaseIntegrationTest;
 import com.barataribeiro.sentinelofliberty.utils.ConcurrencyTestUtil;
 import com.jayway.jsonpath.JsonPath;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
@@ -28,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DirtiesContext
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
     private static final String BASE_URL = "/api/v1/articles";
