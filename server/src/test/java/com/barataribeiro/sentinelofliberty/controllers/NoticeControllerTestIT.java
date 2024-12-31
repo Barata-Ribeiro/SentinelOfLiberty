@@ -5,9 +5,7 @@ import com.barataribeiro.sentinelofliberty.utils.ApplicationBaseIntegrationTest;
 import com.jayway.jsonpath.JsonPath;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONArray;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
@@ -23,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DirtiesContext
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 class NoticeControllerTestIT extends ApplicationBaseIntegrationTest {
     private static final String BASE_URL = "/api/v1/notices";
@@ -105,6 +104,23 @@ class NoticeControllerTestIT extends ApplicationBaseIntegrationTest {
                    String responseBody = result.getResponse().getContentAsString();
                    assertEquals("You have successfully updated the notice", JsonPath.read(responseBody, "$.message"));
                    assertEquals("Updated Test Notice", JsonPath.read(responseBody, "$.data.title"));
+               });
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("Test set notice status where an authenticated admin attempts to update its status")
+    void testSetNoticeStatus() throws Exception {
+        mockMvc.perform(patch(BASE_URL + "/" + createdNoticeId + "/status")
+                                .headers(authHeader())
+                                .param("isActive", "false"))
+               .andExpect(status().isOk())
+               .andDo(print())
+               .andExpect(result -> {
+                   String responseBody = result.getResponse().getContentAsString();
+                   assertEquals("You have successfully updated the notice status",
+                                JsonPath.read(responseBody, "$.message"));
+                   assertFalse((Boolean) JsonPath.read(responseBody, "$.data.isActive"));
                });
     }
 }
