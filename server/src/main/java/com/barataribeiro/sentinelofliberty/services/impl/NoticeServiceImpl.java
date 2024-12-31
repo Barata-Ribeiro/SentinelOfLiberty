@@ -4,6 +4,7 @@ import com.barataribeiro.sentinelofliberty.builders.NoticeMapper;
 import com.barataribeiro.sentinelofliberty.dtos.notice.NoticeDTO;
 import com.barataribeiro.sentinelofliberty.dtos.notice.NoticeRequestDTO;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
+import com.barataribeiro.sentinelofliberty.exceptions.throwables.IllegalRequestException;
 import com.barataribeiro.sentinelofliberty.models.entities.Notice;
 import com.barataribeiro.sentinelofliberty.models.entities.User;
 import com.barataribeiro.sentinelofliberty.repositories.NoticeRepository;
@@ -67,6 +68,22 @@ public class NoticeServiceImpl implements NoticeService {
                               .message(body.getMessage())
                               .user(author)
                               .build();
+
+        return noticeMapper.toNoticeDTO(noticeRepository.saveAndFlush(notice));
+    }
+
+    @Override
+    @Transactional
+    public NoticeDTO updateNotice(Long id, NoticeRequestDTO body, @NotNull Authentication authentication) {
+        Notice notice = noticeRepository.findById(id)
+                                        .orElseThrow(() -> new EntityNotFoundException(Notice.class.getSimpleName()));
+
+        if (!notice.getUser().getUsername().equals(authentication.getName())) {
+            throw new IllegalRequestException("You are not authorized to update this notice");
+        }
+
+        notice.setTitle(body.getTitle());
+        notice.setMessage(body.getMessage());
 
         return noticeMapper.toNoticeDTO(noticeRepository.saveAndFlush(notice));
     }

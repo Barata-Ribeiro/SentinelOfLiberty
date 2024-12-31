@@ -35,10 +35,10 @@ public class NoticeController {
                                                               response));
     }
 
-    @GetMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Get all notices issued by you (admin)",
                description = "This endpoint allows a requesting admin (you) to get all notices that they have issued.")
+    @GetMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApplicationResponseDTO<Page<NoticeDTO>>> getAllOwnNotices(
             @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0") int page,
@@ -65,4 +65,18 @@ public class NoticeController {
                              .body(new ApplicationResponseDTO<>(HttpStatus.CREATED, HttpStatus.CREATED.value(),
                                                                 "You have successfully created a notice", response));
     }
+
+    @Operation(summary = "Update a notice",
+               description = "This endpoint allows an admin to update a notice by providing the title and message. " +
+                       "The notice will be displayed on the homepage. The title is optional.")
+    @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ApplicationResponseDTO<NoticeDTO>> updateNotice(@PathVariable Long id,
+                                                                          @RequestBody @Valid NoticeRequestDTO body,
+                                                                          Authentication authentication) {
+        NoticeDTO response = noticeService.updateNotice(id, body, authentication);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully updated the notice", response));
+    }
+
 }
