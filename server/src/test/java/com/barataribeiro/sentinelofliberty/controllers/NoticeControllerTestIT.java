@@ -18,8 +18,7 @@ import java.util.List;
 
 import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants.NEW_NOTICE_PAYLOAD;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -88,6 +87,24 @@ class NoticeControllerTestIT extends ApplicationBaseIntegrationTest {
                    assertInstanceOf(JSONArray.class, JsonPath.read(responseBody, "$.data.content"));
                    assertFalse(((List<?>) JsonPath.parse(responseBody)
                                                   .read("$.data.content[?(@.id == " + createdNoticeId + ")]")).isEmpty());
+               });
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("Test update notice with valid request body and an authenticated admin attempts to update a notice")
+    void testUpdateNotice() throws Exception {
+        String updatedNoticePayload = NEW_NOTICE_PAYLOAD.replace("Test Notice", "Updated Test Notice");
+        mockMvc.perform(patch(BASE_URL + "/" + createdNoticeId)
+                                .headers(authHeader())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(updatedNoticePayload))
+               .andExpect(status().isOk())
+               .andDo(print())
+               .andExpect(result -> {
+                   String responseBody = result.getResponse().getContentAsString();
+                   assertEquals("You have successfully updated the notice", JsonPath.read(responseBody, "$.message"));
+                   assertEquals("Updated Test Notice", JsonPath.read(responseBody, "$.data.title"));
                });
     }
 }
