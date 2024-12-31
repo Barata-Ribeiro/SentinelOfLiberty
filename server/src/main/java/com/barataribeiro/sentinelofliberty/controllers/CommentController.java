@@ -22,7 +22,8 @@ public class CommentController {
     private final CommentService commentService;
 
     @Operation(summary = "Create a comment",
-               description = "This endpoint allows a logged in user to create a comment on an article.")
+               description = "This endpoint allows a logged in user to create a comment on an article or reply to a " +
+                       "comment through the parentId field in the request body.")
     @PostMapping("/{articleId}")
     public ResponseEntity<ApplicationResponseDTO<CommentDTO>> createComment(
             @PathVariable Long articleId,

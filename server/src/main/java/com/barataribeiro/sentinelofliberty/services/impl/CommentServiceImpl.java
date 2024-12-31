@@ -46,11 +46,9 @@ public class CommentServiceImpl implements CommentService {
                                     .build();
 
         Optional.ofNullable(body.getParentId()).ifPresent(parentId -> {
-            Comment parent = article.getComments()
-                                    .stream()
-                                    .filter(comment -> comment.getId().equals(parentId))
-                                    .findFirst()
-                                    .orElseThrow(() -> new EntityNotFoundException(Comment.class.getSimpleName()));
+            Comment parent = commentRepository
+                    .findById(parentId)
+                    .orElseThrow(() -> new EntityNotFoundException(Comment.class.getSimpleName()));
 
             newComment.setParent(parent);
         });

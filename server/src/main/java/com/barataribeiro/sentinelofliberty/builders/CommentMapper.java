@@ -26,6 +26,7 @@ public class CommentMapper {
                     return children == null ? 0L : (long) children.size();
                 }).map(source.getChildren(), destination.getChildrenCount());
                 map(source.getArticle().getId(), destination.getArticleId());
+                map(source.getParent().getId(), destination.getParentId());
             }
         });
     }
