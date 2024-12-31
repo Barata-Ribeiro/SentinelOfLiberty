@@ -90,6 +90,21 @@ public class NoticeServiceImpl implements NoticeService {
 
     @Override
     @Transactional
+    public NoticeDTO setNoticeStatus(Long id, Boolean isActive, @NotNull Authentication authentication) {
+        Notice notice = noticeRepository.findById(id)
+                                        .orElseThrow(() -> new EntityNotFoundException(Notice.class.getSimpleName()));
+
+        if (!notice.getUser().getUsername().equals(authentication.getName())) {
+            throw new IllegalRequestException("You are not authorized to update this notice");
+        }
+
+        notice.setIsActive(isActive);
+
+        return noticeMapper.toNoticeDTO(noticeRepository.saveAndFlush(notice));
+    }
+
+    @Override
+    @Transactional
     public void deleteNotice(Long id, @NotNull Authentication authentication) {
         Notice notice = noticeRepository.findById(id)
                                         .orElseThrow(() -> new EntityNotFoundException(Notice.class.getSimpleName()));

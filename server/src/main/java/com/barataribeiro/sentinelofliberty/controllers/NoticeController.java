@@ -79,6 +79,20 @@ public class NoticeController {
                                                               "You have successfully updated the notice", response));
     }
 
+    @Operation(summary = "Set a notice as active/inactive",
+               description = "This endpoint allows an admin to set a notice as active or inactive by providing the " +
+                       "notice ID.")
+    @PatchMapping("/{id}/status")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ApplicationResponseDTO<NoticeDTO>> setNoticeStatus(@PathVariable Long id,
+                                                                             @RequestParam Boolean isActive,
+                                                                             Authentication authentication) {
+        NoticeDTO response = noticeService.setNoticeStatus(id, isActive, authentication);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully updated the notice status",
+                                                              response));
+    }
+
     @Operation(summary = "Delete a notice",
                description = "This endpoint allows an admin to delete a notice by providing the notice ID.")
     @DeleteMapping("/{id}")

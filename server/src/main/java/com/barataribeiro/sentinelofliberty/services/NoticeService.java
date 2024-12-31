@@ -17,5 +17,7 @@ public interface NoticeService {
 
     NoticeDTO updateNotice(Long id, NoticeRequestDTO body, Authentication authentication);
 
+    NoticeDTO setNoticeStatus(Long id, Boolean isActive, Authentication authentication);
+
     void deleteNotice(Long id, Authentication authentication);
 }
