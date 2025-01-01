@@ -1,17 +1,22 @@
 package com.barataribeiro.sentinelofliberty.controllers;
 
+import com.barataribeiro.sentinelofliberty.exceptions.throwables.IllegalRequestException;
 import com.barataribeiro.sentinelofliberty.repositories.CommentRepository;
 import com.barataribeiro.sentinelofliberty.utils.ApplicationBaseIntegrationTest;
 import com.jayway.jsonpath.JsonPath;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.List;
 
+import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants.LONG_LOREM_IPSUM;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -127,4 +132,44 @@ class CommentControllerTestIT extends ApplicationBaseIntegrationTest {
                 "root comment was deleted.");
     }
 
+
+    @ParameterizedTest
+    @CsvSource({
+            "'', 'must not be blank'",
+            "'   ', 'must not be blank'",
+            "'1234', 'Comment body must be between 5 and 400 characters'",
+            LONG_LOREM_IPSUM + ", 'Comment body must be between 5 and 400 characters'"
+    })
+    @DisplayName("Create comment with invalid request body")
+    void createCommentWithInvalidRequestBody(String body, String expectedErrorMessage) throws Exception {
+        mockMvc.perform(post(BASE_URL + "/1")
+                                .headers(userAuthHeader())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                         {
+                                             "body": "%s"
+                                         }
+                                         """.formatted(body)))
+               .andExpect(status().isBadRequest())
+               .andDo(print())
+               .andExpect(result -> {
+                   String responseBody = result.getResponse().getContentAsString();
+                   assertTrue(responseBody.contains(expectedErrorMessage));
+                   assertInstanceOf(MethodArgumentNotValidException.class, result.getResolvedException());
+               });
+    }
+
+    @Test
+    @DisplayName("Delete comment with invalid comment ID")
+    void deleteCommentWithInvalidCommentId() throws Exception {
+        mockMvc.perform(delete(BASE_URL + "/1/9999").headers(userAuthHeader())
+                                                    .contentType(MediaType.APPLICATION_JSON))
+               .andExpect(status().isBadRequest())
+               .andDo(print())
+               .andExpect(result -> {
+                   String responseBody = result.getResponse().getContentAsString();
+                   assertTrue(responseBody.contains("Comment not found or you are not the author"));
+                   assertInstanceOf(IllegalRequestException.class, result.getResolvedException());
+               });
+    }
 }

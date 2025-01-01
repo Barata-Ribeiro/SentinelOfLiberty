@@ -58,6 +58,23 @@ public final class ApplicationTestConstants {
                                                               }
                                                               """;
 
+    public static final String LONG_LOREM_IPSUM = "Iuvaret proin orci alienum maximus definitionem nobis diam veri " +
+            "habemus nisl dolores amet metus suas accumsan interdum senectus venenatis ius dolore reprimique eros ne " +
+            "adversarium volumus ornatus invidunt antiopam postea sumo metus ridens lobortis prompta habemus ornatus " +
+            "alterum venenatis aenean taciti sit fermentum ullamcorper ac errem mentitum principes inceptos inimicus " +
+            "taciti omittam possim simul augue nulla ridens ridens ignota idque splendide appareat eget adversarium " +
+            "legimus suspendisse tractatos non pri quod suspendisse vidisse viris verterem bibendum sapientem idque " +
+            "platonem suscipiantur veritus nisl maecenas tamquam penatibus odio ultrices gloriatur sumo comprehensam " +
+            "pharetra ut mutat diam constituto nobis ultricies libero tincidunt tale diam meliore conceptam quis sit " +
+            "vel tibique ultricies lectus ullamcorper ipsum aptent possit sagittis possim ancillae elementum " +
+            "deterruisset idque vero inceptos id liber gubergren ipsum simul volutpat rhoncus elit porta definiebas " +
+            "prodesset solum sit vix efficiantur maecenas hendrerit quod fames reformidans id condimentum eget " +
+            "phasellus causae class mnesarchum consectetuer necessitatibus tation idque habeo ultricies ludus " +
+            "necessitatibus fames egestas tibique qui tantas adversarium his nobis a imperdiet sanctus comprehensam " +
+            "tritani vulputate esse eum mentitum tantas singulis cu ultricies offendit turpis consul libero habitant " +
+            "luctus brute cras iuvaret elit diam commune morbi eruditi omittantur elementum pertinax montes sit " +
+            "mediocrem habeo pri petentium ubique.";
+
 
     private ApplicationTestConstants() {
         throw new UnsupportedOperationException("This class cannot be instantiated.");
