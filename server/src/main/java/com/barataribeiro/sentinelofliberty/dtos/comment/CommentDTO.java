@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * DTO for {@link com.barataribeiro.sentinelofliberty.models.entities.Comment}
@@ -17,12 +19,13 @@ import java.time.Instant;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CommentDTO implements Serializable {
-    Long id;
-    String content;
-    AuthorDTO user;
-    Long articleId;
-    Long parentId;
-    Long childrenCount;
-    Instant createdAt;
-    Instant updatedAt;
+    private Long id;
+    private String content;
+    private AuthorDTO user;
+    private Long articleId;
+    private Long parentId;
+    private Long childrenCount;
+    private List<CommentDTO> children = new ArrayList<>();
+    private Instant createdAt;
+    private Instant updatedAt;
 }
