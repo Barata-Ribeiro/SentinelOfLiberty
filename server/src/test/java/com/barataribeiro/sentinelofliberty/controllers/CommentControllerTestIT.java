@@ -4,19 +4,22 @@ import com.barataribeiro.sentinelofliberty.repositories.CommentRepository;
 import com.barataribeiro.sentinelofliberty.utils.ApplicationBaseIntegrationTest;
 import com.jayway.jsonpath.JsonPath;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DirtiesContext
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 class CommentControllerTestIT extends ApplicationBaseIntegrationTest {
     private static final String BASE_URL = "/api/v1/comments";
@@ -33,6 +36,7 @@ class CommentControllerTestIT extends ApplicationBaseIntegrationTest {
     @Autowired private CommentRepository commentRepository;
 
     @Test
+    @Order(1)
     @DisplayName("Test create comment with valid request body and an authenticated user attempts to create a comment")
     void testCreateComment() throws Exception {
         mockMvc.perform(post(BASE_URL + "/1")
@@ -51,6 +55,7 @@ class CommentControllerTestIT extends ApplicationBaseIntegrationTest {
     }
 
     @Test
+    @Order(2)
     @DisplayName("Test create reply with valid request body and an authenticated user attempts to create a reply")
     void testReplyToComment() throws Exception {
         mockMvc.perform(post(BASE_URL + "/1")
@@ -77,5 +82,31 @@ class CommentControllerTestIT extends ApplicationBaseIntegrationTest {
                });
 
         assertEquals(2, commentRepository.countDistinctByArticle_Id(1L));
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("Get article comments tree with valid article ID")
+    void getArticleCommentsTreeWithValidArticleId() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/1").headers(userAuthHeader()).contentType(MediaType.APPLICATION_JSON))
+               .andExpect(status().isOk())
+               .andDo(print())
+               .andExpect(result -> {
+                   String responseBody = result.getResponse().getContentAsString();
+
+                   assertTrue(responseBody.contains("You have successfully retrieved the comments tree"));
+                   assertTrue(responseBody.contains("data"));
+
+                   List<Integer> rootsIds = JsonPath.read(responseBody, "$.data[*].id");
+                   assertEquals(1, rootsIds.size(), "There should be only one root comment");
+                   assertEquals(createdCommentId, Long.parseLong(rootsIds.getFirst().toString()),
+                                "The root comment ID should match the created comment ID");
+
+                   List<Integer> childrenOfRoot = JsonPath.read(responseBody, "$.data[0].children[*].id");
+                   assertEquals(1, childrenOfRoot.size(), "There should be only one reply to the root comment");
+                   assertEquals(createdReplyId, Long.parseLong(childrenOfRoot.getFirst().toString()),
+                                "The reply ID should match the created reply ID");
+               });
+
     }
 }
