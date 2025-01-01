@@ -10,4 +10,6 @@ public interface CommentService {
     CommentDTO createComment(Long articleId, CommentRequestDTO body, Authentication authentication);
 
     List<CommentDTO> getArticleCommentsTree(Long articleId);
+
+    void deleteComment(Long articleId, Long commentId, Authentication authentication);
 }

@@ -38,4 +38,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
                    ORDER BY created_at DESC;
                    """, nativeQuery = true)
     List<Comment> findCommentsRecursivelyByArticleId(@Param("articleId") Long articleId);
+
+    long deleteByIdAndArticle_IdAndUser_UsernameAllIgnoreCase(Long id, Long id1, String username);
 }

@@ -23,6 +23,17 @@ import java.util.List;
 public class CommentController {
     private final CommentService commentService;
 
+    @Operation(summary = "Get article's comments tree",
+               description = "This endpoint allows a user to get all comments from an article in a tree structure.")
+    @GetMapping("/{articleId}")
+    public ResponseEntity<ApplicationResponseDTO<List<CommentDTO>>> getArticleCommentsTree(@PathVariable
+                                                                                           Long articleId) {
+        List<CommentDTO> response = commentService.getArticleCommentsTree(articleId);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully retrieved the comments tree",
+                                                              response));
+    }
+
     @Operation(summary = "Create a comment",
                description = "This endpoint allows a logged in user to create a comment on an article or reply to a " +
                        "comment through the parentId field in the request body.")
@@ -37,14 +48,14 @@ public class CommentController {
                                                                 "You have successfully created a comment", response));
     }
 
-    @Operation(summary = "Get article's comments tree",
-               description = "This endpoint allows a user to get all comments from an article in a tree structure.")
-    @GetMapping("/{articleId}")
-    public ResponseEntity<ApplicationResponseDTO<List<CommentDTO>>> getArticleCommentsTree(@PathVariable
-                                                                                           Long articleId) {
-        List<CommentDTO> response = commentService.getArticleCommentsTree(articleId);
+    @Operation(summary = "Delete a comment",
+               description = "This endpoint allows a logged in user to delete his own comment.")
+    @DeleteMapping("/{articleId}/{commentId}")
+    public ResponseEntity<ApplicationResponseDTO<CommentDTO>> deleteComment(@PathVariable Long articleId,
+                                                                            @PathVariable Long commentId,
+                                                                            Authentication authentication) {
+        commentService.deleteComment(articleId, commentId, authentication);
         return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
-                                                              "You have successfully retrieved the comments tree",
-                                                              response));
+                                                              "You have successfully deleted the comment", null));
     }
 }

@@ -4,6 +4,7 @@ import com.barataribeiro.sentinelofliberty.builders.CommentMapper;
 import com.barataribeiro.sentinelofliberty.dtos.comment.CommentDTO;
 import com.barataribeiro.sentinelofliberty.dtos.comment.CommentRequestDTO;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
+import com.barataribeiro.sentinelofliberty.exceptions.throwables.IllegalRequestException;
 import com.barataribeiro.sentinelofliberty.models.entities.Article;
 import com.barataribeiro.sentinelofliberty.models.entities.Comment;
 import com.barataribeiro.sentinelofliberty.models.entities.User;
@@ -78,5 +79,13 @@ public class CommentServiceImpl implements CommentService {
         }
 
         return roots;
+    }
+
+    @Override
+    @Transactional
+    public void deleteComment(Long articleId, Long commentId, @NotNull Authentication authentication) {
+        long wasDeleted = commentRepository
+                .deleteByIdAndArticle_IdAndUser_UsernameAllIgnoreCase(commentId, articleId, authentication.getName());
+        if (wasDeleted == 0) throw new IllegalRequestException("Comment not found or you are not the author");
     }
 }
