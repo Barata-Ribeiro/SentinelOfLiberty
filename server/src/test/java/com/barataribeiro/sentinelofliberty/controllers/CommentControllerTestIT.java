@@ -13,8 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -109,4 +108,23 @@ class CommentControllerTestIT extends ApplicationBaseIntegrationTest {
                });
 
     }
+
+    @Test
+    @Order(4)
+    @DisplayName("Delete comment with valid comment ID and an authenticated user attempts to delete its own comment")
+    void testDeleteOwnComment() throws Exception {
+        mockMvc.perform(delete(BASE_URL + "/1/%d".formatted(createdCommentId)).headers(userAuthHeader())
+                                                                              .contentType(MediaType.APPLICATION_JSON))
+               .andExpect(status().isOk())
+               .andDo(print())
+               .andExpect(result -> {
+                   String responseBody = result.getResponse().getContentAsString();
+
+                   assertTrue(responseBody.contains("You have successfully deleted the comment"));
+               });
+
+        assertEquals(0, commentRepository.countDistinctByArticle_Id(1L), "There should be no comments left, as the " +
+                "root comment was deleted.");
+    }
+
 }
