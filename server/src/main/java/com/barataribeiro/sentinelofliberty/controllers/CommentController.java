@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/comments")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -33,5 +35,16 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.CREATED)
                              .body(new ApplicationResponseDTO<>(HttpStatus.CREATED, HttpStatus.CREATED.value(),
                                                                 "You have successfully created a comment", response));
+    }
+
+    @Operation(summary = "Get article's comments tree",
+               description = "This endpoint allows a user to get all comments from an article in a tree structure.")
+    @GetMapping("/{articleId}")
+    public ResponseEntity<ApplicationResponseDTO<List<CommentDTO>>> getArticleCommentsTree(@PathVariable
+                                                                                           Long articleId) {
+        List<CommentDTO> response = commentService.getArticleCommentsTree(articleId);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully retrieved the comments tree",
+                                                              response));
     }
 }

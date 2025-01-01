@@ -11,15 +11,27 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     long countDistinctByArticle_Id(Long id);
 
     @Query(value = """
-                   WITH RECURSIVE comment_tree AS (
-                        SELECT c.*
-                        FROM tb_comments c
-                        WHERE c.article_id = :articleId
-                            AND c.parent_id IS NULL
-                        UNION ALL
-                        SELECT c.*
-                        FROM tb_comments c
-                        INNER JOIN comment_tree ct ON c.parent_id = ct.id
+                   WITH RECURSIVE comment_tree (id, content, user_id, article_id, parent_id, created_at, updated_at) AS (
+                       SELECT c.id,
+                              c.content,
+                              c.user_id,
+                              c.article_id,
+                              c.parent_id,
+                              c.created_at,
+                              c.updated_at
+                       FROM tb_comments c
+                       WHERE c.article_id = :articleId
+                         AND c.parent_id IS NULL
+                       UNION ALL
+                       SELECT c.id,
+                              c.content,
+                              c.user_id,
+                              c.article_id,
+                              c.parent_id,
+                              c.created_at,
+                              c.updated_at
+                       FROM tb_comments c
+                       INNER JOIN comment_tree ct ON c.parent_id = ct.id
                    )
                    SELECT *
                    FROM comment_tree

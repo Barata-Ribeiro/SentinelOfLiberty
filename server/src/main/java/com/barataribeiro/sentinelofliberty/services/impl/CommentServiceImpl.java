@@ -18,7 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -54,5 +54,29 @@ public class CommentServiceImpl implements CommentService {
         });
 
         return commentMapper.toCommentDTO(commentRepository.saveAndFlush(newComment));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CommentDTO> getArticleCommentsTree(Long articleId) {
+        List<Comment> comments = commentRepository.findCommentsRecursivelyByArticleId(articleId);
+        List<CommentDTO> commentDTOS = commentMapper.toCommentDTOList(comments);
+
+        Map<Long, CommentDTO> dtoById = new LinkedHashMap<>();
+        for (CommentDTO dto : commentDTOS) {
+            dto.setChildren(new ArrayList<>());
+            dtoById.put(dto.getId(), dto);
+        }
+
+        List<CommentDTO> roots = new ArrayList<>();
+        for (CommentDTO dto : commentDTOS) {
+            if (dto.getParentId() == null) roots.add(dto);
+            else {
+                CommentDTO parentDTO = dtoById.get(dto.getParentId());
+                if (parentDTO != null) parentDTO.getChildren().add(dto);
+            }
+        }
+
+        return roots;
     }
 }
