@@ -20,6 +20,7 @@ import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
 
 @Configuration
 @EnableWebSecurity
@@ -45,9 +46,10 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .headers(headers -> headers
                     .httpStrictTransportSecurity(Customizer.withDefaults())
-                    .xssProtection(Customizer.withDefaults())
-                    .contentSecurityPolicy(
-                            csp -> csp.policyDirectives(ApplicationConstants.CONTENT_SECURITY_POLICY_VALUE))
+                    .xssProtection(xXssConfig -> xXssConfig
+                            .headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))
+                    .contentSecurityPolicy(csp -> csp
+                            .policyDirectives(ApplicationConstants.CONTENT_SECURITY_POLICY_VALUE))
                     .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                     .permissionsPolicy(policy -> policy.policy("geolocation=(), microphone=(), camera=()")))
             .authorizeHttpRequests(authorize -> authorize
