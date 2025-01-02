@@ -61,6 +61,29 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    @Transactional
+    public UserProfileDTO adminUpdateAnUser(String username, @NotNull ProfileUpdateRequestDTO body,
+                                            @NotNull Authentication authentication) {
+        User userToUpdate = userRepository.findByUsername(username)
+                                          .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName()));
+
+        User admin = userRepository.findByUsername(authentication.getName())
+                                   .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName()));
+
+        if (!passwordEncoder.matches(body.getCurrentPassword(), admin.getPassword())) {
+            throw new InvalidCredentialsException("Authorization failed; Wrong credentials.");
+        }
+
+        if (body.getNewPassword() != null) {
+            throw new IllegalRequestException("Admins cannot change user passwords.");
+        }
+
+        verifyIfBodyExistsThenUpdateProperties(body, userToUpdate);
+
+        return userMapper.toUserProfileDTO(userRepository.saveAndFlush(userToUpdate));
+    }
+
     private void verifyIfRequestingUserIsAuthorizedToUpdateAccount(@NotNull ProfileUpdateRequestDTO body,
                                                                    @NotNull User userToUpdate) {
         boolean passwordMatches = passwordEncoder.matches(body.getCurrentPassword(), userToUpdate.getPassword());
@@ -76,7 +99,7 @@ public class UserServiceImpl implements UserService {
                                                         @NotNull User userToUpdate) {
         Optional.ofNullable(body.getUsername()).ifPresent(s -> {
             if (s.equals(userToUpdate.getUsername())) {
-                throw new IllegalRequestException("You already uses this username.");
+                throw new IllegalRequestException("Account already uses this username.");
             }
 
             if (userRepository.existsByUsernameOrEmailAllIgnoreCase(s, null)) {
@@ -88,7 +111,7 @@ public class UserServiceImpl implements UserService {
 
         Optional.ofNullable(body.getEmail()).ifPresent(s -> {
             if (s.equals(userToUpdate.getEmail())) {
-                throw new IllegalRequestException("You already uses this email.");
+                throw new IllegalRequestException("Account already uses this email.");
             }
 
             if (userRepository.existsByUsernameOrEmailAllIgnoreCase(null, s)) {

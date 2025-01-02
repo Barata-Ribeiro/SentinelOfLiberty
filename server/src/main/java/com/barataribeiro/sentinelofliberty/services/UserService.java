@@ -10,4 +10,6 @@ public interface UserService {
     UserProfileDTO updateUserProfile(ProfileUpdateRequestDTO body, Authentication authentication);
 
     void deleteUserProfile(Authentication authentication);
+
+    UserProfileDTO adminUpdateAnUser(String username, ProfileUpdateRequestDTO body, Authentication authentication);
 }
