@@ -8,4 +8,6 @@ public interface UserService {
     UserProfileDTO getUserProfile(String username);
 
     UserProfileDTO updateUserProfile(ProfileUpdateRequestDTO body, Authentication authentication);
+
+    void deleteUserProfile(Authentication authentication);
 }

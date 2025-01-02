@@ -51,6 +51,16 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserProfileDTO(userRepository.saveAndFlush(userToUpdate));
     }
 
+    @Override
+    @Transactional
+    public void deleteUserProfile(@NotNull Authentication authentication) {
+        long wasDeleted = userRepository.deleteByUsername(authentication.getName());
+
+        if (wasDeleted == 0) {
+            throw new IllegalRequestException("Account deletion failed; Account not found or not authorized.");
+        }
+    }
+
     private void verifyIfRequestingUserIsAuthorizedToUpdateAccount(@NotNull ProfileUpdateRequestDTO body,
                                                                    @NotNull User userToUpdate) {
         boolean passwordMatches = passwordEncoder.matches(body.getCurrentPassword(), userToUpdate.getPassword());

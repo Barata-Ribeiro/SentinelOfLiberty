@@ -41,4 +41,13 @@ public class UserController {
         return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
                                                               "User profile updated successfully", response));
     }
+
+    @Operation(summary = "Delete own account",
+               description = "This endpoint allows an user to delete their own account.")
+    @DeleteMapping("/me")
+    public ResponseEntity<ApplicationResponseDTO<Void>> deleteUserProfile(Authentication authentication) {
+        userService.deleteUserProfile(authentication);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "User profile deleted successfully", null));
+    }
 }
