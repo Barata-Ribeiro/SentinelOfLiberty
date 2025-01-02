@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
     private final UserService userService;
 
-    @PatchMapping("/users/{username}/update")
     @Operation(summary = "Update a user",
                description = "This endpoint allows an admin to update an user's information.")
+    @PatchMapping("/users/{username}/update")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApplicationResponseDTO<UserProfileDTO>> adminUpdateAnUser(@PathVariable String username,
                                                                                     @RequestBody @Valid
@@ -33,5 +33,20 @@ public class AdminController {
         UserProfileDTO response = userService.adminUpdateAnUser(username, body, authentication);
         return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
                                                               "You have successfully updated the user", response));
+    }
+
+    @Operation(summary = "Ban or Unban an user",
+               description = "This endpoint allows an admin to ban or unban an user.")
+    @PatchMapping("/users/{username}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApplicationResponseDTO<UserProfileDTO>> adminBanOrUnbanAnUser(
+            @PathVariable String username,
+            @RequestParam(required = true, defaultValue = "ban") String action,
+            Authentication authentication) {
+        UserProfileDTO response = userService.adminBanOrUnbanAnUser(username, action, authentication);
+        String messageAction = action.equals("ban") ? "banned" : "unbanned";
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully " + messageAction + " the user",
+                                                              response));
     }
 }

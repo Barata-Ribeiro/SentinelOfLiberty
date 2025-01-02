@@ -84,6 +84,19 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserProfileDTO(userRepository.saveAndFlush(userToUpdate));
     }
 
+    @Override
+    @Transactional
+    public UserProfileDTO adminBanOrUnbanAnUser(String username, @NotNull String action,
+                                                Authentication authentication) {
+        User userToUpdate = userRepository.findByUsername(username)
+                                          .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName()));
+
+        Roles newRole = action.equalsIgnoreCase("ban") ? Roles.BANNED : Roles.USER;
+        userToUpdate.setRole(newRole);
+
+        return userMapper.toUserProfileDTO(userRepository.saveAndFlush(userToUpdate));
+    }
+
     private void verifyIfRequestingUserIsAuthorizedToUpdateAccount(@NotNull ProfileUpdateRequestDTO body,
                                                                    @NotNull User userToUpdate) {
         boolean passwordMatches = passwordEncoder.matches(body.getCurrentPassword(), userToUpdate.getPassword());
