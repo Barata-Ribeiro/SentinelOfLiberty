@@ -10,8 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -33,8 +33,7 @@ class CorsConfigTest {
     @Test
     @DisplayName("CORS headers are set for allowed origin")
     void corsHeadersAreSetForAllowedOrigin() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/")
-                                              .header("Origin", "http://localhost:3000"))
+        mockMvc.perform(get("/").header("Origin", "http://localhost:3000"))
                .andExpect(status().isNotFound())
                .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:3000"));
     }
@@ -42,8 +41,7 @@ class CorsConfigTest {
     @Test
     @DisplayName("CORS headers are not set for disallowed origin")
     void corsHeadersAreNotSetForDisallowedOrigin() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/")
-                                              .header("Origin", "http://malicious.com"))
+        mockMvc.perform(get("/").header("Origin", "http://malicious.com"))
                .andExpect(status().isForbidden())
                .andExpect(header().doesNotExist("Access-Control-Allow-Origin"));
     }
