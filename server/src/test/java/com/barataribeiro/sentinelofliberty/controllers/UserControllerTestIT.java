@@ -1,6 +1,7 @@
 package com.barataribeiro.sentinelofliberty.controllers;
 
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
+import com.barataribeiro.sentinelofliberty.repositories.UserRepository;
 import com.barataribeiro.sentinelofliberty.utils.ApplicationBaseIntegrationTest;
 import com.jayway.jsonpath.JsonPath;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +17,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants.ADMIN_UPDATE_PROFILE_PAYLOAD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -27,6 +27,7 @@ class UserControllerTestIT extends ApplicationBaseIntegrationTest {
     private static final String BASE_URL = "/api/v1/users";
 
     private final MockMvc mockMvc;
+    private final UserRepository userRepository;
 
     @Test
     @DisplayName("Test get user public profile with valid username")
@@ -85,5 +86,19 @@ class UserControllerTestIT extends ApplicationBaseIntegrationTest {
                .andDo(print())
                .andExpect(result -> assertInstanceOf(MethodArgumentNotValidException.class,
                                                      result.getResolvedException()));
+    }
+
+    @Test
+    @DisplayName("Logged in user deletes their own account")
+    void deleteUserProfile() throws Exception {
+        mockMvc.perform(delete(BASE_URL + "/me")
+                                .headers(userAuthHeader()))
+               .andExpect(status().isOk())
+               .andDo(print())
+               .andExpect(result -> assertEquals("User profile deleted successfully",
+                                                 JsonPath.read(result.getResponse().getContentAsString(),
+                                                               "$.message")));
+
+        assertEquals(0, userRepository.countByUsername("testuser"));
     }
 }
