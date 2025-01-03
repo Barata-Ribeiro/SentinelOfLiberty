@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
     private final UserService userService;
 
-    @Operation(summary = "Update a user",
+    @Operation(summary = "Update an user",
                description = "This endpoint allows an admin to update an user's information.")
     @PatchMapping("/users/{username}/update")
     @PreAuthorize("hasRole('ADMIN')")
@@ -41,12 +41,22 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApplicationResponseDTO<UserProfileDTO>> adminBanOrUnbanAnUser(
             @PathVariable String username,
-            @RequestParam(required = true, defaultValue = "ban") String action,
-            Authentication authentication) {
-        UserProfileDTO response = userService.adminBanOrUnbanAnUser(username, action, authentication);
+            @RequestParam(required = true, defaultValue = "ban") String action) {
+        UserProfileDTO response = userService.adminBanOrUnbanAnUser(username, action);
         String messageAction = action.equals("ban") ? "banned" : "unbanned";
         return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
                                                               "You have successfully " + messageAction + " the user",
                                                               response));
+    }
+
+    @Operation(summary = "Delete an user",
+               description = "This endpoint allows an admin to delete an user.")
+    @DeleteMapping("/users/{username}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApplicationResponseDTO<UserProfileDTO>> adminDeleteAnUser(@PathVariable String username,
+                                                                                    Authentication authentication) {
+        userService.adminDeleteAnUser(username, authentication);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully deleted the user", null));
     }
 }
