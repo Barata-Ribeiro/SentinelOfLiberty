@@ -2,6 +2,7 @@ package com.barataribeiro.sentinelofliberty.services.impl;
 
 import com.barataribeiro.sentinelofliberty.builders.UserMapper;
 import com.barataribeiro.sentinelofliberty.dtos.user.ProfileUpdateRequestDTO;
+import com.barataribeiro.sentinelofliberty.dtos.user.UserAccountDTO;
 import com.barataribeiro.sentinelofliberty.dtos.user.UserProfileDTO;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.IllegalRequestException;
@@ -49,6 +50,15 @@ public class UserServiceImpl implements UserService {
         verifyIfBodyExistsThenUpdateProperties(body, userToUpdate);
 
         return userMapper.toUserProfileDTO(userRepository.saveAndFlush(userToUpdate));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserAccountDTO getOwnProfile(@NotNull Authentication authentication) {
+        return userMapper.toUserAccountDTO(
+                userRepository.findByUsername(authentication.getName())
+                              .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName()))
+        );
     }
 
     @Override

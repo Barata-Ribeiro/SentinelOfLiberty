@@ -2,6 +2,7 @@ package com.barataribeiro.sentinelofliberty.controllers;
 
 import com.barataribeiro.sentinelofliberty.dtos.ApplicationResponseDTO;
 import com.barataribeiro.sentinelofliberty.dtos.user.ProfileUpdateRequestDTO;
+import com.barataribeiro.sentinelofliberty.dtos.user.UserAccountDTO;
 import com.barataribeiro.sentinelofliberty.dtos.user.UserProfileDTO;
 import com.barataribeiro.sentinelofliberty.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,7 +32,17 @@ public class UserController {
                                                               "User profile retrieved successfully", response));
     }
 
-    @Operation(summary = "Update user profile",
+    @Operation(summary = "Get own profile",
+               description = "This endpoint allows an user to retrieve their own profile, along with other " +
+                       "information such as statistics")
+    @GetMapping("/me")
+    public ResponseEntity<ApplicationResponseDTO<UserAccountDTO>> getOwnProfile(Authentication authentication) {
+        UserAccountDTO response = userService.getOwnProfile(authentication);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "Account info retrieved successfully", response));
+    }
+
+    @Operation(summary = "Update own account",
                description = "This endpoint allows an user to update their own profile.")
     @PatchMapping("/me")
     public ResponseEntity<ApplicationResponseDTO<UserProfileDTO>> updateUserProfile(
