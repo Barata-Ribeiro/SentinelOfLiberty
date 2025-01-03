@@ -13,5 +13,7 @@ public interface UserService {
 
     UserProfileDTO adminUpdateAnUser(String username, ProfileUpdateRequestDTO body, Authentication authentication);
 
-    UserProfileDTO adminBanOrUnbanAnUser(String username, String action, Authentication authentication);
+    UserProfileDTO adminBanOrUnbanAnUser(String username, String action);
+
+    void adminDeleteAnUser(String username, Authentication authentication);
 }

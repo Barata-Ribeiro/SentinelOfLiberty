@@ -86,8 +86,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserProfileDTO adminBanOrUnbanAnUser(String username, @NotNull String action,
-                                                Authentication authentication) {
+    public UserProfileDTO adminBanOrUnbanAnUser(String username, @NotNull String action) {
         User userToUpdate = userRepository.findByUsername(username)
                                           .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName()));
 
@@ -95,6 +94,20 @@ public class UserServiceImpl implements UserService {
         userToUpdate.setRole(newRole);
 
         return userMapper.toUserProfileDTO(userRepository.saveAndFlush(userToUpdate));
+    }
+
+    @Override
+    @Transactional
+    public void adminDeleteAnUser(@NotNull String username, @NotNull Authentication authentication) {
+        if (username.equals(authentication.getName())) {
+            throw new IllegalRequestException("Admins cannot delete their own accounts through this resource.");
+        }
+
+        long wasDeleted = userRepository.deleteByUsername(username);
+
+        if (wasDeleted == 0) {
+            throw new IllegalRequestException("Account deletion failed; Account not found or something went wrong.");
+        }
     }
 
     private void verifyIfRequestingUserIsAuthorizedToUpdateAccount(@NotNull ProfileUpdateRequestDTO body,
