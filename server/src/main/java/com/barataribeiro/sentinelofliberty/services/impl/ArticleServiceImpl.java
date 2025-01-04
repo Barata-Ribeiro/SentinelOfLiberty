@@ -102,9 +102,12 @@ public class ArticleServiceImpl implements ArticleService {
                                  .content(body.getContent())
                                  .summary(StringNormalizer.toSummary(body.getContent(), 100))
                                  .references(body.getReferences())
-                                 .slug(StringNormalizer.toSlug(body.getTitle()))
                                  .author(author)
                                  .build();
+
+        String generatedSlug = article.getId() + "-" + StringNormalizer.toSlug(body.getTitle()) + "-" +
+                StringNormalizer.toSlug(body.getSubTitle());
+        article.setSlug(generatedSlug);
 
         Optional.ofNullable(body.getMediaUrl()).ifPresent(article::setMediaUrl);
 
