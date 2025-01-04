@@ -31,4 +31,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     Set<Article> findTop10ByOrderByCreatedAtDesc();
 
     long countByTitle(String title);
+
+    long countDistinctByAuthor_Username(String username);
 }
