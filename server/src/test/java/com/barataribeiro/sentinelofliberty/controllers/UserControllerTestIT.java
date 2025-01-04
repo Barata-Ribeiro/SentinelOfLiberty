@@ -1,12 +1,13 @@
 package com.barataribeiro.sentinelofliberty.controllers;
 
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
+import com.barataribeiro.sentinelofliberty.repositories.ArticleRepository;
+import com.barataribeiro.sentinelofliberty.repositories.CommentRepository;
 import com.barataribeiro.sentinelofliberty.repositories.UserRepository;
 import com.barataribeiro.sentinelofliberty.utils.ApplicationBaseIntegrationTest;
 import com.jayway.jsonpath.JsonPath;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +23,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DirtiesContext
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 class UserControllerTestIT extends ApplicationBaseIntegrationTest {
     private static final String BASE_URL = "/api/v1/users";
 
     private final MockMvc mockMvc;
     private final UserRepository userRepository;
+    private final ArticleRepository articleRepository;
+    private final CommentRepository commentRepository;
 
     @Test
+    @Order(1)
     @DisplayName("Test get user public profile with valid username")
     void testGetUserPublicProfile() throws Exception {
         mockMvc.perform(get(BASE_URL + "/public/profile/testuser"))
@@ -38,6 +43,37 @@ class UserControllerTestIT extends ApplicationBaseIntegrationTest {
                .andExpect(result -> assertEquals("testuser",
                                                  JsonPath.read(result.getResponse().getContentAsString(),
                                                                "$.data.username")));
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("Test get own profile for both logged admin and user")
+    void getOwnProfile() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/me")
+                                .headers(authHeader()))
+               .andExpect(status().isOk())
+               .andDo(print())
+               .andExpect(result -> {
+                   String responseBody = result.getResponse().getContentAsString();
+
+                   assertEquals("testadmin", JsonPath.read(responseBody, "$.data.username"));
+
+                   long articlesCount = articleRepository.countDistinctByAuthor_Username("testadmin");
+                   assertEquals((int) JsonPath.read(responseBody, "$.data.articlesCount"), articlesCount);
+               });
+
+        mockMvc.perform(get(BASE_URL + "/me")
+                                .headers(userAuthHeader()))
+               .andExpect(status().isOk())
+               .andDo(print())
+               .andExpect(result -> {
+                   String responseBody = result.getResponse().getContentAsString();
+
+                   assertEquals("testuser", JsonPath.read(responseBody, "$.data.username"));
+
+                   long commentsCount = commentRepository.countDistinctByUser_Username("testuser");
+                   assertEquals((int) JsonPath.read(responseBody, "$.data.commentsCount"), commentsCount);
+               });
     }
 
     @Test
@@ -51,7 +87,7 @@ class UserControllerTestIT extends ApplicationBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Update user profile with valid data")
+    @DisplayName("Test update user profile with valid data")
     void updateUserProfileWithValidData() throws Exception {
         mockMvc.perform(patch(BASE_URL + "/me")
                                 .contentType("application/json")
@@ -76,7 +112,7 @@ class UserControllerTestIT extends ApplicationBaseIntegrationTest {
             "'{\"currentPassword\": \"testpassword\", \"newPassword\": \"short\"}'",
             "'{\"username\": \"newusername\", \"newPassword\": \"NewPassword123!\"}'"
     })
-    @DisplayName("Update user profile with invalid data")
+    @DisplayName("Test update user profile with invalid data")
     void updateUserProfileWithInvalidData(String payload) throws Exception {
         mockMvc.perform(patch(BASE_URL + "/me")
                                 .contentType("application/json")
@@ -89,7 +125,8 @@ class UserControllerTestIT extends ApplicationBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Logged in user deletes their own account")
+    @Order(10)
+    @DisplayName("Test logged in user deletes their own account")
     void deleteUserProfile() throws Exception {
         mockMvc.perform(delete(BASE_URL + "/me")
                                 .headers(userAuthHeader()))
