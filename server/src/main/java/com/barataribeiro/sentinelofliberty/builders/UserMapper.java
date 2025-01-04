@@ -23,15 +23,15 @@ public class UserMapper {
         modelMapper.addMappings(new PropertyMap<User, UserAccountDTO>() {
             @Override
             protected void configure() {
-                mapSetSize(source.getArticles(), destination.getArticlesCount());
-                mapSetSize(source.getComments(), destination.getCommentsCount());
-            }
-
-            private void mapSetSize(Set<?> sourceSet, Long destinationField) {
                 using(ctx -> {
                     Set<?> children = (Set<?>) ctx.getSource();
                     return children == null ? 0L : (long) children.size();
-                }).map(sourceSet, destinationField);
+                }).map(source.getArticles(), destination.getArticlesCount());
+
+                using(ctx -> {
+                    Set<?> children = (Set<?>) ctx.getSource();
+                    return children == null ? 0L : (long) children.size();
+                }).map(source.getComments(), destination.getCommentsCount());
             }
         });
     }
