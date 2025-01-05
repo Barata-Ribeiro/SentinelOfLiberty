@@ -42,6 +42,11 @@ public class Suggestion implements Serializable {
     @Column(name = "source_url", nullable = false)
     private String sourceUrl;
 
+    @ToString.Exclude
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @Builder.Default
     @ToString.Exclude
     @OneToMany(mappedBy = "suggestion", cascade = CascadeType.ALL, orphanRemoval = true)

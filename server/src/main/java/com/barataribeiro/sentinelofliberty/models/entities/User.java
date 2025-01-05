@@ -113,8 +113,14 @@ public class User implements UserDetails, Serializable {
     @Builder.Default
     @JsonIgnore
     @ToString.Exclude
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Notice> notices = new LinkedHashSet<>();
+
+    @Builder.Default
+    @JsonIgnore
+    @ToString.Exclude
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<Suggestion> suggestions = new LinkedHashSet<>();
 
     // UserDetails methods
 

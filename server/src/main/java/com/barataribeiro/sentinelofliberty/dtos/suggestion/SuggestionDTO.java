@@ -1,5 +1,6 @@
 package com.barataribeiro.sentinelofliberty.dtos.suggestion;
 
+import com.barataribeiro.sentinelofliberty.dtos.user.AuthorDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class SuggestionDTO implements Serializable {
     String content;
     String mediaUrl;
     String sourceUrl;
+    AuthorDTO user;
     Long articlesWritten;
     Instant createdAt;
     Instant updatedAt;
