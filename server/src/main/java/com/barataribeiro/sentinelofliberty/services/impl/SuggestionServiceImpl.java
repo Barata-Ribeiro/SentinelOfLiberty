@@ -33,8 +33,18 @@ public class SuggestionServiceImpl implements SuggestionService {
         Sort.Direction sortDirection = Sort.Direction.fromString(direction);
         orderBy = orderBy.equalsIgnoreCase(ApplicationConstants.CREATED_AT) ? ApplicationConstants.CREATED_AT : orderBy;
         PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
-        
+
         return suggestionRepository.findAll(pageable).map(suggestionMapper::toSuggestionDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SuggestionDTO getSuggestionById(Long id) {
+        Suggestion suggestion = suggestionRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Suggestion.class.getSimpleName()));
+
+        return suggestionMapper.toSuggestionDTO(suggestion);
     }
 
     @Override

@@ -36,6 +36,16 @@ public class SuggestionController {
                                                               response));
     }
 
+    @Operation(summary = "Get suggestion by id",
+               description = "This endpoint allows any user to retrieve a suggestion by its id. Logged or not, anyone" +
+                       " can access this endpoint.")
+    @GetMapping("/public/{id}")
+    public ResponseEntity<ApplicationResponseDTO<SuggestionDTO>> getSuggestionById(@PathVariable Long id) {
+        SuggestionDTO response = suggestionService.getSuggestionById(id);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully retrieved the suggestion",
+                                                              response));
+    }
 
     @Operation(summary = "Create a suggestion",
                description = "This endpoint allows any logged user to create a suggestion.")

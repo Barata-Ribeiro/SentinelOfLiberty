@@ -8,5 +8,7 @@ import org.springframework.security.core.Authentication;
 public interface SuggestionService {
     Page<SuggestionDTO> getAllSuggestions(int page, int perPage, String direction, String orderBy);
 
+    SuggestionDTO getSuggestionById(Long id);
+
     SuggestionDTO createSuggestion(SuggestionRequestDTO body, Authentication authentication);
 }
