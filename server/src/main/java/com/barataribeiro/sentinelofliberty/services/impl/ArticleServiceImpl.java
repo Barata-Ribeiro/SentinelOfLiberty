@@ -9,9 +9,11 @@ import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundE
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.IllegalRequestException;
 import com.barataribeiro.sentinelofliberty.models.entities.Article;
 import com.barataribeiro.sentinelofliberty.models.entities.Category;
+import com.barataribeiro.sentinelofliberty.models.entities.Suggestion;
 import com.barataribeiro.sentinelofliberty.models.entities.User;
 import com.barataribeiro.sentinelofliberty.repositories.ArticleRepository;
 import com.barataribeiro.sentinelofliberty.repositories.CategoryRepository;
+import com.barataribeiro.sentinelofliberty.repositories.SuggestionRepository;
 import com.barataribeiro.sentinelofliberty.repositories.UserRepository;
 import com.barataribeiro.sentinelofliberty.services.ArticleService;
 import com.barataribeiro.sentinelofliberty.utils.ApplicationConstants;
@@ -40,6 +42,7 @@ public class ArticleServiceImpl implements ArticleService {
     private final CategoryRepository categoryRepository;
     private final ArticleMapper articleMapper;
     private final ArticleRepository articleRepository;
+    private final SuggestionRepository suggestionRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -114,6 +117,14 @@ public class ArticleServiceImpl implements ArticleService {
         Set<Category> categories = getNewCategories(body.getCategories(), article);
 
         article.setCategories(categories);
+
+        Optional.ofNullable(body.getSuggestionId()).ifPresent(suggestionId -> {
+            Suggestion suggestion = suggestionRepository
+                    .findById(suggestionId)
+                    .orElseThrow(() -> new EntityNotFoundException(Suggestion.class.getSimpleName()));
+
+            article.setSuggestion(suggestion);
+        });
 
         categoryRepository.saveAll(categories);
 

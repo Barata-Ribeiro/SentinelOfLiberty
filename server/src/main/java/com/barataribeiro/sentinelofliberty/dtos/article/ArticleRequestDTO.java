@@ -12,6 +12,9 @@ import java.util.List;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ArticleRequestDTO {
+
+    private Long suggestionId;
+
     @NotBlank
     @Size(min = 3, max = 100, message = "Title must be between 3 and 100 characters.")
     private String title;
