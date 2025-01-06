@@ -3,7 +3,9 @@ package com.barataribeiro.sentinelofliberty.services.impl;
 import com.barataribeiro.sentinelofliberty.builders.SuggestionMapper;
 import com.barataribeiro.sentinelofliberty.dtos.suggestion.SuggestionDTO;
 import com.barataribeiro.sentinelofliberty.dtos.suggestion.SuggestionRequestDTO;
+import com.barataribeiro.sentinelofliberty.dtos.suggestion.SuggestionUpdateRequestDTO;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
+import com.barataribeiro.sentinelofliberty.exceptions.throwables.IllegalRequestException;
 import com.barataribeiro.sentinelofliberty.models.entities.Suggestion;
 import com.barataribeiro.sentinelofliberty.models.entities.User;
 import com.barataribeiro.sentinelofliberty.repositories.SuggestionRepository;
@@ -19,6 +21,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -60,6 +64,28 @@ public class SuggestionServiceImpl implements SuggestionService {
                                           .sourceUrl(body.getSourceUrl())
                                           .user(author)
                                           .build();
+
+        return suggestionMapper.toSuggestionDTO(suggestionRepository.saveAndFlush(suggestion));
+    }
+
+    @Override
+    @Transactional
+    public void deleteSuggestion(Long id, @NotNull Authentication authentication) {
+        long wasDeleted = suggestionRepository.deleteByIdAndUser_UsernameAllIgnoreCase(id, authentication.getName());
+        if (wasDeleted == 0) throw new IllegalRequestException("Suggestion not found or you are not the author");
+    }
+
+    @Override
+    @Transactional
+    public SuggestionDTO adminUpdateAnExistingSuggestion(Long id, @NotNull SuggestionUpdateRequestDTO body) {
+        Suggestion suggestion = suggestionRepository.findById(id)
+                                                    .orElseThrow(() -> new EntityNotFoundException(
+                                                            Suggestion.class.getSimpleName()));
+
+        Optional.ofNullable(body.getTitle()).ifPresent(suggestion::setTitle);
+        Optional.ofNullable(body.getContent()).ifPresent(suggestion::setContent);
+        Optional.ofNullable(body.getMediaUrl()).ifPresent(suggestion::setMediaUrl);
+        Optional.ofNullable(body.getSourceUrl()).ifPresent(suggestion::setSourceUrl);
 
         return suggestionMapper.toSuggestionDTO(suggestionRepository.saveAndFlush(suggestion));
     }
