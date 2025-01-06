@@ -9,9 +9,13 @@ import com.barataribeiro.sentinelofliberty.models.entities.User;
 import com.barataribeiro.sentinelofliberty.repositories.SuggestionRepository;
 import com.barataribeiro.sentinelofliberty.repositories.UserRepository;
 import com.barataribeiro.sentinelofliberty.services.SuggestionService;
+import com.barataribeiro.sentinelofliberty.utils.ApplicationConstants;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +26,16 @@ public class SuggestionServiceImpl implements SuggestionService {
     private final UserRepository userRepository;
     private final SuggestionMapper suggestionMapper;
     private final SuggestionRepository suggestionRepository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<SuggestionDTO> getAllSuggestions(int page, int perPage, String direction, String orderBy) {
+        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+        orderBy = orderBy.equalsIgnoreCase(ApplicationConstants.CREATED_AT) ? ApplicationConstants.CREATED_AT : orderBy;
+        PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
+        
+        return suggestionRepository.findAll(pageable).map(suggestionMapper::toSuggestionDTO);
+    }
 
     @Override
     @Transactional
