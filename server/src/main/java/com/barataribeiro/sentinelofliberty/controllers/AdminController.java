@@ -1,8 +1,11 @@
 package com.barataribeiro.sentinelofliberty.controllers;
 
 import com.barataribeiro.sentinelofliberty.dtos.ApplicationResponseDTO;
+import com.barataribeiro.sentinelofliberty.dtos.suggestion.SuggestionDTO;
+import com.barataribeiro.sentinelofliberty.dtos.suggestion.SuggestionUpdateRequestDTO;
 import com.barataribeiro.sentinelofliberty.dtos.user.ProfileUpdateRequestDTO;
 import com.barataribeiro.sentinelofliberty.dtos.user.UserProfileDTO;
+import com.barataribeiro.sentinelofliberty.services.SuggestionService;
 import com.barataribeiro.sentinelofliberty.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Admin", description = "Admin endpoints")
 public class AdminController {
     private final UserService userService;
+    private final SuggestionService suggestionService;
 
     @Operation(summary = "Update an user",
                description = "This endpoint allows an admin to update an user's information.")
@@ -46,6 +50,19 @@ public class AdminController {
         String messageAction = action.equals("ban") ? "banned" : "unbanned";
         return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
                                                               "You have successfully " + messageAction + " the user",
+                                                              response));
+    }
+
+    @Operation(summary = "Update an existing suggestion",
+               description = "This endpoint allows an admin to update an existing suggestion.")
+    @PatchMapping("/suggestions/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApplicationResponseDTO<SuggestionDTO>> adminUpdateAnExistingSuggestion(
+            @PathVariable Long id,
+            @RequestBody @Valid SuggestionUpdateRequestDTO body) {
+        SuggestionDTO response = suggestionService.adminUpdateAnExistingSuggestion(id, body);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully updated the suggestion",
                                                               response));
     }
 

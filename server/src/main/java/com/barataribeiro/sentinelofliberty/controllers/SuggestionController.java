@@ -6,6 +6,7 @@ import com.barataribeiro.sentinelofliberty.dtos.suggestion.SuggestionRequestDTO;
 import com.barataribeiro.sentinelofliberty.services.SuggestionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -50,12 +51,24 @@ public class SuggestionController {
     @Operation(summary = "Create a suggestion",
                description = "This endpoint allows any logged user to create a suggestion.")
     @PostMapping
-    public ResponseEntity<ApplicationResponseDTO<SuggestionDTO>> createSuggestion(SuggestionRequestDTO body,
-                                                                                  Authentication authentication) {
+    public ResponseEntity<ApplicationResponseDTO<SuggestionDTO>> createSuggestion(
+            @RequestBody @Valid SuggestionRequestDTO body,
+            Authentication authentication) {
         SuggestionDTO response = suggestionService.createSuggestion(body, authentication);
         return ResponseEntity.status(HttpStatus.CREATED)
                              .body(new ApplicationResponseDTO<>(HttpStatus.CREATED, HttpStatus.CREATED.value(),
                                                                 "You have successfully created a suggestion",
                                                                 response));
+    }
+
+    @Operation(summary = "Delete a suggestion",
+               description = "This endpoint allows the user who created the suggestion to delete it.")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApplicationResponseDTO<SuggestionDTO>> deleteSuggestion(@PathVariable Long id,
+                                                                                  Authentication authentication) {
+        suggestionService.deleteSuggestion(id, authentication);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully deleted the suggestion",
+                                                              null));
     }
 }
