@@ -58,6 +58,15 @@ public final class ApplicationTestConstants {
                                                               }
                                                               """;
 
+    public static final String NEW_SUGGESTION_PAYLOAD = """
+                                                        {
+                                                            "title": "Test Suggestion",
+                                                            "content": "This is a test suggestion. It is a very good test suggestion. This additional text ensures the content is at least 100 characters.",
+                                                            "mediaUrl": "https://exampleOne.com/image.jpg",
+                                                            "sourceUrl": "https://exampleTwo.com"
+                                                        }
+                                                        """;
+
     public static final String LONG_LOREM_IPSUM = "Iuvaret proin orci alienum maximus definitionem nobis diam veri " +
             "habemus nisl dolores amet metus suas accumsan interdum senectus venenatis ius dolore reprimique eros ne " +
             "adversarium volumus ornatus invidunt antiopam postea sumo metus ridens lobortis prompta habemus ornatus " +
