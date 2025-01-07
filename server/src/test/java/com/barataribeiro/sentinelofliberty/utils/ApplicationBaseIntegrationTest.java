@@ -97,6 +97,20 @@ public abstract class ApplicationBaseIntegrationTest {
                                              }
                                              """.formatted(i, new java.util.Random().nextInt(1000), "testing" + i)))
                    .andDo(print());
+
+            mockMvc.perform(post("/api/v1/suggestions")
+                                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content("""
+                                             {
+                                                 "title": "Test Suggestion %d-%d",
+                                                 "content": "This is a test suggestion. It is a very good test suggestion. This additional text ensures the content is at least 100 characters.",
+                                                 "mediaUrl": "https://exampleOne.com/image.jpg",
+                                                 "sourceUrl": "https://exampleTwo.com"
+                                             }
+                                             """.formatted(i, new java.util.Random().nextInt(1000)))
+                                    .accept(MediaType.APPLICATION_JSON))
+                   .andDo(print());
         }
     }
 
