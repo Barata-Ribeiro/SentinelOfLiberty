@@ -13,7 +13,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants.NEW_ARTICLE_PAYLOAD;
@@ -23,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DirtiesContext
@@ -120,7 +120,7 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
                                 .param("direction", "ASC"))
                .andExpect(status().isOk())
                .andDo(print())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.data.content").isArray());
+               .andExpect(jsonPath("$.data.content").isArray());
     }
 
     @Test
@@ -129,7 +129,7 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
         mockMvc.perform(get(BASE_URL + "/public/latest"))
                .andExpect(status().isOk())
                .andDo(print())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.data").isArray());
+               .andExpect(jsonPath("$.data").isArray());
     }
 
     @Test
@@ -138,6 +138,27 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
         mockMvc.perform(get(BASE_URL + "/public/1"))
                .andExpect(status().isOk())
                .andDo(print())
-               .andExpect(MockMvcResultMatchers.jsonPath("$.data.id").value(1));
+               .andExpect(jsonPath("$.data.id").value(1));
+    }
+
+    @Test
+    @DisplayName("Test create article with valid request body, based on a created suggestion, and it is successful")
+    void testCreateArticleFromSuggestion() throws Exception {
+        mockMvc.perform(post(BASE_URL)
+                                .headers(authHeader())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                         {
+                                             "suggestionId": %d,
+                                             "title": "Test Article from Suggestion",
+                                             "subTitle": "Based on a Suggestion",
+                                             "content": "This is a test article from a suggestion. It is a very good test article based on a suggestion. This additional text ensures the content is at least 100 characters.",
+                                             "references": ["https://exampleOne.com", "https://exampleTwo.com"],
+                                             "categories": ["test"]
+                                         }
+                                         """.formatted(getSuggestionIdToBeUsedInTests())))
+               .andExpect(status().isCreated())
+               .andDo(print())
+               .andExpect(jsonPath("$.data.title").value("Test Article from Suggestion"));
     }
 }
