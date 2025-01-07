@@ -33,6 +33,9 @@ public abstract class ApplicationBaseIntegrationTest {
     protected static String accessToken;
     protected static String userAccessToken;
 
+    protected static Long suggestionIdToBeDeleted;
+    protected static Long suggestionIdToBeUsedInTests;
+
     @BeforeAll
     static void createTestingAdmin(@Autowired @NotNull PasswordEncoder passwordEncoder,
                                    @Autowired @NotNull UserRepository userRepository,
@@ -84,6 +87,7 @@ public abstract class ApplicationBaseIntegrationTest {
 
         // Generate list of new articles
         for (int i = 0; i < 10; i++) {
+            final int index = i;
             mockMvc.perform(post("/api/v1/articles")
                                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                                     .contentType(MediaType.APPLICATION_JSON)
@@ -95,7 +99,8 @@ public abstract class ApplicationBaseIntegrationTest {
                                                  "references": ["https://exampleOne.com", "https://exampleTwo.com"],
                                                  "categories": ["%s", "listTest"]
                                              }
-                                             """.formatted(i, new java.util.Random().nextInt(1000), "testing" + i)))
+                                             """.formatted(index, new java.util.Random().nextInt(1000),
+                                                           "testing" + index)))
                    .andDo(print());
 
             mockMvc.perform(post("/api/v1/suggestions")
@@ -108,9 +113,15 @@ public abstract class ApplicationBaseIntegrationTest {
                                                  "mediaUrl": "https://exampleOne.com/image.jpg",
                                                  "sourceUrl": "https://exampleTwo.com"
                                              }
-                                             """.formatted(i, new java.util.Random().nextInt(1000)))
+                                             """.formatted(index, new java.util.Random().nextInt(1000)))
                                     .accept(MediaType.APPLICATION_JSON))
-                   .andDo(print());
+                   .andDo(print())
+                   .andDo(result -> {
+                       String responseBody = result.getResponse().getContentAsString();
+                       Integer suggestionId = JsonPath.read(responseBody, "$.data.id");
+                       if (index == 0) suggestionIdToBeDeleted = Long.valueOf(suggestionId);
+                       else if (index == 1) suggestionIdToBeUsedInTests = Long.valueOf(suggestionId);
+                   });
         }
     }
 
@@ -124,5 +135,13 @@ public abstract class ApplicationBaseIntegrationTest {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken);
         return headers;
+    }
+
+    protected Long getSuggestionIdToBeDeleted() {
+        return suggestionIdToBeDeleted;
+    }
+
+    protected Long getSuggestionIdToBeUsedInTests() {
+        return suggestionIdToBeUsedInTests;
     }
 }
