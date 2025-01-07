@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 @Tag(name = "Suggestion", description = "Suggestions endpoints")
 public class SuggestionController {
-    private SuggestionService suggestionService;
+    private final SuggestionService suggestionService;
 
     @Operation(summary = "Get all suggestions paginated",
                description = "This endpoint allows any user to retrieve all suggestions paginated, that are available" +
