@@ -1,5 +1,6 @@
 package com.barataribeiro.sentinelofliberty.controllers;
 
+import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
 import com.barataribeiro.sentinelofliberty.repositories.ArticleRepository;
 import com.barataribeiro.sentinelofliberty.repositories.CategoryRepository;
 import com.barataribeiro.sentinelofliberty.utils.ApplicationBaseIntegrationTest;
@@ -17,8 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants.NEW_ARTICLE_PAYLOAD;
 import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants.UPDATE_ARTICLE_PAYLOAD;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -133,7 +133,7 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Test get public article where a user attempts to get an article")
+    @DisplayName("Test get public article where an logged or not user attempts to get an article")
     void testGetArticle() throws Exception {
         mockMvc.perform(get(BASE_URL + "/public/1"))
                .andExpect(status().isOk())
@@ -160,5 +160,26 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
                .andExpect(status().isCreated())
                .andDo(print())
                .andExpect(jsonPath("$.data.title").value("Test Article from Suggestion"));
+    }
+
+    @Test
+    @DisplayName("Test create article with invalid request body, based on a created suggestion, and it fails")
+    void testCreateArticleFromSuggestionWithInvalidRequestBody() throws Exception {
+        mockMvc.perform(post(BASE_URL)
+                                .headers(authHeader())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                         {
+                                             "suggestionId": 80,
+                                             "title": "Test Article from Suggestion",
+                                             "subTitle": "Based on a Suggestion",
+                                             "content": "This is a test article from a suggestion. It is a very good test article based on a suggestion. This additional text ensures the content is at least 100 characters.",
+                                             "references": ["https://exampleOne.com", "https://exampleTwo.com"],
+                                             "categories": ["test"]
+                                         }
+                                         """))
+               .andExpect(status().isNotFound())
+               .andDo(print())
+               .andExpect(result -> assertInstanceOf(EntityNotFoundException.class, result.getResolvedException()));
     }
 }
