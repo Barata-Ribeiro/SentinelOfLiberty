@@ -50,7 +50,7 @@ public class User implements UserDetails, Serializable {
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
-    @Column(name = "roles", nullable = false)
+    @Column(nullable = false)
     private Roles role = Roles.USER;
 
     // Profile Fields
@@ -71,11 +71,18 @@ public class User implements UserDetails, Serializable {
     @Column(name = "birth_date")
     private LocalDate birthDate;
 
-    @Column(name = "location")
     private String location;
 
-    @Column(name = "website")
     private String website;
+
+    @Column(name = "social_media")
+    private String socialMedia;
+
+    @Column(name = "video_channel")
+    private String videoChannel;
+
+    @Column(name = "streaming_channel")
+    private String streamingChannel;
 
     // Settings
 
