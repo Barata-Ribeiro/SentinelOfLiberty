@@ -163,6 +163,9 @@ public class UserServiceImpl implements UserService {
         Optional.ofNullable(body.getBiography()).ifPresent(userToUpdate::setBiography);
         Optional.ofNullable(body.getLocation()).ifPresent(userToUpdate::setLocation);
         Optional.ofNullable(body.getWebsite()).ifPresent(userToUpdate::setWebsite);
+        Optional.ofNullable(body.getSocialMedia()).ifPresent(userToUpdate::setSocialMedia);
+        Optional.ofNullable(body.getVideoChannel()).ifPresent(userToUpdate::setVideoChannel);
+        Optional.ofNullable(body.getStreamingChannel()).ifPresent(userToUpdate::setStreamingChannel);
         Optional.ofNullable(body.getNewPassword()).ifPresent(s -> userToUpdate.setPassword(passwordEncoder.encode(s)));
     }
 }
