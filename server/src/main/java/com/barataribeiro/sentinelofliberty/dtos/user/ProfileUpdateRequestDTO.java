@@ -44,6 +44,12 @@ public class ProfileUpdateRequestDTO implements Serializable {
          regexp = "((((https?|ftps?|gopher|telnet|nntp)://)|(mailto:|news:))([-%()_.!~*';/?:@&=+$,A-Za-z0-9])+)")
     private String website;
 
+    private String socialMedia;
+
+    private String videoChannel;
+    
+    private String streamingChannel;
+
     @Size(min = 8, max = 100, message = "New password must be between 8 and 100 characters.")
     @Pattern(
             message = "New password must contain at least one digit, one lowercase letter, one uppercase letter, one " +

@@ -36,4 +36,7 @@ public class UserAccountDTO implements Serializable {
     private Long articlesCount;
     private Instant createdAt;
     private Instant updatedAt;
+    private String socialMedia;
+    private String videoChannel;
+    private String streamingChannel;
 }

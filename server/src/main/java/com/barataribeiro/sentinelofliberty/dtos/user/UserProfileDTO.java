@@ -35,4 +35,7 @@ public class UserProfileDTO implements Serializable {
     boolean isVerified;
     Instant createdAt;
     Instant updatedAt;
+    private String socialMedia;
+    private String videoChannel;
+    private String streamingChannel;
 }
