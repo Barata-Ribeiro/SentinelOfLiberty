@@ -99,8 +99,7 @@ public abstract class ApplicationBaseIntegrationTest {
                                                  "references": ["https://exampleOne.com", "https://exampleTwo.com"],
                                                  "categories": ["%s", "listTest"]
                                              }
-                                             """.formatted(index, new java.util.Random().nextInt(1000),
-                                                           "testing" + index)))
+                                             """.formatted(index, System.currentTimeMillis(), "testing" + index)))
                    .andDo(print());
 
             mockMvc.perform(post("/api/v1/suggestions")
@@ -113,7 +112,7 @@ public abstract class ApplicationBaseIntegrationTest {
                                                  "mediaUrl": "https://exampleOne.com/image.jpg",
                                                  "sourceUrl": "https://exampleTwo.com"
                                              }
-                                             """.formatted(index, new java.util.Random().nextInt(1000)))
+                                             """.formatted(index, System.currentTimeMillis()))
                                     .accept(MediaType.APPLICATION_JSON))
                    .andDo(print())
                    .andDo(result -> {
