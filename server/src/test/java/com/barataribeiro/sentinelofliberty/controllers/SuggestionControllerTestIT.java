@@ -12,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants.NEW_SUGGESTION_PAYLOAD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -75,5 +77,25 @@ class SuggestionControllerTestIT extends ApplicationBaseIntegrationTest {
                .andExpect(status().isCreated())
                .andDo(print())
                .andExpect(jsonPath("$.data.title").value("Test Suggestion"));
+    }
+
+    @Test
+    @DisplayName("Test where an authenticated user attempts to create a suggestion with invalid payload")
+    void testCreateSuggestionWithInvalidPayload() throws Exception {
+        mockMvc.perform(post(BASE_URL)
+                                .headers(userAuthHeader())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                         {
+                                             "title": "",
+                                             "content": "This...",
+                                             "mediaUrl": "http://exampleOne.com/image.jpg",
+                                             "sourceUrl": "http://exampleTwo.com"
+                                         }
+                                         """))
+               .andExpect(status().isBadRequest())
+               .andDo(print())
+               .andExpect(result -> assertInstanceOf(MethodArgumentNotValidException.class,
+                                                     result.getResolvedException()));
     }
 }
