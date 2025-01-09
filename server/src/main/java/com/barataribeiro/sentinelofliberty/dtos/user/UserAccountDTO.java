@@ -34,6 +34,8 @@ public class UserAccountDTO implements Serializable {
     private boolean isVerified;
     private Long commentsCount;
     private Long articlesCount;
+    private Long readNotificationsCount;
+    private Long unreadNotificationsCount;
     private Instant createdAt;
     private Instant updatedAt;
     private String socialMedia;
