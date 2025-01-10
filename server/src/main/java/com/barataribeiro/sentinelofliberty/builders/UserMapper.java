@@ -37,14 +37,14 @@ public class UserMapper {
                 using(ctx -> {
                     Set<?> notifications = (Set<?>) ctx.getSource();
                     return notifications == null ? 0L : notifications
-                            .stream()
+                            .parallelStream()
                             .filter(notification -> ((Notification) notification).isRead()).count();
                 }).map(source.getNotifications(), destination.getReadNotificationsCount());
 
                 using(ctx -> {
                     Set<?> notifications = (Set<?>) ctx.getSource();
                     return notifications == null ? 0L : notifications
-                            .stream()
+                            .parallelStream()
                             .filter(notification -> !((Notification) notification).isRead()).count();
                 }).map(source.getNotifications(), destination.getUnreadNotificationsCount());
             }

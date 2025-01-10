@@ -1,7 +1,7 @@
 package com.barataribeiro.sentinelofliberty.builders;
 
+import com.barataribeiro.sentinelofliberty.dtos.NotificationDTO;
 import com.barataribeiro.sentinelofliberty.models.entities.Notification;
-import com.barataribeiro.sentinelofliberty.models.entities.NotificationDTO;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
@@ -20,6 +20,6 @@ public class NotificationMapper {
     }
 
     public List<NotificationDTO> toNotificationDTOList(@NotNull List<Notification> notifications) {
-        return notifications.stream().map(this::toNotificationDTO).toList();
+        return notifications.parallelStream().map(this::toNotificationDTO).toList();
     }
 }
