@@ -17,7 +17,9 @@ import java.time.Instant;
 @Setter
 @ToString
 @Entity
-@Table(name = "tb_notifications")
+@Table(name = "tb_notifications", indexes = {
+        @Index(name = "idx_notification_id_unq", columnList = "id, recipient_id", unique = true)
+})
 public class Notification implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

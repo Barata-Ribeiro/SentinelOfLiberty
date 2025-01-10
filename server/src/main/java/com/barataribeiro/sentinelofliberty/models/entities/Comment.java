@@ -20,7 +20,11 @@ import java.util.Set;
 @Setter
 @ToString
 @Entity
-@Table(name = "tb_comments")
+@Table(name = "tb_comments", indexes = {
+        @Index(name = "idx_comment_user_id", columnList = "user_id"),
+        @Index(name = "idx_comment_article_id", columnList = "article_id"),
+        @Index(name = "idx_comment_parent_id", columnList = "parent_id")
+})
 public class Comment implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -33,19 +37,23 @@ public class Comment implements Serializable {
     @Column(nullable = false, length = 500)
     private String content;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_id")
     private Article article;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Comment parent;
 
     @Builder.Default
+    @ToString.Exclude
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Comment> children = new LinkedHashSet<>();
 

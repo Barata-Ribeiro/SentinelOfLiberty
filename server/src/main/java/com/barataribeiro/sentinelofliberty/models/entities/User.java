@@ -23,7 +23,10 @@ import java.util.*;
 @Setter
 @ToString
 @Entity
-@Table(name = "tb_users", uniqueConstraints = {
+@Table(name = "tb_users", indexes = {
+        @Index(name = "idx_user_id_username_email", columnList = "id, username, email"),
+        @Index(name = "idx_user_username_email_unq", columnList = "username, email", unique = true)
+}, uniqueConstraints = {
         @UniqueConstraint(name = "uc_user_username_email", columnNames = {"username", "email"})
 })
 public class User implements UserDetails, Serializable {
