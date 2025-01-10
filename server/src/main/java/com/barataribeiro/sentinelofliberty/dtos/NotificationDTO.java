@@ -1,6 +1,7 @@
-package com.barataribeiro.sentinelofliberty.models.entities;
+package com.barataribeiro.sentinelofliberty.dtos;
 
 import com.barataribeiro.sentinelofliberty.dtos.user.AuthorDTO;
+import com.barataribeiro.sentinelofliberty.models.entities.Notification;
 import com.barataribeiro.sentinelofliberty.models.enums.NotificationType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
