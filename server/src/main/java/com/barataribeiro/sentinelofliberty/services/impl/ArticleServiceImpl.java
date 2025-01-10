@@ -170,6 +170,8 @@ public class ArticleServiceImpl implements ArticleService {
             categoryRepository.saveAll(newCategories);
         });
 
+        article.setWasEdit(true);
+
         return articleMapper.toArticleDTO(articleRepository.saveAndFlush(article));
     }
 

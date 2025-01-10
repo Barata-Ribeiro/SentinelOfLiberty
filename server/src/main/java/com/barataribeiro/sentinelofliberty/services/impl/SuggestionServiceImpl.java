@@ -1,15 +1,20 @@
 package com.barataribeiro.sentinelofliberty.services.impl;
 
+import com.barataribeiro.sentinelofliberty.builders.NotificationMapper;
 import com.barataribeiro.sentinelofliberty.builders.SuggestionMapper;
 import com.barataribeiro.sentinelofliberty.dtos.suggestion.SuggestionDTO;
 import com.barataribeiro.sentinelofliberty.dtos.suggestion.SuggestionRequestDTO;
 import com.barataribeiro.sentinelofliberty.dtos.suggestion.SuggestionUpdateRequestDTO;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.IllegalRequestException;
+import com.barataribeiro.sentinelofliberty.models.entities.Notification;
 import com.barataribeiro.sentinelofliberty.models.entities.Suggestion;
 import com.barataribeiro.sentinelofliberty.models.entities.User;
+import com.barataribeiro.sentinelofliberty.models.enums.Roles;
+import com.barataribeiro.sentinelofliberty.repositories.NotificationRepository;
 import com.barataribeiro.sentinelofliberty.repositories.SuggestionRepository;
 import com.barataribeiro.sentinelofliberty.repositories.UserRepository;
+import com.barataribeiro.sentinelofliberty.services.NotificationService;
 import com.barataribeiro.sentinelofliberty.services.SuggestionService;
 import com.barataribeiro.sentinelofliberty.utils.ApplicationConstants;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +27,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,6 +36,9 @@ public class SuggestionServiceImpl implements SuggestionService {
     private final UserRepository userRepository;
     private final SuggestionMapper suggestionMapper;
     private final SuggestionRepository suggestionRepository;
+    private final NotificationService notificationService;
+    private final NotificationMapper notificationMapper;
+    private final NotificationRepository notificationRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -65,14 +74,9 @@ public class SuggestionServiceImpl implements SuggestionService {
                                           .user(author)
                                           .build();
 
-        return suggestionMapper.toSuggestionDTO(suggestionRepository.saveAndFlush(suggestion));
-    }
+        sendNotificationToAdminsAboutANewSuggestionMade(author);
 
-    @Override
-    @Transactional
-    public void deleteSuggestion(Long id, @NotNull Authentication authentication) {
-        long wasDeleted = suggestionRepository.deleteByIdAndUser_UsernameAllIgnoreCase(id, authentication.getName());
-        if (wasDeleted == 0) throw new IllegalRequestException("Suggestion not found or you are not the author");
+        return suggestionMapper.toSuggestionDTO(suggestionRepository.saveAndFlush(suggestion));
     }
 
     @Override
@@ -88,5 +92,31 @@ public class SuggestionServiceImpl implements SuggestionService {
         Optional.ofNullable(body.getSourceUrl()).ifPresent(suggestion::setSourceUrl);
 
         return suggestionMapper.toSuggestionDTO(suggestionRepository.saveAndFlush(suggestion));
+    }
+
+    @Override
+    @Transactional
+    public void deleteSuggestion(Long id, @NotNull Authentication authentication) {
+        long wasDeleted = suggestionRepository.deleteByIdAndUser_UsernameAllIgnoreCase(id, authentication.getName());
+        if (wasDeleted == 0) throw new IllegalRequestException("Suggestion not found or you are not the author");
+    }
+
+    private void sendNotificationToAdminsAboutANewSuggestionMade(User author) {
+        List<User> admins = userRepository.findAllByRole(Roles.ADMIN);
+        admins.parallelStream().forEach(admin -> {
+            final String formatedMessage = String.format("%s has suggested an interesting news! Check it and maybe" +
+                                                                 " write an article about it!", author.getUsername());
+
+            Notification notification = Notification.builder()
+                                                    .title("Someone suggested something!")
+                                                    .message(formatedMessage)
+                                                    .recipient(admin)
+                                                    .build();
+
+            notificationService.sendNotificationThroughWebsocket(admin.getUsername(),
+                                                                 notificationMapper
+                                                                         .toNotificationDTO(notificationRepository.save(
+                                                                                 notification)));
+        });
     }
 }
