@@ -14,4 +14,5 @@ public interface NotificationService {
     Page<NotificationDTO> getAllOwnNotifications(int page, int perPage, String direction, String orderBy,
                                                  Authentication authentication);
 
+    NotificationDTO changeNotificationStatus(Long notifId, Boolean isRead, Authentication authentication);
 }

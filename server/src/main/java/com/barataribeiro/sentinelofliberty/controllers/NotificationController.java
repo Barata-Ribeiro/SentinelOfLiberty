@@ -11,10 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -53,5 +50,16 @@ public class NotificationController {
                                                               response));
     }
 
-
+    @Operation(summary = "Change the notification status",
+               description = "This endpoint allows an authenticated user to change the status of a notification.")
+    @PatchMapping("/{notifId}/status")
+    public ResponseEntity<ApplicationResponseDTO<NotificationDTO>> changeNotificationStatus(
+            @PathVariable Long notifId,
+            @RequestParam Boolean isRead,
+            Authentication authentication) {
+        NotificationDTO response = notificationService.changeNotificationStatus(notifId, isRead, authentication);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully changed the notification status",
+                                                              response));
+    }
 }

@@ -2,6 +2,7 @@ package com.barataribeiro.sentinelofliberty.services.impl;
 
 import com.barataribeiro.sentinelofliberty.builders.NotificationMapper;
 import com.barataribeiro.sentinelofliberty.dtos.NotificationDTO;
+import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
 import com.barataribeiro.sentinelofliberty.models.entities.Notification;
 import com.barataribeiro.sentinelofliberty.repositories.NotificationRepository;
 import com.barataribeiro.sentinelofliberty.services.NotificationService;
@@ -55,5 +56,16 @@ public class NotificationServiceImpl implements NotificationService {
                 .map(notificationMapper::toNotificationDTO);
     }
 
+    @Override
+    @Transactional
+    public NotificationDTO changeNotificationStatus(Long notifId, Boolean isRead,
+                                                    @NotNull Authentication authentication) {
+        Notification notification = notificationRepository
+                .findByIdAndRecipient_Username(notifId, authentication.getName())
+                .orElseThrow(() -> new EntityNotFoundException(Notification.class.getSimpleName()));
 
+        notification.setRead(isRead);
+
+        return notificationMapper.toNotificationDTO(notificationRepository.saveAndFlush(notification));
+    }
 }
