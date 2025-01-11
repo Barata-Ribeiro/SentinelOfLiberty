@@ -33,4 +33,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     long countByTitle(String title);
 
     long countDistinctByAuthor_Username(String username);
+
+    long deleteByIdAndAuthor_UsernameAllIgnoreCase(Long id, String username);
 }
