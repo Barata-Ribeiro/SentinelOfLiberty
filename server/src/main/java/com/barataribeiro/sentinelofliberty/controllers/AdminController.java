@@ -53,6 +53,18 @@ public class AdminController {
                                                               response));
     }
 
+    @Operation(description = "Toggles an user's profile verification status.")
+    @PatchMapping("/users/{username}/toggle-verification")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApplicationResponseDTO<UserProfileDTO>> adminToggleUserVerification(
+            @PathVariable String username, Authentication authentication) {
+        UserProfileDTO response = userService.adminToggleUserVerification(username, authentication);
+        String isVerified = response.getIsVerified() ? "verified" : "unverified";
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully " + isVerified + " the user",
+                                                              response));
+    }
+
     @Operation(summary = "Update an existing suggestion",
                description = "This endpoint allows an admin to update an existing suggestion.")
     @PatchMapping("/suggestions/{id}")

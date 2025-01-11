@@ -18,5 +18,7 @@ public interface UserService {
 
     UserProfileDTO adminBanOrUnbanAnUser(String username, String action);
 
+    UserProfileDTO adminToggleUserVerification(String username, Authentication authentication);
+
     void adminDeleteAnUser(String username, Authentication authentication);
 }

@@ -108,6 +108,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    public UserProfileDTO adminToggleUserVerification(String username, Authentication authentication) {
+
+        User userToUpdate = userRepository.findByUsername(username)
+                                          .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName()));
+
+        if (!userToUpdate.getRole().equals(Roles.USER) || username.equals(authentication.getName())) {
+            throw new IllegalRequestException("Verification toggling failed; User is not a regular user or is the " +
+                                                      "admin. Contact another admin for help.");
+        }
+
+        userToUpdate.setIsVerified(!userToUpdate.getIsVerified());
+
+        return userMapper.toUserProfileDTO(userRepository.saveAndFlush(userToUpdate));
+    }
+
+    @Override
+    @Transactional
     public void adminDeleteAnUser(@NotNull String username, @NotNull Authentication authentication) {
         if (username.equals(authentication.getName())) {
             throw new IllegalRequestException("Admins cannot delete their own accounts through this resource.");
@@ -166,6 +183,7 @@ public class UserServiceImpl implements UserService {
         Optional.ofNullable(body.getSocialMedia()).ifPresent(userToUpdate::setSocialMedia);
         Optional.ofNullable(body.getVideoChannel()).ifPresent(userToUpdate::setVideoChannel);
         Optional.ofNullable(body.getStreamingChannel()).ifPresent(userToUpdate::setStreamingChannel);
+        Optional.ofNullable(body.getIsPrivate()).ifPresent(userToUpdate::setIsPrivate);
         Optional.ofNullable(body.getNewPassword()).ifPresent(s -> userToUpdate.setPassword(passwordEncoder.encode(s)));
     }
 }
