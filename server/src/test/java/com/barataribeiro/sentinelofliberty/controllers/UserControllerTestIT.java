@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DirtiesContext
@@ -130,11 +131,9 @@ class UserControllerTestIT extends ApplicationBaseIntegrationTest {
     void deleteUserProfile() throws Exception {
         mockMvc.perform(delete(BASE_URL + "/me")
                                 .headers(userAuthHeader()))
-               .andExpect(status().isOk())
+               .andExpect(status().isNoContent())
                .andDo(print())
-               .andExpect(result -> assertEquals("User profile deleted successfully",
-                                                 JsonPath.read(result.getResponse().getContentAsString(),
-                                                               "$.message")));
+               .andExpect(jsonPath("$.message").value("User profile deleted successfully"));
 
         assertEquals(0, userRepository.countByUsername("testuser"));
     }

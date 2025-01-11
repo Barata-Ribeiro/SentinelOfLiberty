@@ -104,7 +104,8 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
                                 .delete(BASE_URL + "/" + createdArticleId)
                                 .headers(authHeader()))
                .andExpect(status().isNoContent())
-               .andDo(print());
+               .andDo(print())
+               .andExpect(jsonPath("$.message").value("You have successfully deleted the article"));
 
         assertTrue(articleRepository.findById(createdArticleId).isEmpty());
     }

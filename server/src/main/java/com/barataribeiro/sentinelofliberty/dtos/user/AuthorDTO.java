@@ -23,5 +23,5 @@ public class AuthorDTO implements Serializable {
     String displayName;
     String avatarUrl;
     Boolean isPrivate;
-    Boolean isVerified;dd
+    Boolean isVerified;
 }

@@ -20,6 +20,7 @@ import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DirtiesContext
@@ -120,13 +121,9 @@ class CommentControllerTestIT extends ApplicationBaseIntegrationTest {
     void testDeleteOwnComment() throws Exception {
         mockMvc.perform(delete(BASE_URL + "/1/%d".formatted(createdCommentId)).headers(userAuthHeader())
                                                                               .contentType(MediaType.APPLICATION_JSON))
-               .andExpect(status().isOk())
+               .andExpect(status().isNoContent())
                .andDo(print())
-               .andExpect(result -> {
-                   String responseBody = result.getResponse().getContentAsString();
-
-                   assertTrue(responseBody.contains("You have successfully deleted the comment"));
-               });
+               .andExpect(jsonPath("$.message").value("You have successfully deleted the comment"));
 
         assertEquals(0, commentRepository.countDistinctByArticle_Id(1L), "There should be no comments left, as the " +
                 "root comment was deleted.");
