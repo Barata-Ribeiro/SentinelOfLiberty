@@ -67,8 +67,9 @@ public class SuggestionController {
     public ResponseEntity<ApplicationResponseDTO<SuggestionDTO>> deleteSuggestion(@PathVariable Long id,
                                                                                   Authentication authentication) {
         suggestionService.deleteSuggestion(id, authentication);
-        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
-                                                              "You have successfully deleted the suggestion",
-                                                              null));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                             .body(new ApplicationResponseDTO<>(HttpStatus.NO_CONTENT, HttpStatus.NO_CONTENT.value(),
+                                                                "You have successfully deleted the suggestion",
+                                                                null));
     }
 }

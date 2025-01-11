@@ -58,7 +58,8 @@ public class UserController {
     @DeleteMapping("/me")
     public ResponseEntity<ApplicationResponseDTO<Void>> deleteUserProfile(Authentication authentication) {
         userService.deleteUserProfile(authentication);
-        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
-                                                              "User profile deleted successfully", null));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                             .body(new ApplicationResponseDTO<>(HttpStatus.NO_CONTENT, HttpStatus.NO_CONTENT.value(),
+                                                                "User profile deleted successfully", null));
     }
 }

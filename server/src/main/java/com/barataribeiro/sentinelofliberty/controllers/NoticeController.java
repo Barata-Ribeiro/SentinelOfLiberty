@@ -100,8 +100,9 @@ public class NoticeController {
     public ResponseEntity<ApplicationResponseDTO<Void>> deleteNotice(@PathVariable Long id,
                                                                      Authentication authentication) {
         noticeService.deleteNotice(id, authentication);
-        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
-                                                              "You have successfully deleted the notice", null));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                             .body(new ApplicationResponseDTO<>(HttpStatus.NO_CONTENT, HttpStatus.NO_CONTENT.value(),
+                                                                "You have successfully deleted the notice", null));
     }
 
 }

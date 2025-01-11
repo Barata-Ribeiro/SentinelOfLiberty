@@ -55,7 +55,8 @@ public class CommentController {
                                                                             @PathVariable Long commentId,
                                                                             Authentication authentication) {
         commentService.deleteComment(articleId, commentId, authentication);
-        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
-                                                              "You have successfully deleted the comment", null));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                             .body(new ApplicationResponseDTO<>(HttpStatus.NO_CONTENT, HttpStatus.NO_CONTENT.value(),
+                                                                "You have successfully deleted the comment", null));
     }
 }

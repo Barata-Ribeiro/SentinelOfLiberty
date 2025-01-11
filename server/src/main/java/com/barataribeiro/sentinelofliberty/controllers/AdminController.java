@@ -59,7 +59,7 @@ public class AdminController {
     public ResponseEntity<ApplicationResponseDTO<UserProfileDTO>> adminToggleUserVerification(
             @PathVariable String username, Authentication authentication) {
         UserProfileDTO response = userService.adminToggleUserVerification(username, authentication);
-        String isVerified = response.getIsVerified() ? "verified" : "unverified";
+        String isVerified = Boolean.TRUE.equals(response.getIsVerified()) ? "verified" : "unverified";
         return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
                                                               "You have successfully " + isVerified + " the user",
                                                               response));
@@ -85,7 +85,8 @@ public class AdminController {
     public ResponseEntity<ApplicationResponseDTO<UserProfileDTO>> adminDeleteAnUser(@PathVariable String username,
                                                                                     Authentication authentication) {
         userService.adminDeleteAnUser(username, authentication);
-        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
-                                                              "You have successfully deleted the user", null));
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                             .body(new ApplicationResponseDTO<>(HttpStatus.NO_CONTENT, HttpStatus.NO_CONTENT.value(),
+                                                                "You have successfully deleted the user", null));
     }
 }
