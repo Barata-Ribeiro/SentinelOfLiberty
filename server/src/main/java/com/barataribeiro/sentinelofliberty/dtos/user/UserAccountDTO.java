@@ -30,8 +30,8 @@ public class UserAccountDTO implements Serializable {
     private LocalDate birthDate;
     private String location;
     private String website;
-    private boolean isPrivate;
-    private boolean isVerified;
+    private Boolean isPrivate;
+    private Boolean isVerified;
     private Long commentsCount;
     private Long articlesCount;
     private Long readNotificationsCount;

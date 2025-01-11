@@ -47,8 +47,10 @@ public class ProfileUpdateRequestDTO implements Serializable {
     private String socialMedia;
 
     private String videoChannel;
-    
+
     private String streamingChannel;
+
+    private Boolean isPrivate;
 
     @Size(min = 8, max = 100, message = "New password must be between 8 and 100 characters.")
     @Pattern(

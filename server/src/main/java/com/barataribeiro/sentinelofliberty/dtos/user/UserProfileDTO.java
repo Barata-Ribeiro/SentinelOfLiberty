@@ -31,8 +31,8 @@ public class UserProfileDTO implements Serializable {
     LocalDate birthDate;
     String location;
     String website;
-    boolean isPrivate;
-    boolean isVerified;
+    Boolean isPrivate;
+    Boolean isVerified;
     Instant createdAt;
     Instant updatedAt;
     private String socialMedia;
