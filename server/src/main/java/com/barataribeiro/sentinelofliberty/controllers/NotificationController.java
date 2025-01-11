@@ -77,4 +77,17 @@ public class NotificationController {
                                                               "You have successfully changed the notification status",
                                                               response));
     }
+
+    @Operation(summary = "Delete a notification",
+               description = "This endpoint allows an authenticated user to delete a notification.")
+    @DeleteMapping("/{notifId}")
+    public ResponseEntity<ApplicationResponseDTO<Void>> deleteNotification(
+            @PathVariable Long notifId,
+            Authentication authentication) {
+        notificationService.deleteNotification(notifId, authentication);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                             .body(new ApplicationResponseDTO<>(HttpStatus.NO_CONTENT, HttpStatus.NO_CONTENT.value(),
+                                                                "You have successfully deleted the notification",
+                                                                null));
+    }
 }

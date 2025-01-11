@@ -3,10 +3,12 @@ package com.barataribeiro.sentinelofliberty.services.impl;
 import com.barataribeiro.sentinelofliberty.builders.NotificationMapper;
 import com.barataribeiro.sentinelofliberty.dtos.NotificationDTO;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
+import com.barataribeiro.sentinelofliberty.exceptions.throwables.IllegalRequestException;
 import com.barataribeiro.sentinelofliberty.models.entities.Notification;
 import com.barataribeiro.sentinelofliberty.repositories.NotificationRepository;
 import com.barataribeiro.sentinelofliberty.services.NotificationService;
 import com.barataribeiro.sentinelofliberty.utils.ApplicationConstants;
+import jakarta.transaction.TransactionScoped;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -79,5 +81,13 @@ public class NotificationServiceImpl implements NotificationService {
         notificationsList.parallelStream().forEach(notification -> notification.setRead(isRead));
 
         return notificationMapper.toNotificationDTOList(notificationRepository.saveAll(notificationsList));
+    }
+
+    @Override
+    @TransactionScoped
+    public void deleteNotification(Long notifId, @NotNull Authentication authentication) {
+        long wasDeleted = notificationRepository
+                .deleteByIdAndRecipient_UsernameAllIgnoreCase(notifId, authentication.getName());
+        if (wasDeleted == 0) throw new IllegalRequestException("Notification not found or you are not the recipient");
     }
 }
