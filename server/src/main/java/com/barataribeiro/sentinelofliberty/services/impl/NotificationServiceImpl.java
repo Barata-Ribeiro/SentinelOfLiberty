@@ -68,4 +68,16 @@ public class NotificationServiceImpl implements NotificationService {
 
         return notificationMapper.toNotificationDTO(notificationRepository.saveAndFlush(notification));
     }
+
+    @Override
+    @Transactional
+    public List<NotificationDTO> changeNotificationStatusInBulk(List<Long> ids, Boolean isRead,
+                                                                @NotNull Authentication authentication) {
+        List<Notification> notificationsList = notificationRepository
+                .findAllByRecipient_UsernameAndIdIn(authentication.getName(), ids);
+
+        notificationsList.parallelStream().forEach(notification -> notification.setRead(isRead));
+
+        return notificationMapper.toNotificationDTOList(notificationRepository.saveAll(notificationsList));
+    }
 }

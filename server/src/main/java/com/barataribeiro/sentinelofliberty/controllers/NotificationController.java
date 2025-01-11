@@ -62,4 +62,19 @@ public class NotificationController {
                                                               "You have successfully changed the notification status",
                                                               response));
     }
+
+    @Operation(summary = "Change the notification status in bulk",
+               description = "This endpoint allows an authenticated user to change the status of multiple " +
+                       "notifications.")
+    @PatchMapping("/status")
+    public ResponseEntity<ApplicationResponseDTO<List<NotificationDTO>>> changeNotificationStatusInBulk(
+            @RequestBody List<Long> notificationsId,
+            @RequestParam Boolean isRead,
+            Authentication authentication) {
+        List<NotificationDTO> response = notificationService
+                .changeNotificationStatusInBulk(notificationsId, isRead, authentication);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully changed the notification status",
+                                                              response));
+    }
 }

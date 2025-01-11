@@ -15,4 +15,6 @@ public interface NotificationService {
                                                  Authentication authentication);
 
     NotificationDTO changeNotificationStatus(Long notifId, Boolean isRead, Authentication authentication);
+
+    List<NotificationDTO> changeNotificationStatusInBulk(List<Long> ids, Boolean isRead, Authentication authentication);
 }
