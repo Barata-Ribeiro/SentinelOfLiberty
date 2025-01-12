@@ -24,7 +24,7 @@ public class SuggestionMapper {
             protected void configure() {
                 using(ctx -> {
                     Set<?> articles = (Set<?>) ctx.getSource();
-                    return articles == null ? 0L : articles.size();
+                    return articles == null ? 0L : (long) articles.size();
                 }).map(source.getArticles(), destination.getArticlesWritten());
             }
         });
