@@ -29,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -39,6 +41,14 @@ public class SuggestionServiceImpl implements SuggestionService {
     private final NotificationService notificationService;
     private final NotificationMapper notificationMapper;
     private final NotificationRepository notificationRepository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public Set<SuggestionDTO> getLatestSuggestions() {
+        return suggestionRepository.findTop10ByOrderByCreatedAtDesc().parallelStream()
+                                   .map(suggestionMapper::toSuggestionDTO)
+                                   .collect(Collectors.toUnmodifiableSet());
+    }
 
     @Override
     @Transactional(readOnly = true)

@@ -15,12 +15,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @RestController
 @RequestMapping("/api/v1/suggestions")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 @Tag(name = "Suggestion", description = "Suggestions endpoints")
 public class SuggestionController {
     private final SuggestionService suggestionService;
+
+    @Operation(summary = "Get the latest suggestions",
+               description = "This endpoint returns the latest ten (10) made suggestions that are displayed on the " +
+                       "homepage.")
+    @GetMapping("/public/latest")
+    public ResponseEntity<ApplicationResponseDTO<Set<SuggestionDTO>>> getLatestSuggestions() {
+        Set<SuggestionDTO> response = suggestionService.getLatestSuggestions();
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully retrieved the latest suggestions",
+                                                              response));
+    }
 
     @Operation(summary = "Get all suggestions paginated",
                description = "This endpoint allows any user to retrieve all suggestions paginated, that are available" +
