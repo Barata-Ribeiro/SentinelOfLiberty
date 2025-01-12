@@ -1,8 +1,10 @@
 package com.barataribeiro.sentinelofliberty.repositories;
 
 import com.barataribeiro.sentinelofliberty.models.entities.Comment;
+import jakarta.persistence.QueryHint;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
@@ -37,6 +39,13 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
                    FROM comment_tree
                    ORDER BY created_at DESC;
                    """, nativeQuery = true)
+    @QueryHints({
+            @QueryHint(name = "org.hibernate.readOnly", value = "true"),
+            @QueryHint(name = "org.hibernate.fetchSize", value = "50"),
+            @QueryHint(name = "org.hibarnate.cacheable", value = "true"),
+            @QueryHint(name = "jakarta.persistence.cache.retrieveMode", value = "USE"),
+            @QueryHint(name = "jakarta.persistence.cache.storeMode", value = "USE")
+    })
     List<Comment> findCommentsRecursivelyByArticleId(@Param("articleId") Long articleId);
 
     long deleteByIdAndArticle_IdAndUser_UsernameAllIgnoreCase(Long id, Long id1, String username);
