@@ -1,6 +1,6 @@
 package com.barataribeiro.sentinelofliberty.services;
 
-import com.barataribeiro.sentinelofliberty.dtos.NotificationDTO;
+import com.barataribeiro.sentinelofliberty.dtos.notification.NotificationDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 

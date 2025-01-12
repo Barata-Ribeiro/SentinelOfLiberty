@@ -1,4 +1,4 @@
-package com.barataribeiro.sentinelofliberty.dtos;
+package com.barataribeiro.sentinelofliberty.dtos.notification;
 
 import com.barataribeiro.sentinelofliberty.dtos.user.AuthorDTO;
 import com.barataribeiro.sentinelofliberty.models.entities.Notification;
@@ -24,7 +24,7 @@ public class NotificationDTO implements Serializable {
     String message;
     NotificationType type;
     AuthorDTO recipient;
-    boolean isRead;
+    Boolean isRead;
     Instant createdAt;
     Instant updatedAt;
 }

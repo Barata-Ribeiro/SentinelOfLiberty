@@ -1,7 +1,7 @@
 package com.barataribeiro.sentinelofliberty.controllers;
 
 import com.barataribeiro.sentinelofliberty.dtos.ApplicationResponseDTO;
-import com.barataribeiro.sentinelofliberty.dtos.NotificationDTO;
+import com.barataribeiro.sentinelofliberty.dtos.notification.NotificationDTO;
 import com.barataribeiro.sentinelofliberty.services.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

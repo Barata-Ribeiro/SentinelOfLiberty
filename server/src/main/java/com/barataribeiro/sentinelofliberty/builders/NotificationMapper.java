@@ -1,6 +1,6 @@
 package com.barataribeiro.sentinelofliberty.builders;
 
-import com.barataribeiro.sentinelofliberty.dtos.NotificationDTO;
+import com.barataribeiro.sentinelofliberty.dtos.notification.NotificationDTO;
 import com.barataribeiro.sentinelofliberty.models.entities.Notification;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
