@@ -65,7 +65,7 @@ public abstract class ApplicationBaseIntegrationTest {
         // Authenticate and get the token
         if (accessToken == null || userAccessToken == null) {
             mockMvc.perform(post("/api/v1/auth/login")
-                                    .contentType("application/json")
+                                    .contentType(MediaType.APPLICATION_JSON)
                                     .content(VALID_ADMIN_LOGIN_PAYLOAD))
                    .andExpect(status().isOk())
                    .andDo(print())
@@ -75,7 +75,7 @@ public abstract class ApplicationBaseIntegrationTest {
                    });
 
             mockMvc.perform(post("/api/v1/auth/login")
-                                    .contentType("application/json")
+                                    .contentType(MediaType.APPLICATION_JSON)
                                     .content(VALID_LOGIN_PAYLOAD))
                    .andExpect(status().isOk())
                    .andDo(print())

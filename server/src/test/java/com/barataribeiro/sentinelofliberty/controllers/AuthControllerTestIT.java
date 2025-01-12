@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
@@ -34,7 +35,7 @@ class AuthControllerTestIT extends ApplicationBaseIntegrationTest {
     @DisplayName("Test login with valid request body and an existing user attempts to login with valid credentials")
     void testLoginWithValidCredentials() throws Exception {
         mockMvc.perform(post(BASE_URL + "/login")
-                                .contentType("application/json")
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .content(VALID_LOGIN_PAYLOAD))
                .andExpect(status().isOk())
                .andDo(print());
@@ -44,7 +45,7 @@ class AuthControllerTestIT extends ApplicationBaseIntegrationTest {
     @DisplayName("Test login with valid request body and an existing user attempts to login with invalid credentials")
     void testLoginWithInvalidCredentials() throws Exception {
         mockMvc.perform(post(BASE_URL + "/login")
-                                .contentType("application/json")
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .content(
                                         "{\"username\": \"testuser\", \"password\": \"wrongpassword\", " +
                                                 "\"rememberMe\": true}"))
@@ -57,7 +58,7 @@ class AuthControllerTestIT extends ApplicationBaseIntegrationTest {
     @DisplayName("Test login scenarios where user does not exist; the body is empty; or the boolean value is invalid")
     void testInvalidLoginScenarios() throws Exception {
         mockMvc.perform(post(BASE_URL + "/login")
-                                .contentType("application/json")
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .content(
                                         "{\"username\": \"test\", \"password\": \"test\", " +
                                                 "\"rememberMe\": true}"))
@@ -66,7 +67,7 @@ class AuthControllerTestIT extends ApplicationBaseIntegrationTest {
                .andExpect(result -> assertInstanceOf(EntityNotFoundException.class, result.getResolvedException()));
 
         mockMvc.perform(post(BASE_URL + "/login")
-                                .contentType("application/json")
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .content("{}"))
                .andExpect(status().isBadRequest())
                .andDo(print())
@@ -74,7 +75,7 @@ class AuthControllerTestIT extends ApplicationBaseIntegrationTest {
                                                      result.getResolvedException()));
 
         mockMvc.perform(post(BASE_URL + "/login")
-                                .contentType("application/json")
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .content("{\"username\": \"test\", \"password\": \"test\", \"rememberMe\": \"test\"}"))
                .andExpect(status().isBadRequest())
                .andDo(print())
@@ -87,7 +88,7 @@ class AuthControllerTestIT extends ApplicationBaseIntegrationTest {
     void testRegistrationWithConcurrency() {
         ConcurrencyTestUtil.doAsyncAndConcurrently(10, () -> mockMvc
                 .perform(post(BASE_URL + "/register")
-                                 .contentType("application/json")
+                                 .contentType(MediaType.APPLICATION_JSON)
                                  .content("{\"username\": \"jasonbourne\", " +
                                                   "\"email\": \"jasonbourne@cia.com\", " +
                                                   "\"password\": \"q@7$eEMvmVz7!fDn\", " +
@@ -110,7 +111,7 @@ class AuthControllerTestIT extends ApplicationBaseIntegrationTest {
                                   .value("The token provided is invalid."));
 
         mockMvc.perform(post(BASE_URL + "/login")
-                                .contentType("application/json")
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .content(VALID_LOGIN_PAYLOAD))
                .andExpect(status().isOk())
                .andDo(print())

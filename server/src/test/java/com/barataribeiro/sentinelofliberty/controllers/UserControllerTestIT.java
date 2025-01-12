@@ -11,6 +11,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -91,7 +92,7 @@ class UserControllerTestIT extends ApplicationBaseIntegrationTest {
     @DisplayName("Test update user profile with valid data")
     void updateUserProfileWithValidData() throws Exception {
         mockMvc.perform(patch(BASE_URL + "/me")
-                                .contentType("application/json")
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .content(ADMIN_UPDATE_PROFILE_PAYLOAD)
                                 .headers(authHeader()))
                .andExpect(status().isOk())
@@ -116,7 +117,7 @@ class UserControllerTestIT extends ApplicationBaseIntegrationTest {
     @DisplayName("Test update user profile with invalid data")
     void updateUserProfileWithInvalidData(String payload) throws Exception {
         mockMvc.perform(patch(BASE_URL + "/me")
-                                .contentType("application/json")
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .content(payload)
                                 .headers(authHeader()))
                .andExpect(status().isBadRequest())
