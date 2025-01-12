@@ -33,6 +33,16 @@ class SuggestionControllerTestIT extends ApplicationBaseIntegrationTest {
     private final SuggestionRepository suggestionRepository;
 
     @Test
+    @DisplayName("Test where an user, authenticated or not, attempts to get the latest public suggestions")
+    void testGetLatestPublicSuggestions() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/public/latest"))
+               .andExpect(status().isOk())
+               .andDo(print())
+               .andExpect(jsonPath("$.message").value("You have successfully retrieved the latest suggestions"))
+               .andExpect(jsonPath("$.data").isArray());
+    }
+
+    @Test
     @DisplayName("Test where an user, authenticated or not, attempts to get all public suggestions")
     void testGetAllPublicSuggestionsPaginated() throws Exception {
         mockMvc.perform(get(BASE_URL + "/public")
