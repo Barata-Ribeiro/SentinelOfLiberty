@@ -13,15 +13,17 @@ import java.time.Instant;
 @Setter
 @ToString
 @Entity
-@Table(name = "tb_blacklisted_tokens", uniqueConstraints = {
-        @UniqueConstraint(name = "uc_blacklist_token", columnNames = {"token"})
+@Table(name = "tb_blacklisted_tokens", indexes = {
+        @Index(name = "idx_token_tokenvalue_unq", columnList = "tokenValue, owner_username", unique = true)
+}, uniqueConstraints = {
+        @UniqueConstraint(name = "uc_token_token_value", columnNames = {"token_value"})
 })
 public class Token {
     @Id // The id is the JTI (JWT Token Identifier)
     @Column(updatable = false, nullable = false, unique = true)
     private String id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "token_value", nullable = false, unique = true)
     private String tokenValue;
 
     @Column(name = "owner_username", nullable = false)
