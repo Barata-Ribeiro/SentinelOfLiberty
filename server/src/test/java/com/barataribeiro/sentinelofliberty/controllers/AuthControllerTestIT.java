@@ -2,6 +2,7 @@ package com.barataribeiro.sentinelofliberty.controllers;
 
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.InvalidCredentialsException;
+import com.barataribeiro.sentinelofliberty.repositories.TokenRepository;
 import com.barataribeiro.sentinelofliberty.repositories.UserRepository;
 import com.barataribeiro.sentinelofliberty.utils.ApplicationBaseIntegrationTest;
 import com.barataribeiro.sentinelofliberty.utils.ConcurrencyTestUtil;
@@ -16,9 +17,12 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants.VALID_LOGIN_PAYLOAD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -28,8 +32,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 class AuthControllerTestIT extends ApplicationBaseIntegrationTest {
     private static final String BASE_URL = "/api/v1/auth";
+
     private final MockMvc mockMvc;
-    @Autowired private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final TokenRepository tokenRepository;
 
     @Test
     @DisplayName("Test login with valid request body and an existing user attempts to login with valid credentials")
@@ -108,7 +114,7 @@ class AuthControllerTestIT extends ApplicationBaseIntegrationTest {
                .andExpect(status().isUnauthorized())
                .andDo(print())
                .andExpect(jsonPath("$.detail")
-                                  .value("The token provided is invalid."));
+                                  .value("The provided token is invalid"));
 
         mockMvc.perform(post(BASE_URL + "/login")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -127,5 +133,41 @@ class AuthControllerTestIT extends ApplicationBaseIntegrationTest {
                           .andExpect(jsonPath("$.data.accessToken").exists())
                           .andExpect(jsonPath("$.data.refreshToken").doesNotExist());
                });
+    }
+
+    @Test
+    @DisplayName("Test logout with valid refresh token")
+    void logoutWithValidRefreshToken() throws Exception {
+        AtomicReference<String> refreshToken = new AtomicReference<>();
+
+        mockMvc.perform(post(BASE_URL + "/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(VALID_LOGIN_PAYLOAD))
+               .andExpect(status().isOk())
+               .andDo(print())
+               .andExpect(jsonPath("$.data.refreshToken").exists())
+               .andDo(result -> {
+                   String responseBody = result.getResponse().getContentAsString();
+                   refreshToken.set(JsonPath.read(responseBody, "$.data.refreshToken"));
+               });
+
+        mockMvc.perform(delete(BASE_URL + "/logout")
+                                .header("X-Refresh-Token", refreshToken.get()))
+               .andExpect(status().isNoContent())
+               .andDo(print())
+               .andExpect(jsonPath("$.message").value("You have successfully logged out"));
+
+        assertEquals(1, tokenRepository.countDistinctByTokenValue(refreshToken.get()),
+                     "The refresh token should be invalidated after logout");
+    }
+
+    @Test
+    @DisplayName("Test logout with invalid refresh token")
+    void logoutWithInvalidRefreshToken() throws Exception {
+        mockMvc.perform(delete(BASE_URL + "/logout")
+                                .header("X-Refresh-Token", "invalid-refresh-token"))
+               .andExpect(status().isUnauthorized())
+               .andDo(print())
+               .andExpect(result -> assertInstanceOf(InvalidCredentialsException.class, result.getResolvedException()));
     }
 }
