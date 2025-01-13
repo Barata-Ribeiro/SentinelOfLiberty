@@ -5,6 +5,7 @@ public final class ApplicationConstants {
     public static final String CONTENT_SECURITY_POLICY_VALUE = "script-src 'self'; frame-ancestors 'self'; " +
             "upgrade-insecure-requests";
     public static final String CREATED_AT = "createdAt";
+    public static final String THE_PROVIDED_TOKEN_IS_INVALID = "The provided token is invalid";
     private static final String[] AUTH_WHITELIST = {
             // -- Swagger UI v2
             "/v2/api-docs",
