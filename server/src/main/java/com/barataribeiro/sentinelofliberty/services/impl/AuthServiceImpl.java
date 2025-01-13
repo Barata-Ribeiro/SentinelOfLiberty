@@ -1,5 +1,6 @@
 package com.barataribeiro.sentinelofliberty.services.impl;
 
+import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.barataribeiro.sentinelofliberty.builders.UserMapper;
 import com.barataribeiro.sentinelofliberty.dtos.authentication.LoginRequestDTO;
@@ -10,11 +11,14 @@ import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityAlreadyEx
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.IllegalRequestException;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.InvalidCredentialsException;
+import com.barataribeiro.sentinelofliberty.models.entities.Token;
 import com.barataribeiro.sentinelofliberty.models.entities.User;
 import com.barataribeiro.sentinelofliberty.models.enums.Roles;
+import com.barataribeiro.sentinelofliberty.repositories.TokenRepository;
 import com.barataribeiro.sentinelofliberty.repositories.UserRepository;
 import com.barataribeiro.sentinelofliberty.services.AuthService;
 import com.barataribeiro.sentinelofliberty.services.security.impl.TokenServiceImpl;
+import com.barataribeiro.sentinelofliberty.utils.ApplicationConstants;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final TokenServiceImpl tokenService;
     private final UserMapper userMapper;
+    private final TokenRepository tokenRepository;
 
     @Override
     public LoginResponseDTO login(@NotNull LoginRequestDTO body) {
@@ -84,7 +89,7 @@ public class AuthServiceImpl implements AuthService {
         DecodedJWT decodedJWT = tokenService.validateToken(refreshToken);
 
         if (decodedJWT == null) {
-            throw new InvalidCredentialsException("The token provided is invalid.");
+            throw new InvalidCredentialsException(ApplicationConstants.THE_PROVIDED_TOKEN_IS_INVALID);
         }
 
         String username = decodedJWT.getSubject();
@@ -95,5 +100,24 @@ public class AuthServiceImpl implements AuthService {
 
         return new LoginResponseDTO(userMapper.toUserSecurityDTO(user), accessTokenEntry.getKey(),
                                     accessTokenEntry.getValue(), null, null);
+    }
+
+    @Override
+    @Transactional
+    public void logout(String refreshToken) {
+        if (tokenService.validateToken(refreshToken) == null) {
+            throw new InvalidCredentialsException(ApplicationConstants.THE_PROVIDED_TOKEN_IS_INVALID);
+        }
+
+        DecodedJWT decodedJWT = JWT.decode(refreshToken);
+
+        Token blackListedToken = Token.builder()
+                                      .id(decodedJWT.getId())
+                                      .tokenValue(decodedJWT.getToken())
+                                      .ownerUsername(decodedJWT.getSubject())
+                                      .expirationDate(decodedJWT.getExpiresAt().toInstant())
+                                      .build();
+
+        tokenRepository.save(blackListedToken);
     }
 }

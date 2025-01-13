@@ -57,4 +57,14 @@ public class AuthController {
         return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
                                                               "You have successfully refreshed your token", response));
     }
+
+    @Operation(summary = "Logout user",
+               description = "This endpoint allows a logged in user to logout by providing their valid refresh token.")
+    @DeleteMapping("/logout")
+    public ResponseEntity<ApplicationResponseDTO<Void>> logout(@RequestHeader("X-Refresh-Token") String refreshToken) {
+        authService.logout(refreshToken);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                             .body(new ApplicationResponseDTO<>(HttpStatus.NO_CONTENT, HttpStatus.NO_CONTENT.value(),
+                                                                "You have successfully logged out", null));
+    }
 }

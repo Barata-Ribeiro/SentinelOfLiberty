@@ -11,4 +11,6 @@ public interface AuthService {
     UserSecurityDTO register(RegistrationRequestDTO body);
 
     LoginResponseDTO refreshToken(String refreshToken);
+
+    void logout(String refreshToken);
 }
