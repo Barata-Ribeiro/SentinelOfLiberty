@@ -19,17 +19,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ServerApplicationTests {
     private final ServerApplication serverApplication;
 
-    private final AuthController authController;
-    private final AuthService authService;
+    private final AdminController adminController;
 
     private final ArticleController articleController;
     private final ArticleService articleService;
+
+    private final AuthController authController;
+    private final AuthService authService;
 
     private final CommentController commentController;
     private final CommentService commentService;
 
     private final NoticeController noticeController;
     private final NoticeService noticeService;
+
+    private final NotificationController notificationController;
+    private final NotificationService notificationService;
 
     private final SuggestionController suggestionController;
     private final SuggestionService suggestionService;
@@ -40,14 +45,17 @@ class ServerApplicationTests {
     @Test
     void contextLoads() {
         assertThat(serverApplication).isNotNull();
-        assertThat(authController).isNotNull();
-        assertThat(authService).isNotNull();
+        assertThat(adminController).isNotNull();
         assertThat(articleController).isNotNull();
         assertThat(articleService).isNotNull();
+        assertThat(authController).isNotNull();
+        assertThat(authService).isNotNull();
         assertThat(commentController).isNotNull();
         assertThat(commentService).isNotNull();
         assertThat(noticeController).isNotNull();
         assertThat(noticeService).isNotNull();
+        assertThat(notificationController).isNotNull();
+        assertThat(notificationService).isNotNull();
         assertThat(suggestionController).isNotNull();
         assertThat(suggestionService).isNotNull();
         assertThat(userController).isNotNull();
