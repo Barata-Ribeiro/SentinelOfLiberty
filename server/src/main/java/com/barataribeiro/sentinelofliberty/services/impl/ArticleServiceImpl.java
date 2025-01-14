@@ -143,6 +143,38 @@ public class ArticleServiceImpl implements ArticleService {
             throw new IllegalRequestException("You are not the author of this article.");
         }
 
+        updateArticlePropertiesIfPresentAndSetItAsEdited(body, article);
+
+        return articleMapper.toArticleDTO(articleRepository.saveAndFlush(article));
+    }
+
+    @Override
+    @Transactional
+    public void deleteArticle(Long articleId, @NotNull Authentication authentication) {
+        long wasDeleted = articleRepository
+                .deleteByIdAndAuthor_UsernameAllIgnoreCase(articleId, authentication.getName());
+        if (wasDeleted == 0) throw new IllegalRequestException("Article not found or you are not the author");
+    }
+
+    @Override
+    @Transactional
+    public ArticleDTO adminUpdateAnArticle(Long articleId, ArticleUpdateRequestDTO body,
+                                           @NotNull Authentication authentication) {
+        Article article = articleRepository
+                .findById(articleId)
+                .orElseThrow(() -> new EntityNotFoundException(Article.class.getSimpleName()));
+
+        if (article.getAuthor().getUsername().equals(authentication.getName())) {
+            throw new IllegalRequestException("Admins cannot update their own articles through this resource.");
+        }
+
+        updateArticlePropertiesIfPresentAndSetItAsEdited(body, article);
+
+        return articleMapper.toArticleDTO(articleRepository.saveAndFlush(article));
+    }
+
+    private void updateArticlePropertiesIfPresentAndSetItAsEdited(@NotNull ArticleUpdateRequestDTO body,
+                                                                  @NotNull Article article) {
         Optional.ofNullable(body.getTitle()).ifPresent(article::setTitle);
 
         Optional.ofNullable(body.getSubTitle()).ifPresent(article::setSubTitle);
@@ -171,16 +203,6 @@ public class ArticleServiceImpl implements ArticleService {
         });
 
         article.setWasEdit(true);
-
-        return articleMapper.toArticleDTO(articleRepository.saveAndFlush(article));
-    }
-
-    @Override
-    @Transactional
-    public void deleteArticle(Long articleId, @NotNull Authentication authentication) {
-        long wasDeleted = articleRepository
-                .deleteByIdAndAuthor_UsernameAllIgnoreCase(articleId, authentication.getName());
-        if (wasDeleted == 0) throw new IllegalRequestException("Article not found or you are not the author");
     }
 
     private @NotNull Set<Category> getNewCategories(@NotNull List<@NotBlank String> categories, Article article) {

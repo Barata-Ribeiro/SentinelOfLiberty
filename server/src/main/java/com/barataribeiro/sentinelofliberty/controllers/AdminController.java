@@ -1,10 +1,13 @@
 package com.barataribeiro.sentinelofliberty.controllers;
 
 import com.barataribeiro.sentinelofliberty.dtos.ApplicationResponseDTO;
+import com.barataribeiro.sentinelofliberty.dtos.article.ArticleDTO;
+import com.barataribeiro.sentinelofliberty.dtos.article.ArticleUpdateRequestDTO;
 import com.barataribeiro.sentinelofliberty.dtos.suggestion.SuggestionDTO;
 import com.barataribeiro.sentinelofliberty.dtos.suggestion.SuggestionUpdateRequestDTO;
 import com.barataribeiro.sentinelofliberty.dtos.user.ProfileUpdateRequestDTO;
 import com.barataribeiro.sentinelofliberty.dtos.user.UserProfileDTO;
+import com.barataribeiro.sentinelofliberty.services.ArticleService;
 import com.barataribeiro.sentinelofliberty.services.SuggestionService;
 import com.barataribeiro.sentinelofliberty.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
     private final UserService userService;
     private final SuggestionService suggestionService;
+    private final ArticleService articleService;
 
     @Operation(summary = "Update an user",
                description = "This endpoint allows an admin to update an user's information.")
@@ -37,6 +41,19 @@ public class AdminController {
         UserProfileDTO response = userService.adminUpdateAnUser(username, body, authentication);
         return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
                                                               "You have successfully updated the user", response));
+    }
+
+    @Operation(summary = "Update an article",
+               description = "This endpoint allows an admin to update an article that is not his/hers.")
+    @PatchMapping("/articles/{articleId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApplicationResponseDTO<ArticleDTO>> adminUpdateAnArticle(@PathVariable Long articleId,
+                                                                                   @RequestBody @Valid
+                                                                                   ArticleUpdateRequestDTO body,
+                                                                                   Authentication authentication) {
+        ArticleDTO response = articleService.adminUpdateAnArticle(articleId, body, authentication);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully updated the article", response));
     }
 
     @Operation(summary = "Ban or Unban an user",

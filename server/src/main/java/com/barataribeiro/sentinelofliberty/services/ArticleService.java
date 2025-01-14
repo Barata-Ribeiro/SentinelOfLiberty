@@ -4,7 +4,6 @@ import com.barataribeiro.sentinelofliberty.dtos.article.ArticleDTO;
 import com.barataribeiro.sentinelofliberty.dtos.article.ArticleRequestDTO;
 import com.barataribeiro.sentinelofliberty.dtos.article.ArticleSummaryDTO;
 import com.barataribeiro.sentinelofliberty.dtos.article.ArticleUpdateRequestDTO;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 
@@ -22,7 +21,9 @@ public interface ArticleService {
 
     ArticleDTO createArticle(ArticleRequestDTO body, Authentication authentication);
 
-    ArticleDTO updateArticle(Long articleId, @Valid ArticleUpdateRequestDTO body, Authentication authentication);
+    ArticleDTO updateArticle(Long articleId, ArticleUpdateRequestDTO body, Authentication authentication);
 
     void deleteArticle(Long articleId, Authentication authentication);
+
+    ArticleDTO adminUpdateAnArticle(Long articleId, ArticleUpdateRequestDTO body, Authentication authentication);
 }
