@@ -20,13 +20,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 class AdminControllerTestIT extends ApplicationBaseIntegrationTest {
+    private static final String BASE_URL = "/api/v1/admin";
+
     private final MockMvc mockMvc;
     private final UserRepository userRepository;
 
     @Test
     @DisplayName("Test admin banning and unbanning an user")
     void testAdminBanOrUnbanAnUser() throws Exception {
-        mockMvc.perform(patch("/api/v1/admin/users/testuser")
+        mockMvc.perform(patch(BASE_URL + "/users/testuser")
                                 .param("action", "ban")
                                 .headers(authHeader()))
                .andExpect(status().isOk())
@@ -37,7 +39,7 @@ class AdminControllerTestIT extends ApplicationBaseIntegrationTest {
                    assertEquals("You have successfully banned the user", message);
                });
 
-        mockMvc.perform(patch("/api/v1/admin/users/testuser")
+        mockMvc.perform(patch(BASE_URL + "/users/testuser")
                                 .param("action", "unban")
                                 .headers(authHeader()))
                .andExpect(status().isOk())
@@ -50,9 +52,33 @@ class AdminControllerTestIT extends ApplicationBaseIntegrationTest {
     }
 
     @Test
+    @DisplayName("Test admin toggling an user's verification status")
+    void testAdminToggleVerification() throws Exception {
+        mockMvc.perform(patch(BASE_URL + "/users/testuser/toggle-verification")
+                                .headers(authHeader()))
+               .andExpect(status().isOk())
+               .andDo(print())
+               .andExpect(result -> {
+                   String responseContent = result.getResponse().getContentAsString();
+                   String message = JsonPath.read(responseContent, "$.message");
+                   assertEquals("You have successfully verified the user", message);
+               });
+
+        mockMvc.perform(patch(BASE_URL + "/users/testuser/toggle-verification")
+                                .headers(authHeader()))
+               .andExpect(status().isOk())
+               .andDo(print())
+               .andExpect(result -> {
+                   String responseContent = result.getResponse().getContentAsString();
+                   String message = JsonPath.read(responseContent, "$.message");
+                   assertEquals("You have successfully unverified the user", message);
+               });
+    }
+
+    @Test
     @DisplayName("Test where a regular user tries to access the admin endpoint, should return 403")
     void testRegularUserAccessingAdminEndpoint() throws Exception {
-        mockMvc.perform(patch("/api/v1/admin/users/testuser")
+        mockMvc.perform(patch(BASE_URL + "/users/testuser")
                                 .param("action", "ban")
                                 .headers(userAuthHeader()))
                .andExpect(status().isForbidden())
