@@ -94,7 +94,7 @@ class NoticeControllerTestIT extends ApplicationBaseIntegrationTest {
     @DisplayName("Test update notice with valid request body and an authenticated admin attempts to update a notice")
     void testUpdateNotice() throws Exception {
         String updatedNoticePayload = NEW_NOTICE_PAYLOAD.replace("Test Notice", "Updated Test Notice");
-        mockMvc.perform(patch(BASE_URL + "/" + createdNoticeId)
+        mockMvc.perform(patch(BASE_URL + "/{noticedId}", createdNoticeId)
                                 .headers(authHeader())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(updatedNoticePayload))
@@ -111,7 +111,7 @@ class NoticeControllerTestIT extends ApplicationBaseIntegrationTest {
     @Order(4)
     @DisplayName("Test set notice status where an authenticated admin attempts to update its status")
     void testSetNoticeStatus() throws Exception {
-        mockMvc.perform(patch(BASE_URL + "/" + createdNoticeId + "/status")
+        mockMvc.perform(patch(BASE_URL + "/{noticedId}/status", createdNoticeId)
                                 .headers(authHeader())
                                 .param("isActive", "false"))
                .andExpect(status().isOk())

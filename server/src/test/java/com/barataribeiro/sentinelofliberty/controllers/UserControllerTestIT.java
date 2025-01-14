@@ -39,7 +39,7 @@ class UserControllerTestIT extends ApplicationBaseIntegrationTest {
     @Order(1)
     @DisplayName("Test get user public profile with valid username")
     void testGetUserPublicProfile() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/public/profile/testuser"))
+        mockMvc.perform(get(BASE_URL + "/public/profile/{username}", "testuser"))
                .andExpect(status().isOk())
                .andDo(print())
                .andExpect(result -> assertEquals("testuser",
@@ -81,7 +81,7 @@ class UserControllerTestIT extends ApplicationBaseIntegrationTest {
     @Test
     @DisplayName("Test get user public profile with invalid username")
     void testGetUserPublicProfileWithInvalidUsername() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/public/profile/invalidusername"))
+        mockMvc.perform(get(BASE_URL + "/public/profile/{username}", "invalidusername"))
                .andExpect(status().isNotFound())
                .andDo(print())
                .andExpect(result -> assertInstanceOf(EntityNotFoundException.class,

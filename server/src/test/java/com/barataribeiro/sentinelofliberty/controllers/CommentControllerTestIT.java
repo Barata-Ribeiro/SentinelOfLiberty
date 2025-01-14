@@ -44,7 +44,7 @@ class CommentControllerTestIT extends ApplicationBaseIntegrationTest {
     @Order(1)
     @DisplayName("Test create comment with valid request body and an authenticated user attempts to create a comment")
     void testCreateComment() throws Exception {
-        mockMvc.perform(post(BASE_URL + "/1")
+        mockMvc.perform(post(BASE_URL + "/{articleId}", 1)
                                 .headers(userAuthHeader())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(NEW_COMMENT_PAYLOAD))
@@ -63,7 +63,7 @@ class CommentControllerTestIT extends ApplicationBaseIntegrationTest {
     @Order(2)
     @DisplayName("Test create reply with valid request body and an authenticated user attempts to create a reply")
     void testReplyToComment() throws Exception {
-        mockMvc.perform(post(BASE_URL + "/1")
+        mockMvc.perform(post(BASE_URL + "/{articleId}", 1)
                                 .headers(userAuthHeader())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
@@ -93,7 +93,9 @@ class CommentControllerTestIT extends ApplicationBaseIntegrationTest {
     @Order(3)
     @DisplayName("Get article comments tree with valid article ID")
     void getArticleCommentsTreeWithValidArticleId() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/1").headers(userAuthHeader()).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get(BASE_URL + "/{articleId}", 1)
+                                .headers(userAuthHeader())
+                                .contentType(MediaType.APPLICATION_JSON))
                .andExpect(status().isOk())
                .andDo(print())
                .andExpect(result -> {
@@ -119,8 +121,9 @@ class CommentControllerTestIT extends ApplicationBaseIntegrationTest {
     @Order(4)
     @DisplayName("Delete comment with valid comment ID and an authenticated user attempts to delete its own comment")
     void testDeleteOwnComment() throws Exception {
-        mockMvc.perform(delete(BASE_URL + "/1/%d".formatted(createdCommentId)).headers(userAuthHeader())
-                                                                              .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete(BASE_URL + "/{articleId}/{commentId}", 1, createdCommentId)
+                                .headers(userAuthHeader())
+                                .contentType(MediaType.APPLICATION_JSON))
                .andExpect(status().isNoContent())
                .andDo(print())
                .andExpect(jsonPath("$.message").value("You have successfully deleted the comment"));
@@ -139,7 +142,7 @@ class CommentControllerTestIT extends ApplicationBaseIntegrationTest {
     })
     @DisplayName("Create comment with invalid request body")
     void createCommentWithInvalidRequestBody(String body, String expectedErrorMessage) throws Exception {
-        mockMvc.perform(post(BASE_URL + "/1")
+        mockMvc.perform(post(BASE_URL + "/{articleId}", 1)
                                 .headers(userAuthHeader())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
@@ -159,8 +162,9 @@ class CommentControllerTestIT extends ApplicationBaseIntegrationTest {
     @Test
     @DisplayName("Delete comment with invalid comment ID")
     void deleteCommentWithInvalidCommentId() throws Exception {
-        mockMvc.perform(delete(BASE_URL + "/1/9999").headers(userAuthHeader())
-                                                    .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete(BASE_URL + "/{articleId}/{commentId}", 1, 9999)
+                                .headers(userAuthHeader())
+                                .contentType(MediaType.APPLICATION_JSON))
                .andExpect(status().isBadRequest())
                .andDo(print())
                .andExpect(result -> {

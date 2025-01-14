@@ -28,7 +28,7 @@ class AdminControllerTestIT extends ApplicationBaseIntegrationTest {
     @Test
     @DisplayName("Test admin banning and unbanning an user")
     void testAdminBanOrUnbanAnUser() throws Exception {
-        mockMvc.perform(patch(BASE_URL + "/users/testuser")
+        mockMvc.perform(patch(BASE_URL + "/users/{username}", "testuser")
                                 .param("action", "ban")
                                 .headers(authHeader()))
                .andExpect(status().isOk())
@@ -39,7 +39,7 @@ class AdminControllerTestIT extends ApplicationBaseIntegrationTest {
                    assertEquals("You have successfully banned the user", message);
                });
 
-        mockMvc.perform(patch(BASE_URL + "/users/testuser")
+        mockMvc.perform(patch(BASE_URL + "/users/{username}", "testuser")
                                 .param("action", "unban")
                                 .headers(authHeader()))
                .andExpect(status().isOk())
@@ -54,7 +54,7 @@ class AdminControllerTestIT extends ApplicationBaseIntegrationTest {
     @Test
     @DisplayName("Test admin toggling an user's verification status")
     void testAdminToggleVerification() throws Exception {
-        mockMvc.perform(patch(BASE_URL + "/users/testuser/toggle-verification")
+        mockMvc.perform(patch(BASE_URL + "/users/{username}/toggle-verification", "testuser")
                                 .headers(authHeader()))
                .andExpect(status().isOk())
                .andDo(print())
@@ -64,7 +64,7 @@ class AdminControllerTestIT extends ApplicationBaseIntegrationTest {
                    assertEquals("You have successfully verified the user", message);
                });
 
-        mockMvc.perform(patch(BASE_URL + "/users/testuser/toggle-verification")
+        mockMvc.perform(patch(BASE_URL + "/users/{username}/toggle-verification", "testuser")
                                 .headers(authHeader()))
                .andExpect(status().isOk())
                .andDo(print())
@@ -78,7 +78,7 @@ class AdminControllerTestIT extends ApplicationBaseIntegrationTest {
     @Test
     @DisplayName("Test where a regular user tries to access the admin endpoint, should return 403")
     void testRegularUserAccessingAdminEndpoint() throws Exception {
-        mockMvc.perform(patch(BASE_URL + "/users/testuser")
+        mockMvc.perform(patch(BASE_URL + "/users/{username}", "testuser")
                                 .param("action", "ban")
                                 .headers(userAuthHeader()))
                .andExpect(status().isForbidden())

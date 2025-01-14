@@ -62,7 +62,7 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
     @DisplayName("Test update article with valid request body and an authenticated admin attempts to update an article")
     void testUpdateArticle() throws Exception {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                                                   .patch(BASE_URL + "/" + createdArticleId)
+                                                   .patch(BASE_URL + "/{articleId}", createdArticleId)
                                                    .headers(authHeader())
                                                    .contentType(MediaType.APPLICATION_JSON)
                                                    .content(UPDATE_ARTICLE_PAYLOAD))
@@ -101,7 +101,7 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
     @DisplayName("Test delete article where an authenticated admin attempts to delete an article")
     void testDeleteArticle() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                                .delete(BASE_URL + "/" + createdArticleId)
+                                .delete(BASE_URL + "/{articleId}", createdArticleId)
                                 .headers(authHeader()))
                .andExpect(status().isNoContent())
                .andDo(print())
@@ -136,7 +136,7 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
     @Test
     @DisplayName("Test get public article where an logged or not user attempts to get an article")
     void testGetArticle() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/public/1"))
+        mockMvc.perform(get(BASE_URL + "/public/{articleId}", 1))
                .andExpect(status().isOk())
                .andDo(print())
                .andExpect(jsonPath("$.data.id").value(1));
