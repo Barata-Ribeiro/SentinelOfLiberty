@@ -62,22 +62,23 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     @Transactional(readOnly = true)
     public Page<ArticleSummaryDTO> getAllArticles(int page, int perPage, String direction, String orderBy) {
-        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
-        orderBy = orderBy.equalsIgnoreCase(ApplicationConstants.CREATED_AT) ? ApplicationConstants.CREATED_AT : orderBy;
-        PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
+        final PageRequest pageable = getPageRequest(page, perPage, direction, orderBy);
+        return articleRepository.findAll(pageable).map(articleMapper::toArticleSummaryDTO);
+    }
 
-        return articleRepository
-                .findAll(pageable)
-                .map(articleMapper::toArticleSummaryDTO);
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ArticleSummaryDTO> getAllArticlesByCategory(String category, int page, int perPage, String direction,
+                                                            String orderBy) {
+        final PageRequest pageable = getPageRequest(page, perPage, direction, orderBy);
+        return articleRepository.findAllByCategories_Name(category, pageable).map(articleMapper::toArticleSummaryDTO);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ArticleSummaryDTO> getAllOwnArticles(String search, int page, int perPage, String direction,
                                                      String orderBy, Authentication authentication) {
-        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
-        orderBy = orderBy.equalsIgnoreCase(ApplicationConstants.CREATED_AT) ? ApplicationConstants.CREATED_AT : orderBy;
-        PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
+        final PageRequest pageable = getPageRequest(page, perPage, direction, orderBy);
 
         Page<ArticleSummaryDTO> articlesPage;
         if (search != null && !search.isBlank()) {
@@ -171,6 +172,12 @@ public class ArticleServiceImpl implements ArticleService {
         updateArticlePropertiesIfPresentAndSetItAsEdited(body, article);
 
         return articleMapper.toArticleDTO(articleRepository.saveAndFlush(article));
+    }
+
+    private @NotNull PageRequest getPageRequest(int page, int perPage, String direction, String orderBy) {
+        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+        orderBy = orderBy.equalsIgnoreCase(ApplicationConstants.CREATED_AT) ? ApplicationConstants.CREATED_AT : orderBy;
+        return PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
     }
 
     private void updateArticlePropertiesIfPresentAndSetItAsEdited(@NotNull ArticleUpdateRequestDTO body,

@@ -37,6 +37,9 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     Set<Article> findByCategories_Name(String name);
 
     @EntityGraph(attributePaths = {"author", "categories", "references"})
+    Page<Article> findAllByCategories_Name(String name, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"author", "categories", "references"})
     Set<Article> findTop10ByOrderByCreatedAtDesc();
 
     long countByTitle(String title);
