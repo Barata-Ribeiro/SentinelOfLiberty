@@ -38,6 +38,77 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
     @Autowired private CategoryRepository categoryRepository;
 
     @Test
+    @DisplayName("Test get public latest articles where a user attempts to get the latest articles")
+    void testGetLatestArticles() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/public/latest"))
+               .andExpect(status().isOk())
+               .andDo(print())
+               .andExpect(jsonPath("$.data").isArray());
+    }
+
+    @Test
+    @DisplayName("Test get all own articles where an authenticated admin attempts to get all of their articles " +
+            "paginated")
+    void testGetAllOwnArticles() throws Exception {
+        mockMvc.perform(get(BASE_URL)
+                                .headers(authHeader())
+                                .param("page", "0")
+                                .param("perPage", "10")
+                                .param("direction", "ASC"))
+               .andExpect(status().isOk())
+               .andDo(print())
+               .andExpect(jsonPath("$.data.content").isArray());
+    }
+
+    @Test
+    @DisplayName("Test get all articles by category with valid category name")
+    void testGetAllArticlesByCategoryWithValidCategory() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/public/category/{category}", "test")
+                                .param("page", "0")
+                                .param("perPage", "10")
+                                .param("direction", "ASC")
+                                .param("orderBy", "createdAt"))
+               .andExpect(status().isOk())
+               .andDo(print())
+               .andExpect(jsonPath("$.data.content").isArray());
+    }
+
+    @Test
+    @DisplayName("Test get all articles by category with non-existing category name")
+    void testGetAllArticlesByCategoryWithNonExistingCategory() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/public/category/{category}", "nonExistingCategory")
+                                .param("page", "0")
+                                .param("perPage", "10")
+                                .param("direction", "ASC")
+                                .param("orderBy", "createdAt"))
+               .andExpect(status().isOk())
+               .andDo(print())
+               .andExpect(jsonPath("$.data.content").isEmpty());
+    }
+
+    @Test
+    @DisplayName("Test get all articles by category with invalid pagination parameters")
+    void testGetAllArticlesByCategoryWithInvalidPagination() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/public/category/{category}", "test")
+                                .param("page", "-1")
+                                .param("perPage", "-10")
+                                .param("direction", "ASC")
+                                .param("orderBy", "createdAt"))
+               .andExpect(status().isBadRequest())
+               .andDo(print())
+               .andExpect(result -> assertInstanceOf(IllegalArgumentException.class, result.getResolvedException()));
+    }
+
+    @Test
+    @DisplayName("Test get public article where an logged or not user attempts to get an article")
+    void testGetArticle() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/public/article/{articleId}", 1L))
+               .andExpect(status().isOk())
+               .andDo(print())
+               .andExpect(jsonPath("$.data.id").value(1));
+    }
+
+    @Test
     @Order(1)
     @DisplayName("Test create article with valid request body and an authenticated admin attempts to create an article")
     void testCreateArticle() throws Exception {
@@ -108,38 +179,6 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
                .andExpect(jsonPath("$.message").value("You have successfully deleted the article"));
 
         assertTrue(articleRepository.findById(createdArticleId).isEmpty());
-    }
-
-    @Test
-    @DisplayName("Test get all own articles where an authenticated admin attempts to get all of their articles " +
-            "paginated")
-    void testGetAllOwnArticles() throws Exception {
-        mockMvc.perform(get(BASE_URL)
-                                .headers(authHeader())
-                                .param("page", "0")
-                                .param("perPage", "10")
-                                .param("direction", "ASC"))
-               .andExpect(status().isOk())
-               .andDo(print())
-               .andExpect(jsonPath("$.data.content").isArray());
-    }
-
-    @Test
-    @DisplayName("Test get public latest articles where a user attempts to get the latest articles")
-    void testGetLatestArticles() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/public/latest"))
-               .andExpect(status().isOk())
-               .andDo(print())
-               .andExpect(jsonPath("$.data").isArray());
-    }
-
-    @Test
-    @DisplayName("Test get public article where an logged or not user attempts to get an article")
-    void testGetArticle() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/public/{articleId}", 1))
-               .andExpect(status().isOk())
-               .andDo(print())
-               .andExpect(jsonPath("$.data.id").value(1));
     }
 
     @Test
