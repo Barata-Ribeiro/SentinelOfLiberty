@@ -38,7 +38,7 @@ public class ArticleController {
                                                               response));
     }
 
-    @GetMapping("/public/{articleId}")
+    @GetMapping("/public/article/{articleId}")
     @Operation(summary = "Get an article",
                description = "This endpoint allows a user to get an article by providing the article ID.")
     public ResponseEntity<ApplicationResponseDTO<ArticleDTO>> getArticle(@PathVariable Long articleId) {
@@ -67,7 +67,7 @@ public class ArticleController {
                description = "This endpoint allows an user to get all articles by category, summarised. These " +
                        "articles are usually suggested to be displayed on the listing page, through infinite " +
                        "scrolling or pagination. Regardless the author.")
-    @GetMapping("/public/{category}")
+    @GetMapping("/public/category/{category}")
     public ResponseEntity<ApplicationResponseDTO<Page<ArticleSummaryDTO>>> getAllArticlesByCategory(
             @PathVariable String category,
             @RequestParam(defaultValue = "0") int page,
