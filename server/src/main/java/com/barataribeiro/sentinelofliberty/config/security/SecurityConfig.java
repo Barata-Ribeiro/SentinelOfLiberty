@@ -51,7 +51,7 @@ public class SecurityConfig {
                     .contentSecurityPolicy(csp -> csp
                             .policyDirectives(ApplicationConstants.CONTENT_SECURITY_POLICY_VALUE))
                     .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
-                    .permissionsPolicy(policy -> policy.policy("geolocation=(), microphone=(), camera=()")))
+                    .permissionsPolicyHeader(policy -> policy.policy("geolocation=(), microphone=(), camera=()")))
             .authorizeHttpRequests(authorize -> authorize
                     .requestMatchers(ApplicationConstants.getAuthWhitelist()).permitAll()
                     .anyRequest().authenticated())
