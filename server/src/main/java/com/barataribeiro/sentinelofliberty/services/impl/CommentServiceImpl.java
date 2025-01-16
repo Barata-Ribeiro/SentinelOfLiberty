@@ -73,19 +73,19 @@ public class CommentServiceImpl implements CommentService {
         List<CommentDTO> commentDTOS = commentMapper.toCommentDTOList(comments);
 
         Map<Long, CommentDTO> dtoById = new LinkedHashMap<>();
-        for (CommentDTO dto : commentDTOS) {
+        commentDTOS.parallelStream().forEach(dto -> {
             dto.setChildren(new ArrayList<>());
             dtoById.put(dto.getId(), dto);
-        }
+        });
 
         List<CommentDTO> roots = new ArrayList<>();
-        for (CommentDTO dto : commentDTOS) {
+        commentDTOS.parallelStream().forEach(dto -> {
             if (dto.getParentId() == null) roots.add(dto);
             else {
                 CommentDTO parentDTO = dtoById.get(dto.getParentId());
                 if (parentDTO != null) parentDTO.getChildren().add(dto);
             }
-        }
+        });
 
         return roots;
     }
