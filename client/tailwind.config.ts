@@ -5,12 +5,14 @@ export default {
         "./src/**/*.{js,ts,jsx,tsx,mdx}",
     ],
     theme: {
+        container: { center: true, padding: "1rem" },
         extend: {
-            colors: {
-                background: "var(--background)",
-                foreground: "var(--foreground)",
+            fontFamily: {
+                heading: [ "var(--font-lora)", "serif" ],
+                body: [ "var(--font-merriWeather)", "serif" ],
             },
         },
     },
-    plugins: [],
+    safelist: [ { pattern: /(bg|text|border|fill)-./ } ],
+    plugins: [ require("@tailwindcss/forms"), require("@tailwindcss/typography") ],
 } satisfies Config
