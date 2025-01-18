@@ -20,22 +20,22 @@ import java.util.UUID;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserProfileDTO implements Serializable {
-    UUID id;
-    String username;
-    String email;
-    Roles role;
-    String displayName;
-    String fullName;
-    String avatarUrl;
-    String biography;
-    LocalDate birthDate;
-    String location;
-    String website;
-    Boolean isPrivate;
-    Boolean isVerified;
-    Instant createdAt;
-    Instant updatedAt;
+    private UUID id;
+    private String username;
+    private String email;
+    private Roles role;
+    private String displayName;
+    private String fullName;
+    private String avatarUrl;
+    private String biography;
+    private LocalDate birthDate;
+    private String location;
+    private String website;
     private String socialMedia;
     private String videoChannel;
     private String streamingChannel;
+    private Boolean isPrivate;
+    private Boolean isVerified;
+    private Instant createdAt;
+    private Instant updatedAt;
 }

@@ -30,6 +30,9 @@ public class UserAccountDTO implements Serializable {
     private LocalDate birthDate;
     private String location;
     private String website;
+    private String socialMedia;
+    private String videoChannel;
+    private String streamingChannel;
     private Boolean isPrivate;
     private Boolean isVerified;
     private Long commentsCount;
@@ -38,7 +41,4 @@ public class UserAccountDTO implements Serializable {
     private Long unreadNotificationsCount;
     private Instant createdAt;
     private Instant updatedAt;
-    private String socialMedia;
-    private String videoChannel;
-    private String streamingChannel;
 }

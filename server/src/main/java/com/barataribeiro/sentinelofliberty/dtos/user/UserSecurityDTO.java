@@ -18,12 +18,13 @@ import java.util.UUID;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserSecurityDTO implements Serializable {
-    UUID id;
-    String username;
-    String email;
-    Roles role;
-    Boolean isPrivate;
-    Boolean isVerified;
-    Instant createdAt;
-    Instant updatedAt;
+    private UUID id;
+    private String username;
+    private String email;
+    private Roles role;
+    private String avatarUrl;
+    private Boolean isPrivate;
+    private Boolean isVerified;
+    private Instant createdAt;
+    private Instant updatedAt;
 }
