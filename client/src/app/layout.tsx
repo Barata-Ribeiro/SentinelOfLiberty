@@ -1,5 +1,6 @@
 import tw                     from "@/utils/tw"
 import type { Metadata }      from "next"
+import { SessionProvider }    from "next-auth/react"
 import { Lora, Merriweather } from "next/font/google"
 import "./globals.css"
 import { ReactNode }          from "react"
@@ -34,7 +35,9 @@ export default function RootLayout({
     
     return (
         <html lang="en" suppressHydrationWarning>
-            <body className={ bodyStyles }>{ children }</body>
+            <body className={ bodyStyles }>
+            <SessionProvider>{ children }</SessionProvider>
+            </body>
         </html>
     )
 }
