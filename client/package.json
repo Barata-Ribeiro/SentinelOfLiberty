@@ -22,21 +22,23 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.18.0",
+    "@next/eslint-plugin-next": "^15.1.5",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.16",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/node": "^22.10.7",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
     "@types/sockjs-client": "^1.5.4",
     "autoprefixer": "^10.4.20",
-    "eslint": "^9",
+    "eslint": "^9.18.0",
     "eslint-config-next": "^15.1.5",
     "eslint-config-prettier": "^10.0.1",
-    "eslint-plugin-prettier": "^5.2.2",
+    "eslint-plugin-prettier": "^5.2.3",
     "postcss": "^8.5.1",
     "prettier-plugin-tailwindcss": "^0.6.10",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5"
+    "typescript": "^5.7.3"
   }
 }
