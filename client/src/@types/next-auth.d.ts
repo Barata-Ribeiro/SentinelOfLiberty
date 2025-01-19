@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { User as Context } from "@/@types/user"
-import { DefaultSession }  from "next-auth"
-import NextAuth            from "next-auth"
-import { JWT }             from "next-auth/jwt"
+import { DefaultSession } from "next-auth"
+import NextAuth from "next-auth"
+import { JWT } from "next-auth/jwt"
 
 declare module "next-auth" {
     interface User {
@@ -13,7 +13,7 @@ declare module "next-auth" {
         refreshToken?: string | null
         refreshTokenExpiresAt?: string | null
     }
-    
+
     interface Session {
         user: Context & DefaultSession["user"]
         accessToken: string

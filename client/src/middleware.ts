@@ -1,4 +1,4 @@
-import { auth }                      from "auth"
+import { auth } from "auth"
 import { NextRequest, NextResponse } from "next/server"
 
 export default auth((request: NextRequest) => {
@@ -6,17 +6,17 @@ export default auth((request: NextRequest) => {
     const { auth } = request
     const { pathname } = request.nextUrl
     const isAuthenticated = !!auth && !auth.error
-    
+
     if (isAuthenticated && pathname.startsWith("/auth")) {
         return NextResponse.redirect(new URL("/dashboard", request.nextUrl))
     }
-    
+
     if (!isAuthenticated && pathname.startsWith("/dashboard")) {
         const loginUrl = new URL("/auth/login", request.nextUrl)
         loginUrl.searchParams.set("callbackUrl", request.nextUrl.href)
         return NextResponse.redirect(loginUrl)
     }
-    
+
     return NextResponse.next()
 })
 

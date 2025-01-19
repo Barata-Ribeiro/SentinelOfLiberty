@@ -19,7 +19,7 @@ interface Profile extends User {
     birthDate: string
     location: string
     website: string
-    socialMedia: string;
+    socialMedia: string
     videoChannel: string
     streamingChannel: string
 }

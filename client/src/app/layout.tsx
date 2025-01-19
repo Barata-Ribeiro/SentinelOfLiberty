@@ -31,12 +31,12 @@ export default function RootLayout({
                                    }: Readonly<{
     children: ReactNode
 }>) {
-    const bodyStyles = tw`${ lora.variable } ${ merriWeather.variable } antialiased h-full`
+    const bodyStyles = tw`${ lora.variable } ${ merriWeather.variable } h-full antialiased`
     
     return (
         <html lang="en" suppressHydrationWarning>
             <body className={ bodyStyles }>
-            <SessionProvider>{ children }</SessionProvider>
+                <SessionProvider>{ children }</SessionProvider>
             </body>
         </html>
     )
