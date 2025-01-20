@@ -3,7 +3,7 @@ import { LoginResponse }            from "@/@types/auth"
 import createCookie                 from "@/actions/application/create-cookie"
 import refreshAccessToken           from "@/actions/application/token-refresh"
 import { loginAuthUrl }             from "@/utils/routes"
-import { getTokenAndExpiration }    from "@/utils/utilities"
+import { getTokenAndExpiration }    from "@/utils/server-utilities"
 import Credentials                  from "@auth/core/providers/credentials"
 import NextAuth, { NextAuthConfig } from "next-auth"
 

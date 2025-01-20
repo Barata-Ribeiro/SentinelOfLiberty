@@ -4,7 +4,7 @@ import "server-only"
 import { RestResponse }          from "@/@types/application"
 import { LoginResponse }         from "@/@types/auth"
 import { refreshTokenAuthUrl }   from "@/utils/routes"
-import { getTokenAndExpiration } from "@/utils/utilities"
+import { getTokenAndExpiration } from "@/utils/server-utilities"
 import { JWT }                   from "next-auth/jwt"
 
 export default async function refreshAccessToken(token: JWT) {
