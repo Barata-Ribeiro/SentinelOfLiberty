@@ -1,11 +1,14 @@
 "use client"
 
+import AvatarWithText                            from "@/components/avatar-with-text"
+import SessionVerifier                           from "@/helpers/session-verifier"
 import { Button, Dialog, DialogPanel }           from "@headlessui/react"
+import { useSession }                            from "next-auth/react"
 import Image, { getImageProps }                  from "next/image"
 import Link                                      from "next/link"
 import { useState }                              from "react"
+import { FaRegBell }                             from "react-icons/fa6"
 import { HiMiniXMark, HiOutlineBars3CenterLeft } from "react-icons/hi2"
-// import SessionVerifier from "@/helpers/session-verifier"
 import headerImage                               from "../../public/city-of-liberty.png"
 import solLogo                                   from "../../public/sentinel-of-liberty-final.svg"
 
@@ -21,13 +24,15 @@ function getBackgroundImage(srcSet = "") {
 }
 
 const navigation = [
-    { name: "Product", href: "#" },
-    { name: "Features", href: "#" },
-    { name: "Marketplace", href: "#" },
-    { name: "Company", href: "#" },
+    { name: "Item 1", href: "#" },
+    { name: "Item 2", href: "#" },
+    { name: "Item 3", href: "#" },
+    { name: "Item 4", href: "#" },
 ]
 
 export default function Header() {
+    const { data: session } = useSession()
+    
     const [ mobileMenuOpen, setMobileMenuOpen ] = useState(false)
     const {
         props: { srcSet },
@@ -35,8 +40,8 @@ export default function Header() {
     const backgroundImage = getBackgroundImage(srcSet)
     
     return (
-        <header>
-            {/*<SessionVerifier />*/ }
+        <header className="shadow">
+            <SessionVerifier />
             <div
                 className="flex items-center justify-center"
                 style={ {
@@ -47,7 +52,13 @@ export default function Header() {
                     backgroundRepeat: "no-repeat",
                     backgroundPosition: "center",
                 } }>
-                <Image src={ solLogo } alt="Sentinel of Liberty Logo" priority className="h-1/2 w-max" />
+                <Image
+                    src={ solLogo }
+                    alt="Sentinel of Liberty Logo"
+                    priority
+                    sizes="(min-width: 808px) 50vw, 100vw"
+                    className="h-1/2 w-max"
+                />
             </div>
 
             <div className="bg-marigold-600">
@@ -75,30 +86,65 @@ export default function Header() {
                     </div>
 
                     <div className="flex flex-1 justify-end">
-                        <Link href="/auth/login"
-                              className="text-sm font-semibold leading-6 text-stone-900 hover:bg-marigold-400 rounded-md px-1.5">
-                            Log in <span aria-hidden="true">&rarr;</span>
-                        </Link>
+                        { !session ? (
+                            <Link
+                                href="/auth/login"
+                                className="rounded-md px-1.5 text-sm font-semibold leading-6 text-stone-900 hover:bg-marigold-400">
+                                Log in <span aria-hidden="true">&rarr;</span>
+                            </Link>
+                        ) : (
+                              <>
+                                <button
+                                    type="button"
+                                    className="relative ml-auto flex-shrink-0 rounded-full bg-white p-1 text-stone-400 hover:text-stone-500 focus:outline-none focus:ring-2 focus:ring-marigold-500 focus:ring-offset-2">
+                                    <span className="absolute -inset-1.5" />
+                                    <span className="sr-only">View notifications</span>
+                                    <FaRegBell aria-hidden="true" className="size-6" />
+                                </button>
+                                <AvatarWithText name={ session.user.username }
+                                                size={ 36 }
+                                                src={ session.user?.avatarUrl } />
+                            </>
+                          ) }
                     </div>
                 </nav>
                 <Dialog open={ mobileMenuOpen } onClose={ setMobileMenuOpen } className="lg:hidden">
                     <div className="fixed inset-0 z-10" />
-                    <DialogPanel className="fixed inset-y-[280px] left-0 z-10 w-full h-full overflow-y-auto bg-stone-50 px-6 py-6">
+                    <DialogPanel className="fixed inset-y-[280px] left-0 z-10 h-full w-full overflow-y-auto bg-stone-50 px-6 py-6">
                         <div className="flex items-center justify-between">
                             <div className="flex flex-1">
                                 <Button
                                     type="button"
                                     onClick={ () => setMobileMenuOpen(false) }
-                                    className="-m-2.5 rounded-md p-2.5 text-stone-700">
+                                    className="-m-2.5 rounded-md p-2.5 text-stone-700 hover:bg-stone-300">
                                     <span className="sr-only">Close menu</span>
                                     <HiMiniXMark aria-hidden="true" className="h-6 w-6" />
                                 </Button>
                             </div>
 
                             <div className="flex flex-1 justify-end">
-                                <Link href="/auth/login" className="text-sm font-semibold leading-6 text-stone-900">
-                                    Log in <span aria-hidden="true">&rarr;</span>
-                                </Link>
+                                { !session ? (
+                                    <Link
+                                        href="/auth/login"
+                                        className="rounded-md px-1.5 text-sm font-semibold leading-6 text-stone-900 hover:bg-stone-300">
+                                        Log in <span aria-hidden="true">&rarr;</span>
+                                    </Link>
+                                ) : (
+                                      <>
+                                        <button
+                                            type="button"
+                                            className="relative ml-auto flex-shrink-0 rounded-full bg-white p-1 text-stone-400 hover:text-stone-500 focus:outline-none focus:ring-2 focus:ring-marigold-500 focus:ring-offset-2">
+                                            <span className="absolute -inset-1.5" />
+                                            <span className="sr-only">View notifications</span>
+                                            <FaRegBell aria-hidden="true" className="size-6" />
+                                        </button>
+                                        <AvatarWithText
+                                            name={ session.user.username }
+                                            size={ 36 }
+                                            src={ session.user?.avatarUrl }
+                                        />
+                                    </>
+                                  ) }
                             </div>
                         </div>
                         <div className="mt-6 space-y-2">
