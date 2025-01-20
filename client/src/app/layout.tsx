@@ -1,3 +1,4 @@
+import Footer                 from "@/components/footer"
 import Header                 from "@/components/header"
 import tw                     from "@/utils/tw"
 import type { Metadata }      from "next"
@@ -9,6 +10,8 @@ import { ReactNode }          from "react"
 const lora = Lora({
                       variable: "--font-lora",
                       subsets: [ "latin" ],
+                      display: "swap",
+                      preload: true,
                   })
 
 const merriWeather = Merriweather({
@@ -17,6 +20,7 @@ const merriWeather = Merriweather({
                                       style: [ "normal", "italic" ],
                                       variable: "--font-merriWeather",
                                       subsets: [ "latin" ],
+                                      preload: true,
                                   })
 
 export const metadata: Metadata = {
@@ -40,6 +44,7 @@ export default function RootLayout({
                 <SessionProvider>
                     <Header />
                     { children }
+                    <Footer />
                 </SessionProvider>
             </body>
         </html>
