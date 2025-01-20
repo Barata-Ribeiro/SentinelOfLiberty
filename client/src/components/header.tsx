@@ -2,6 +2,7 @@
 
 import AvatarWithText                            from "@/components/avatar-with-text"
 import SessionVerifier                           from "@/helpers/session-verifier"
+import { getBackgroundImage }                    from "@/utils/functions"
 import { Button, Dialog, DialogPanel }           from "@headlessui/react"
 import { useSession }                            from "next-auth/react"
 import Image, { getImageProps }                  from "next/image"
@@ -11,17 +12,6 @@ import { FaRegBell }                             from "react-icons/fa6"
 import { HiMiniXMark, HiOutlineBars3CenterLeft } from "react-icons/hi2"
 import headerImage                               from "../../public/city-of-liberty.png"
 import solLogo                                   from "../../public/sentinel-of-liberty-final.svg"
-
-function getBackgroundImage(srcSet = "") {
-    const imageSet = srcSet
-        .split(", ")
-        .map(str => {
-            const [ url, dpi ] = str.split(" ")
-            return `url("${ url }") ${ dpi }`
-        })
-        .join(", ")
-    return `image-set(${ imageSet })`
-}
 
 const navigation = [
     { name: "Item 1", href: "#" },
