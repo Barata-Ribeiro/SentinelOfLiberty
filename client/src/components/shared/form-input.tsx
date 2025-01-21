@@ -9,7 +9,7 @@ interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export default function FormInput({ label, description, disabledField, ...props }: FormInputProps) {
     return (
-        <div className="w-full min-w-[200px] max-w-sm">
+        <div className="w-full min-w-[200px]">
             <Field className="relative" disabled={ disabledField }>
                 <Input
                     className="bg-transparent ease data-[disabled]:bg-gray-100 peer w-full rounded-md border border-stone-200 px-3 py-2 text-sm text-stone-700 shadow-sm transition duration-300 placeholder:text-stone-400 hover:border-stone-300 focus:border-stone-400 focus:shadow focus:outline-none focus:ring-1 focus:ring-stone-400/50 data-[disabled]:pointer-events-none"
