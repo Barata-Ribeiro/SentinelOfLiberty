@@ -7,21 +7,23 @@ import { Button, Dialog, DialogPanel }           from "@headlessui/react"
 import { useSession }                            from "next-auth/react"
 import Image, { getImageProps }                  from "next/image"
 import Link                                      from "next/link"
+import { usePathname }                           from "next/navigation"
 import { useState }                              from "react"
 import { FaRegBell }                             from "react-icons/fa6"
 import { HiMiniXMark, HiOutlineBars3CenterLeft } from "react-icons/hi2"
+import { twMerge }                               from "tailwind-merge"
 import headerImage                               from "../../public/city-of-liberty.png"
 import solLogo                                   from "../../public/sentinel-of-liberty-final.svg"
 
 const navigation = [
-    { name: "Item 1", href: "#" },
-    { name: "Item 2", href: "#" },
-    { name: "Item 3", href: "#" },
-    { name: "Item 4", href: "#" },
+    { name: "Home", href: "/" },
+    { name: "Articles", href: "/articles" },
+    { name: "Suggestions", href: "/suggestions" },
 ]
 
 export default function Header() {
     const { data: session } = useSession()
+    const pathname = usePathname()
     
     const [ mobileMenuOpen, setMobileMenuOpen ] = useState(false)
     const {
@@ -56,12 +58,18 @@ export default function Header() {
                     <div className="flex flex-1">
                         <div className="hidden lg:flex lg:gap-x-12">
                             { navigation.map(item => (
-                                <a
+                                <Link
                                     key={ item.name }
                                     href={ item.href }
-                                    className="text-sm font-semibold leading-6 text-stone-900">
+                                    aria-current={ pathname === item.href ? "page" : undefined }
+                                    className={ twMerge(
+                                        pathname === item.href
+                                        ? "bg-marigold-400 text-marigold-900"
+                                        : "text-stone-900 hover:bg-marigold-400 active:bg-marigold-700",
+                                        "rounded-md px-3 py-2 text-sm font-semibold leading-6 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900",
+                                    ) }>
                                     { item.name }
-                                </a>
+                                </Link>
                             )) }
                         </div>
                         <div className="flex lg:hidden">
@@ -79,18 +87,18 @@ export default function Header() {
                         { !session ? (
                             <Link
                                 href="/auth/login"
-                                className="rounded-md px-1.5 text-sm font-semibold leading-6 text-stone-900 hover:bg-marigold-400">
+                                className="rounded-md px-3 py-2 text-sm font-semibold leading-6 text-stone-900 hover:bg-marigold-400 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900 active:bg-marigold-700">
                                 Log in <span aria-hidden="true">&rarr;</span>
                             </Link>
                         ) : (
                               <>
-                                <button
+                                <Button
                                     type="button"
                                     className="relative ml-auto flex-shrink-0 rounded-full bg-white p-1 text-stone-400 hover:text-stone-500 focus:outline-none focus:ring-2 focus:ring-marigold-500 focus:ring-offset-2">
                                     <span className="absolute -inset-1.5" />
                                     <span className="sr-only">View notifications</span>
                                     <FaRegBell aria-hidden="true" className="size-6" />
-                                </button>
+                                </Button>
                                 <AvatarWithText name={ session.user.username }
                                                 size={ 36 }
                                                 src={ session.user?.avatarUrl } />
@@ -142,7 +150,13 @@ export default function Header() {
                                 <Link
                                     key={ item.name }
                                     href={ item.href }
-                                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-stone-900 hover:bg-stone-50">
+                                    aria-current={ pathname === item.href ? "page" : undefined }
+                                    className={ twMerge(
+                                        pathname === item.href
+                                        ? "bg-stone-400 text-stone-800"
+                                        : "text-stone-900 hover:bg-stone-50",
+                                        "-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7",
+                                    ) }>
                                     { item.name }
                                 </Link>
                             )) }
