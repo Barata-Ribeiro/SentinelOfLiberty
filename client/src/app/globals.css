@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 @layer base {
-    h1, h2, h3, h4, h5, h6, a {
+    h1, h2, h3, h4, h5, h6, a, label, button {
         @apply font-heading;
     }
 
-    p {
+    p, input, textarea, li {
         @apply font-body;
     }
 }
