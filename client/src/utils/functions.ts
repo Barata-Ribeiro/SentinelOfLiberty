@@ -1,3 +1,5 @@
+import { ProblemDetails } from "@/@types/application"
+
 function getBackgroundImage(srcSet = "") {
     const imageSet = srcSet
         .split(", ")
@@ -9,4 +11,14 @@ function getBackgroundImage(srcSet = "") {
     return `image-set(${ imageSet })`
 }
 
-export { getBackgroundImage }
+function problemDetailsFactory({ type, title, status, detail, instance }: ProblemDetails): ProblemDetails {
+    return {
+        type,
+        title,
+        status,
+        detail,
+        instance,
+    }
+}
+
+export { getBackgroundImage, problemDetailsFactory }
