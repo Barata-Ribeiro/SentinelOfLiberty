@@ -1,6 +1,6 @@
 "use client"
 
-import { ProblemDetails, State }         from "@/@types/application"
+import { State }                         from "@/@types/application"
 import postAuthLogin                     from "@/actions/auth/post-auth-login"
 import ApplicationRequestFormError       from "@/components/feedback/application-request-form-error"
 import InputValidationError              from "@/components/feedback/input-validation-error"
@@ -49,7 +49,7 @@ export default function LoginForm() {
             </Fieldset>
             
             { formState.error && !Array.isArray(formState.error) && (
-                <ApplicationRequestFormError error={ formState.error as ProblemDetails } />
+                <ApplicationRequestFormError error={ JSON.parse(String(formState.error).split(". R")[0]) } />
             ) }
             
             { formState.error && Array.isArray(formState.error) && <InputValidationError errors={ formState.error } /> }
@@ -57,11 +57,11 @@ export default function LoginForm() {
             <FormButton className="w-full" disabled={ pending }>
                 { pending ? (
                     <>
-                        Login <FaArrowRightToBracket aria-hidden="true" className="size-4" />
+                        <Spinner /> Loading...
                     </>
                 ) : (
                       <>
-                        <Spinner /> Loading...
+                        Login <FaArrowRightToBracket aria-hidden="true" className="size-4" />
                     </>
                   ) }
             </FormButton>
