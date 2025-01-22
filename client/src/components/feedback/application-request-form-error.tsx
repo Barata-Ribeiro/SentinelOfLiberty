@@ -1,4 +1,4 @@
-import { ProblemDetails } from "@/@types/application"
+import { ProblemDetails }        from "@/@types/application"
 import { FaTriangleExclamation } from "react-icons/fa6"
 
 interface ApplicationRequestFormErrorProps {
@@ -14,17 +14,17 @@ export default function ApplicationRequestFormError({ error }: Readonly<Applicat
                 </div>
                 <div className="ml-3">
                     <h3 className="text-yellow-800 text-sm font-semibold">
-                        <span className="font-bold">{error.status}</span> - {error.title}
+                        <span className="font-bold">{ error.status }</span> - { error.title }
                     </h3>
                     <div className="text-yellow-700 mt-2 font-body text-sm">
-                        <p>{error.detail}</p>
-                        {error["invalid-params"] && (
+                        <p>{ error.detail }</p>
+                        { error["invalid-params"] && (
                             <ul className="mt-2 list-disc space-y-1 pl-5">
-                                {error["invalid-params"].map((param: { fieldName: string; reason: string }) => (
-                                    <li key={param.fieldName}>{param.reason}</li>
-                                ))}
+                                { error["invalid-params"].map((param: { fieldName: string; reason: string }) => (
+                                    <li key={ param.fieldName }>{ param.reason }</li>
+                                )) }
                             </ul>
-                        )}
+                        ) }
                     </div>
                 </div>
             </div>
