@@ -17,13 +17,13 @@ import java.time.Instant;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SuggestionDTO implements Serializable {
-    Long id;
-    String title;
-    String content;
-    String mediaUrl;
-    String sourceUrl;
-    AuthorDTO user;
-    Long articlesWritten;
-    Instant createdAt;
-    Instant updatedAt;
+    private Long id;
+    private String title;
+    private String content;
+    private String mediaUrl;
+    private String sourceUrl;
+    private AuthorDTO user;
+    private Long articlesWritten;
+    private Instant createdAt;
+    private Instant updatedAt;
 }

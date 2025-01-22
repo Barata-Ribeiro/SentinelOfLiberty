@@ -18,11 +18,11 @@ import java.time.Instant;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NoticeDTO implements Serializable {
-    Long id;
-    String title;
-    String message;
-    Boolean isActive;
-    AuthorDTO user;
-    Instant createdAt;
-    Instant updatedAt;
+    private Long id;
+    private String title;
+    private String message;
+    private Boolean isActive;
+    private AuthorDTO user;
+    private Instant createdAt;
+    private Instant updatedAt;
 }

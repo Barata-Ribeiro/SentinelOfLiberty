@@ -15,7 +15,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CategoryDTO implements Serializable {
-    Long id;
-    String name;
-    String description;
+    private Long id;
+    private String name;
+    private String description;
 }
