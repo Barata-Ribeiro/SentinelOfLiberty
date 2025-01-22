@@ -65,7 +65,7 @@ export default function Header() {
                                     className={ twMerge(
                                         pathname === item.href
                                         ? "bg-marigold-400 text-marigold-900"
-                                        : "text-stone-900 hover:bg-marigold-400 active:bg-marigold-700",
+                                        : "text-shadow-900 hover:bg-marigold-400 active:bg-marigold-700",
                                         "rounded-md px-3 py-2 text-sm font-semibold leading-6 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900",
                                     ) }>
                                     { item.name }
@@ -76,7 +76,7 @@ export default function Header() {
                             <Button
                                 type="button"
                                 onClick={ () => setMobileMenuOpen(true) }
-                                className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-stone-700 hover:bg-marigold-400">
+                                className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-shadow-700 hover:bg-marigold-400">
                                 <span className="sr-only">Open main menu</span>
                                 <HiOutlineBars3CenterLeft aria-hidden="true" className="h-6 w-6" />
                             </Button>
@@ -87,14 +87,14 @@ export default function Header() {
                         { !session ? (
                             <Link
                                 href="/auth/login"
-                                className="rounded-md px-3 py-2 text-sm font-semibold leading-6 text-stone-900 hover:bg-marigold-400 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900 active:bg-marigold-700">
+                                className="rounded-md px-3 py-2 text-sm font-semibold leading-6 text-shadow-900 hover:bg-marigold-400 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900 active:bg-marigold-700">
                                 Log in <span aria-hidden="true">&rarr;</span>
                             </Link>
                         ) : (
                               <>
                                 <Button
                                     type="button"
-                                    className="relative ml-auto flex-shrink-0 rounded-full bg-white p-1 text-stone-400 hover:text-stone-500 focus:outline-none focus:ring-2 focus:ring-marigold-500 focus:ring-offset-2">
+                                    className="relative ml-auto flex-shrink-0 rounded-full bg-white p-1 text-shadow-400 hover:text-shadow-500 focus:outline-none focus:ring-2 focus:ring-marigold-500 focus:ring-offset-2">
                                     <span className="absolute -inset-1.5" />
                                     <span className="sr-only">View notifications</span>
                                     <FaRegBell aria-hidden="true" className="size-6" />
@@ -114,7 +114,7 @@ export default function Header() {
                                 <Button
                                     type="button"
                                     onClick={ () => setMobileMenuOpen(false) }
-                                    className="-m-2.5 rounded-md p-2.5 text-stone-700 hover:bg-stone-300">
+                                    className="-m-2.5 rounded-md p-2.5 text-shadow-700 hover:bg-stone-300">
                                     <span className="sr-only">Close menu</span>
                                     <HiMiniXMark aria-hidden="true" className="h-6 w-6" />
                                 </Button>
@@ -124,14 +124,14 @@ export default function Header() {
                                 { !session ? (
                                     <Link
                                         href="/auth/login"
-                                        className="rounded-md px-1.5 text-sm font-semibold leading-6 text-stone-900 hover:bg-stone-300">
+                                        className="rounded-md px-1.5 text-sm font-semibold leading-6 text-shadow-900 hover:bg-stone-300">
                                         Log in <span aria-hidden="true">&rarr;</span>
                                     </Link>
                                 ) : (
                                       <>
                                         <button
                                             type="button"
-                                            className="relative ml-auto flex-shrink-0 rounded-full bg-white p-1 text-stone-400 hover:text-stone-500 focus:outline-none focus:ring-2 focus:ring-marigold-500 focus:ring-offset-2">
+                                            className="relative ml-auto flex-shrink-0 rounded-full bg-white p-1 text-shadow-400 hover:text-shadow-500 focus:outline-none focus:ring-2 focus:ring-marigold-500 focus:ring-offset-2">
                                             <span className="absolute -inset-1.5" />
                                             <span className="sr-only">View notifications</span>
                                             <FaRegBell aria-hidden="true" className="size-6" />
@@ -153,8 +153,8 @@ export default function Header() {
                                     aria-current={ pathname === item.href ? "page" : undefined }
                                     className={ twMerge(
                                         pathname === item.href
-                                        ? "bg-stone-400 text-stone-800"
-                                        : "text-stone-900 hover:bg-stone-50",
+                                        ? "bg-stone-400 text-shadow-800"
+                                        : "text-shadow-900 hover:bg-stone-50",
                                         "-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7",
                                     ) }>
                                     { item.name }

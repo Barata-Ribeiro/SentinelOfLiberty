@@ -27,7 +27,7 @@ export default function Footer() {
                               title={ item.name }
                               rel="noopener noreferrer external"
                               target="_blank"
-                              className="text-stone-400 hover:text-stone-500">
+                              className="text-shadow-400 hover:text-shadow-500">
                             <span className="sr-only">{ item.name }</span>
                             <item.icon aria-hidden="true" className="h-6 w-6" />
                         </Link>
@@ -36,7 +36,7 @@ export default function Footer() {
                 <div className="mt-8 flex items-center gap-x-3 divide-stone-200 md:order-1 md:mt-0">
                     <Image src={ miniLogo } alt="" className="size-8" />
                     <span aria-hidden="true" className="bg-stone-200 h-6 w-px"></span>
-                    <p className="text-center text-xs leading-5 text-stone-500">
+                    <p className="text-center text-xs leading-5 text-shadow-500">
                         &copy; { new Date().getFullYear() } Sentinel of Liberty. All rights reserved.
                     </p>
                 </div>

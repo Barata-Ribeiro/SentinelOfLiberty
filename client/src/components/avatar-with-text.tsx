@@ -43,8 +43,8 @@ export default function AvatarWithText({ name, size, src }: AvatarWithTextProps)
                       ) }
                 </div>
                 <div className="ml-3">
-                    <p className="text-sm font-medium text-stone-700 group-hover:text-stone-900">{ name }</p>
-                    <p className="text-xs font-medium text-stone-500 group-hover:text-stone-700">View profile</p>
+                    <p className="text-sm font-medium text-shadow-700 group-hover:text-shadow-900">{ name }</p>
+                    <p className="text-xs font-medium text-shadow-500 group-hover:text-shadow-700">View profile</p>
                 </div>
             </div>
         </Link>

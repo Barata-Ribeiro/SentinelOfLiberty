@@ -13,14 +13,14 @@ export default function LoginPage() {
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
                 <div className="bg-white px-6 py-12 shadow sm:rounded-md sm:px-12">
                     <div className="mb-8">
-                        <h4 className="block text-xl font-medium text-stone-800">Login</h4>
-                        <p className="text-sm font-light text-stone-500">Welcome back! Please login to your account.</p>
+                        <h4 className="block text-xl font-medium text-shadow-800">Login</h4>
+                        <p className="text-sm font-light text-shadow-500">Welcome back! Please login to your account.</p>
                     </div>
                     
                     <LoginForm />
                 </div>
 
-                <p className="mt-10 text-center text-sm text-stone-300">
+                <p className="mt-10 text-center text-sm text-shadow-300">
                     Not a member?{ " " }
                     <Link
                         href="/auth/register"
