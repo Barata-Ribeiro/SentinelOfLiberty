@@ -9,19 +9,19 @@ import { problemDetailsFactory } from "@/utils/functions"
 import { redirect }              from "next/navigation"
 
 export default async function postAuthLogin(state: State, formData: unknown) {
+    if (!(formData instanceof FormData)) {
+        return ResponseError(
+            problemDetailsFactory({
+                                      type: "https://httpstatuses.com/400",
+                                      title: "Invalid Form Data",
+                                      status: 400,
+                                      detail: "Invalid form data was submitted. Please try again.",
+                                      instance: "/auth/login",
+                                  }),
+        )
+    }
+    
     try {
-        if (!(formData instanceof FormData)) {
-            return ResponseError(
-                problemDetailsFactory({
-                                          type: "https://httpstatuses.com/400",
-                                          title: "Invalid Form Data",
-                                          status: 400,
-                                          detail: "Invalid form data was submitted. Please try again.",
-                                          instance: "/auth/login",
-                                      }),
-            )
-        }
-        
         const rawFormData = Object.fromEntries(formData.entries())
         const parsedFormData = authLoginSchema.safeParse(rawFormData)
         
@@ -35,10 +35,10 @@ export default async function postAuthLogin(state: State, formData: unknown) {
             rememberMe: parsedFormData.data.rememberMe,
             redirect: false,
         })
-        
-        redirect(`/dashboard/${ parsedFormData.data.username }`)
     } catch (error) {
         console.log("CALLBACK ERROR: ", error)
         return ResponseError(error)
     }
+    
+    redirect(`/dashboard/${ formData.get("username")?.toString() }`)
 }
