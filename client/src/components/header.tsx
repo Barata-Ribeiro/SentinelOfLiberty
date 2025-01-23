@@ -89,7 +89,7 @@ export default function Header() {
                               <>
                                 <Button
                                     type="button"
-                                    className="relative mr-4 flex-shrink-0 rounded-full bg-stone-50 p-1 text-shadow-400 hover:text-shadow-500 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900">
+                                    className="relative mr-4 flex-shrink-0 rounded-full bg-shadow-50 p-1 text-shadow-400 hover:text-shadow-600 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900 active:text-shadow-700">
                                     <span className="absolute -inset-1.5" />
                                     <span className="sr-only">View notifications</span>
                                     <FaRegBell aria-hidden="true" className="h-6 w-7" />
