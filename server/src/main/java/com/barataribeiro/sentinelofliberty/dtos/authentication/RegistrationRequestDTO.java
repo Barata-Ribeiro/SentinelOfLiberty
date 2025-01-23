@@ -27,7 +27,7 @@ public class RegistrationRequestDTO implements Serializable {
     @Pattern(
             message = "Password must contain at least one digit, one lowercase letter, one uppercase letter, one " +
                     "special character and no whitespace.",
-            regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$")
+            regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%¨^&*()\\-_=+])(?=\\S+$).{8,}$")
     private String password;
 
     @NotBlank
