@@ -13,10 +13,10 @@ export default function AvatarWithText({ name, size, src }: AvatarWithTextProps)
     const styleSize = size === 32 ? "size-8" : size === 36 ? "size-9" : "size-12"
     const textSize = size === 32 ? "text-base" : size === 36 ? "text-xl" : "text-2xl"
     
-    const placeHolderBaseStyles = tw`bg-gray-200 flex flex-shrink-0 select-none items-center justify-center rounded-full shadow-sm ring-2 ring-white`
+    const placeHolderBaseStyles = tw`flex flex-shrink-0 select-none items-center justify-center rounded-full bg-stone-200 shadow-sm ring-2 ring-white`
     
     const placeHolderMergedStyles = twMerge(placeHolderBaseStyles, styleSize)
-    const spanStyles = twMerge("font-heading text-gray-500", textSize)
+    const spanStyles = twMerge("font-heading capitalize text-stone-500", textSize)
     
     return (
         <Link href={ `/dashboard/${ name }` } className="group block flex-shrink-0">
@@ -43,8 +43,10 @@ export default function AvatarWithText({ name, size, src }: AvatarWithTextProps)
                       ) }
                 </div>
                 <div className="ml-3">
-                    <p className="text-sm font-medium text-shadow-700 group-hover:text-shadow-900">{ name }</p>
-                    <p className="text-xs font-medium text-shadow-500 group-hover:text-shadow-700">View profile</p>
+                    <p className="text-sm font-semibold text-shadow-800 group-hover:text-shadow-900">
+                        { name }
+                    </p>
+                    <p className="text-xs font-medium text-shadow-700 group-hover:text-shadow-800">View profile</p>
                 </div>
             </div>
         </Link>

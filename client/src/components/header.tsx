@@ -94,10 +94,10 @@ export default function Header() {
                               <>
                                 <Button
                                     type="button"
-                                    className="relative ml-auto flex-shrink-0 rounded-full bg-white p-1 text-shadow-400 hover:text-shadow-500 focus:outline-none focus:ring-2 focus:ring-marigold-500 focus:ring-offset-2">
+                                    className="relative mr-4 flex-shrink-0 rounded-full bg-stone-50 p-1 text-shadow-400 hover:text-shadow-500 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900">
                                     <span className="absolute -inset-1.5" />
                                     <span className="sr-only">View notifications</span>
-                                    <FaRegBell aria-hidden="true" className="size-6" />
+                                    <FaRegBell aria-hidden="true" className="h-6 w-7" />
                                 </Button>
                                 <AvatarWithText name={ session.user.username }
                                                 size={ 36 }
@@ -129,13 +129,13 @@ export default function Header() {
                                     </Link>
                                 ) : (
                                       <>
-                                        <button
+                                        <Button
                                             type="button"
-                                            className="relative ml-auto flex-shrink-0 rounded-full bg-white p-1 text-shadow-400 hover:text-shadow-500 focus:outline-none focus:ring-2 focus:ring-marigold-500 focus:ring-offset-2">
+                                            className="relative mr-4 flex-shrink-0 rounded-full bg-stone-50 p-1 text-shadow-400 hover:text-shadow-500 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900">
                                             <span className="absolute -inset-1.5" />
                                             <span className="sr-only">View notifications</span>
-                                            <FaRegBell aria-hidden="true" className="size-6" />
-                                        </button>
+                                            <FaRegBell aria-hidden="true" className="h-6 w-7" />
+                                        </Button>
                                         <AvatarWithText
                                             name={ session.user.username }
                                             size={ 36 }
