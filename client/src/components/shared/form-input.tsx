@@ -44,11 +44,11 @@ export default function FormInput({
                     ) }>
                     { label }
                 </Label>
-                { description &&
-                    <Description className="data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
+                { description && (
+                    <Description className="mt-1 px-1.5 text-xs text-shadow-300 data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
                         { description }
                     </Description>
-                }
+                ) }
             </Field>
         </div>
     )

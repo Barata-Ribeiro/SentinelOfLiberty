@@ -1,30 +1,34 @@
 "use client"
 
-import { State }                         from "@/@types/application"
 import postAuthLogin                     from "@/actions/auth/post-auth-login"
 import ApplicationRequestFormError       from "@/components/feedback/application-request-form-error"
 import InputValidationError              from "@/components/feedback/input-validation-error"
 import Spinner                           from "@/components/helpers/spinner"
 import FormButton                        from "@/components/shared/form-button"
 import FormInput                         from "@/components/shared/form-input"
+import { getInitialFormState }           from "@/utils/functions"
 import { Field, Fieldset, Input, Label } from "@headlessui/react"
 import Link                              from "next/link"
 import { useActionState }                from "react"
 import { FaArrowRightToBracket }         from "react-icons/fa6"
 
-const initialState: State = {
-    ok: false,
-    error: null,
-    response: null,
-}
-
 export default function LoginForm() {
-    const [ formState, formAction, pending ] = useActionState(postAuthLogin, initialState)
+    const [ formState, formAction, pending ] = useActionState(postAuthLogin, getInitialFormState())
     
     return (
         <form action={ formAction } className="space-y-6">
-            <FormInput label="Username" type="text" name="username" autoComplete="username" required />
-            <FormInput label="Password" type="password" name="password" autoComplete="current-password" required />
+            <FormInput label="Username"
+                       type="text"
+                       name="username"
+                       autoComplete="username"
+                       aria-autocomplete="list"
+                       required />
+            <FormInput label="Password"
+                       type="password"
+                       name="password"
+                       autoComplete="current-password"
+                       aria-autocomplete="list"
+                       required />
 
             <Fieldset className="flex flex-col items-center justify-between gap-4 sm:flex-row">
                 <Field className="flex items-center">

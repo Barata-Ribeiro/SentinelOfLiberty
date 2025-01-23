@@ -1,4 +1,4 @@
-import { ProblemDetails } from "@/@types/application"
+import { ProblemDetails, State } from "@/@types/application"
 
 function getBackgroundImage(srcSet = "") {
     const imageSet = srcSet
@@ -21,4 +21,12 @@ function problemDetailsFactory({ type, title, status, detail, instance }: Proble
     }
 }
 
-export { getBackgroundImage, problemDetailsFactory }
+function getInitialFormState(): State {
+    return {
+        ok: false,
+        error: null,
+        response: null,
+    }
+}
+
+export { getBackgroundImage, problemDetailsFactory, getInitialFormState }
