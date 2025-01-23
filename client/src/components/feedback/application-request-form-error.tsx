@@ -9,7 +9,7 @@ export default function ApplicationRequestFormError({ error }: Readonly<Applicat
     return (
         <div className="border-yellow-500 bg-yellow-50 rounded-md border p-4">
             <div className="flex">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                     <FaTriangleExclamation className="text-yellow-400 h-5 w-5" aria-hidden="true" />
                 </div>
                 <div className="ml-3">

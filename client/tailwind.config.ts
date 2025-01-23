@@ -49,7 +49,6 @@ export default {
             },
         },
     },
-    safelist: [ { pattern: /(bg|text|border|fill)-./ } ],
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     plugins: [ require("@tailwindcss/forms"), require("@tailwindcss/typography") ],
 } satisfies Config

@@ -31,7 +31,7 @@ export default function Header() {
     const backgroundImage = getBackgroundImage(srcSet)
     
     return (
-        <header className="shadow">
+        <header className="shadow-sm">
             <SessionVerifier />
             <div
                 className="flex items-center justify-center"
@@ -62,7 +62,7 @@ export default function Header() {
                                     href={ item.href }
                                     data-current={ pathname === item.href ? "page" : undefined }
                                     aria-current={ pathname === item.href ? "page" : undefined }
-                                    className="rounded-md px-3 py-2 text-sm font-semibold leading-6 text-shadow-900 hover:bg-marigold-400 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900 active:bg-marigold-700 data-[current=page]:bg-marigold-400 data-[current=page]:text-marigold-900">
+                                    className="rounded-md px-3 py-2 text-sm font-semibold leading-6 text-shadow-900 hover:bg-marigold-400 focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900 active:bg-marigold-700 data-[current=page]:bg-marigold-400 data-[current=page]:text-marigold-900">
                                     { item.name }
                                 </Link>
                             )) }
@@ -82,14 +82,14 @@ export default function Header() {
                         { !session ? (
                             <Link
                                 href="/auth/login"
-                                className="rounded-md px-3 py-2 text-sm font-semibold leading-6 text-shadow-900 hover:bg-marigold-400 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900 active:bg-marigold-700">
+                                className="rounded-md px-3 py-2 text-sm font-semibold leading-6 text-shadow-900 hover:bg-marigold-400 focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900 active:bg-marigold-700">
                                 Log in <span aria-hidden="true">&rarr;</span>
                             </Link>
                         ) : (
                               <>
                                 <Button
                                     type="button"
-                                    className="relative mr-4 flex-shrink-0 rounded-full bg-shadow-50 p-1 text-shadow-400 hover:text-shadow-600 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900 active:text-shadow-700">
+                                    className="relative mr-4 shrink-0 rounded-full bg-shadow-50 p-1 text-shadow-400 hover:text-shadow-600 focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900 active:text-shadow-700">
                                     <span className="absolute -inset-1.5" />
                                     <span className="sr-only">View notifications</span>
                                     <FaRegBell aria-hidden="true" className="h-6 w-7" />
@@ -119,14 +119,14 @@ export default function Header() {
                                 { !session ? (
                                     <Link
                                         href="/auth/login"
-                                        className="rounded-md px-3 py-2 text-sm font-semibold leading-6 text-shadow-900 hover:bg-stone-300 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-shadow-900 active:bg-shadow-700">
+                                        className="rounded-md px-3 py-2 text-sm font-semibold leading-6 text-shadow-900 hover:bg-stone-300 focus:outline-2 focus:outline-offset-2 focus:outline-shadow-900 active:bg-shadow-700">
                                         Log in <span aria-hidden="true">&rarr;</span>
                                     </Link>
                                 ) : (
                                       <>
                                         <Button
                                             type="button"
-                                            className="relative mr-4 flex-shrink-0 rounded-full bg-stone-50 p-1 text-shadow-400 hover:text-shadow-500 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900">
+                                            className="relative mr-4 shrink-0 rounded-full bg-stone-50 p-1 text-shadow-400 hover:text-shadow-500 focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900">
                                             <span className="absolute -inset-1.5" />
                                             <span className="sr-only">View notifications</span>
                                             <FaRegBell aria-hidden="true" className="h-6 w-7" />

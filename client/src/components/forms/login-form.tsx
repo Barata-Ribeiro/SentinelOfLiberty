@@ -36,7 +36,7 @@ export default function LoginForm() {
                         id="rememberMe"
                         name="rememberMe"
                         type="checkbox"
-                        className="size-4 rounded border-stone-300 text-marigold-600 focus:ring-marigold-600"
+                        className="size-4 rounded-sm border-stone-300 text-marigold-600 focus:ring-marigold-600"
                     />
                     <Label htmlFor="rememberMe" className="ml-3 block text-sm leading-6 text-shadow-900">
                         Remember me

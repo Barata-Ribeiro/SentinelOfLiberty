@@ -13,13 +13,13 @@ export default function AvatarWithText({ name, size, src }: AvatarWithTextProps)
     const styleSize = size === 32 ? "size-8" : size === 36 ? "size-9" : "size-12"
     const textSize = size === 32 ? "text-base" : size === 36 ? "text-xl" : "text-2xl"
     
-    const placeHolderBaseStyles = tw`flex flex-shrink-0 select-none items-center justify-center rounded-full bg-stone-200 shadow-sm ring-2 ring-white`
+    const placeHolderBaseStyles = tw`flex shrink-0 select-none items-center justify-center rounded-full bg-stone-200 shadow-xs ring-2 ring-white`
     
     const placeHolderMergedStyles = twMerge(placeHolderBaseStyles, styleSize)
     const spanStyles = twMerge("font-heading capitalize text-stone-500", textSize)
     
     return (
-        <Link href={ `/dashboard/${ name }` } className="group block flex-shrink-0">
+        <Link href={ `/dashboard/${ name }` } className="group block shrink-0">
             <div className="flex items-center">
                 <div>
                     { src ? (
@@ -28,7 +28,7 @@ export default function AvatarWithText({ name, size, src }: AvatarWithTextProps)
                             alt={ `Avatar for ${ name }` }
                             title={ `Avatar for ${ name }` }
                             aria-label={ `Avatar for ${ name }` }
-                            className="flex-shrink-0 rounded-full bg-stone-200 shadow-sm ring-2 ring-white"
+                            className="shrink-0 rounded-full bg-stone-200 shadow-xs ring-2 ring-white"
                             width={ size }
                             height={ size }
                             sizes={ `${ size }px` }

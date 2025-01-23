@@ -11,7 +11,7 @@ export default function RegisterPage() {
     return (
         <section className="mb-20 w-full sm:container" aria-labelledby="register-heading">
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-                <div className="bg-white px-6 py-12 shadow sm:rounded-md sm:px-12">
+                <div className="bg-white px-6 py-12 shadow-sm sm:rounded-md sm:px-12">
                     <div className="mb-8">
                         <h1 id="register-heading" className="block text-2xl font-medium text-shadow-800">
                             Create an Account

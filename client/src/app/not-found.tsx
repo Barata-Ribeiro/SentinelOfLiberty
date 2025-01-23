@@ -23,12 +23,12 @@ export default async function NotFoundPage() {
                 <div className="mt-10 flex flex-col items-center justify-center gap-6 sm:flex-row">
                     <Link
                         href="/"
-                        className="rounded-md bg-marigold-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-marigold-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marigold-600 active:bg-marigold-700">
+                        className="rounded-md bg-marigold-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-marigold-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marigold-600 active:bg-marigold-700">
                         Go back home
                     </Link>
                     <Link
                         href={ session ? `/dashboard/${ session.user.username }` : "/auth/login" }
-                        className="rounded-md px-3.5 py-2.5 text-sm font-semibold text-shadow-900 hover:bg-stone-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-600 active:bg-stone-200">
+                        className="rounded-md px-3.5 py-2.5 text-sm font-semibold text-shadow-900 hover:bg-stone-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-600 active:bg-stone-200">
                         { session ? (
                             <>
                                 Your Dashboard <span aria-hidden="true">&rarr;</span>
