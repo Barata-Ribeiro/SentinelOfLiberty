@@ -11,7 +11,6 @@ import { usePathname }                           from "next/navigation"
 import { useState }                              from "react"
 import { FaRegBell }                             from "react-icons/fa6"
 import { HiMiniXMark, HiOutlineBars3CenterLeft } from "react-icons/hi2"
-import { twMerge }                               from "tailwind-merge"
 import headerImage                               from "../../public/city-of-liberty.png"
 import solLogo                                   from "../../public/sentinel-of-liberty-final.svg"
 
@@ -61,13 +60,9 @@ export default function Header() {
                                 <Link
                                     key={ item.name }
                                     href={ item.href }
+                                    data-current={ pathname === item.href ? "page" : undefined }
                                     aria-current={ pathname === item.href ? "page" : undefined }
-                                    className={ twMerge(
-                                        pathname === item.href
-                                        ? "bg-marigold-400 text-marigold-900"
-                                        : "text-shadow-900 hover:bg-marigold-400 active:bg-marigold-700",
-                                        "rounded-md px-3 py-2 text-sm font-semibold leading-6 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900",
-                                    ) }>
+                                    className="rounded-md px-3 py-2 text-sm font-semibold leading-6 text-shadow-900 hover:bg-marigold-400 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900 active:bg-marigold-700 data-[current=page]:bg-marigold-400 data-[current=page]:text-marigold-900">
                                     { item.name }
                                 </Link>
                             )) }
@@ -108,7 +103,7 @@ export default function Header() {
                 </nav>
                 <Dialog open={ mobileMenuOpen } onClose={ setMobileMenuOpen } className="lg:hidden">
                     <div className="fixed inset-0 z-10" />
-                    <DialogPanel className="fixed inset-y-[280px] left-0 z-10 h-full w-full overflow-y-auto bg-stone-50 px-6 py-6">
+                    <DialogPanel className="fixed inset-y-0 left-0 z-10 h-full w-full overflow-y-auto bg-stone-50 px-6 py-6">
                         <div className="flex items-center justify-between">
                             <div className="flex flex-1">
                                 <Button
@@ -124,7 +119,7 @@ export default function Header() {
                                 { !session ? (
                                     <Link
                                         href="/auth/login"
-                                        className="rounded-md px-1.5 text-sm font-semibold leading-6 text-shadow-900 hover:bg-stone-300">
+                                        className="rounded-md px-3 py-2 text-sm font-semibold leading-6 text-shadow-900 hover:bg-stone-300 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-shadow-900 active:bg-shadow-700">
                                         Log in <span aria-hidden="true">&rarr;</span>
                                     </Link>
                                 ) : (
@@ -150,13 +145,9 @@ export default function Header() {
                                 <Link
                                     key={ item.name }
                                     href={ item.href }
+                                    data-current={ pathname === item.href ? "page" : undefined }
                                     aria-current={ pathname === item.href ? "page" : undefined }
-                                    className={ twMerge(
-                                        pathname === item.href
-                                        ? "bg-stone-400 text-shadow-800"
-                                        : "text-shadow-900 hover:bg-stone-50",
-                                        "-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7",
-                                    ) }>
+                                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-shadow-900 hover:bg-stone-300 data-[current=page]:bg-stone-400 data-[current=page]:text-shadow-800">
                                     { item.name }
                                 </Link>
                             )) }
