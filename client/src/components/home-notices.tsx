@@ -10,7 +10,7 @@ interface HomeNoticesProps {
     notices: Set<Notice>
 }
 
-export default function HomeNotices({ notices }: HomeNoticesProps) {
+export default function HomeNotices({ notices }: Readonly<HomeNoticesProps>) {
     const noticesArray = Array.from(notices)
     const [ currentNoticeIndex, setCurrentNoticeIndex ] = useState(0)
     const totalNotices = noticesArray.length

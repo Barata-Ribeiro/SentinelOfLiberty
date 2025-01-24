@@ -4,7 +4,7 @@ import Link                   from "next/link"
 import { ReactNode }          from "react"
 import authPhoto              from "../../../public/auth-photo.jpg"
 
-export default function AuthLayout({ children }: { children: ReactNode }) {
+export default function AuthLayout({ children }: Readonly<{ children: ReactNode }>) {
     const {
         props: { srcSet },
     } = getImageProps({ alt: "", width: 1700, height: 280, src: authPhoto })

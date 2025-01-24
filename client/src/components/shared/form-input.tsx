@@ -17,7 +17,7 @@ export default function FormInput({
                                       defaultValue = "",
                                       value,
                                       ...props
-                                  }: FormInputProps) {
+                                  }: Readonly<FormInputProps>) {
     const [ hasValue, setHasValue ] = useState(!!value || !!defaultValue)
     
     function handleChange(e: ChangeEvent<HTMLInputElement>) {

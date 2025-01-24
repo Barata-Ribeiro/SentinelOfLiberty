@@ -7,12 +7,12 @@ interface DashboardLayoutProps {
     params: Promise<{ username: string }>
 }
 
-export default async function DashboardLayout({ children, params }: DashboardLayoutProps) {
+export default async function DashboardLayout({ children, params }: Readonly<DashboardLayoutProps>) {
     const username = (await params).username
     if (!username) return notFound()
     
     return (
-        <main className="flex items-start gap-4 w-full h-full container">
+        <main className="container flex h-full w-full items-start gap-4">
             <DashboardSideBar />
             { children }
         </main>

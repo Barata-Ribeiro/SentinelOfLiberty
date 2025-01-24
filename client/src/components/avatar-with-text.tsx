@@ -9,9 +9,22 @@ interface AvatarWithTextProps {
     src: string | null
 }
 
-export default function AvatarWithText({ name, size, src }: AvatarWithTextProps) {
-    const styleSize = size === 32 ? "size-8" : size === 36 ? "size-9" : "size-12"
-    const textSize = size === 32 ? "text-base" : size === 36 ? "text-xl" : "text-2xl"
+export default function AvatarWithText({ name, size, src }: Readonly<AvatarWithTextProps>) {
+    let styleSize, textSize
+    
+    switch (size) {
+        case 32:
+            styleSize = "size-8"
+            textSize = "text-base"
+            break
+        case 36:
+            styleSize = "size-9"
+            textSize = "text-xl"
+            break
+        default:
+            styleSize = "size-12"
+            textSize = "text-2xl"
+    }
     
     const placeHolderBaseStyles = tw`flex shrink-0 select-none items-center justify-center rounded-full bg-stone-200 shadow-xs ring-2 ring-white`
     
