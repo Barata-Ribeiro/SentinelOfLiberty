@@ -31,7 +31,7 @@ export default function Header() {
     const backgroundImage = getBackgroundImage(srcSet)
     
     return (
-        <header className="shadow-sm">
+        <header className="z-10 shadow-sm">
             <SessionVerifier />
             <div
                 className="flex items-center justify-center"
@@ -62,7 +62,7 @@ export default function Header() {
                                     href={ item.href }
                                     data-current={ pathname === item.href ? "page" : undefined }
                                     aria-current={ pathname === item.href ? "page" : undefined }
-                                    className="rounded-md px-3 py-2 text-sm font-semibold leading-6 text-shadow-900 hover:bg-marigold-400 focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900 active:bg-marigold-700 data-[current=page]:bg-marigold-400 data-[current=page]:text-marigold-900">
+                                    className="text-shadow-900 hover:bg-marigold-400 focus:outline-marigold-900 active:bg-marigold-700 data-[current=page]:bg-marigold-400 data-[current=page]:text-marigold-900 rounded-md px-3 py-2 text-sm leading-6 font-semibold focus:outline-2 focus:outline-offset-2">
                                     { item.name }
                                 </Link>
                             )) }
@@ -71,7 +71,7 @@ export default function Header() {
                             <Button
                                 type="button"
                                 onClick={ () => setMobileMenuOpen(true) }
-                                className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-shadow-700 hover:bg-marigold-400">
+                                className="text-shadow-700 hover:bg-marigold-400 -m-2.5 inline-flex items-center justify-center rounded-md p-2.5">
                                 <span className="sr-only">Open main menu</span>
                                 <HiOutlineBars3CenterLeft aria-hidden="true" className="h-6 w-6" />
                             </Button>
@@ -82,14 +82,14 @@ export default function Header() {
                         { !session ? (
                             <Link
                                 href="/auth/login"
-                                className="rounded-md px-3 py-2 text-sm font-semibold leading-6 text-shadow-900 hover:bg-marigold-400 focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900 active:bg-marigold-700">
+                                className="text-shadow-900 hover:bg-marigold-400 focus:outline-marigold-900 active:bg-marigold-700 rounded-md px-3 py-2 text-sm leading-6 font-semibold focus:outline-2 focus:outline-offset-2">
                                 Log in <span aria-hidden="true">&rarr;</span>
                             </Link>
                         ) : (
                               <>
                                 <Button
                                     type="button"
-                                    className="relative mr-4 shrink-0 rounded-full bg-shadow-50 p-1 text-shadow-400 hover:text-shadow-600 focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900 active:text-shadow-700">
+                                    className="bg-shadow-50 text-shadow-400 hover:text-shadow-600 focus:outline-marigold-900 active:text-shadow-700 relative mr-4 shrink-0 rounded-full p-1 focus:outline-2 focus:outline-offset-2">
                                     <span className="absolute -inset-1.5" />
                                     <span className="sr-only">View notifications</span>
                                     <FaRegBell aria-hidden="true" className="h-6 w-7" />
@@ -102,14 +102,14 @@ export default function Header() {
                     </div>
                 </nav>
                 <Dialog open={ mobileMenuOpen } onClose={ setMobileMenuOpen } className="lg:hidden">
-                    <div className="fixed inset-0 z-10" />
-                    <DialogPanel className="fixed inset-y-0 left-0 z-10 h-full w-full overflow-y-auto bg-stone-50 px-6 py-6">
+                    <div className="fixed inset-0 z-20" />
+                    <DialogPanel className="fixed inset-y-0 left-0 z-20 h-full w-full overflow-y-auto bg-stone-50 px-6 py-6">
                         <div className="flex items-center justify-between">
                             <div className="flex flex-1">
                                 <Button
                                     type="button"
                                     onClick={ () => setMobileMenuOpen(false) }
-                                    className="-m-2.5 rounded-md p-2.5 text-shadow-700 hover:bg-stone-300">
+                                    className="text-shadow-700 -m-2.5 rounded-md p-2.5 hover:bg-stone-300">
                                     <span className="sr-only">Close menu</span>
                                     <HiMiniXMark aria-hidden="true" className="h-6 w-6" />
                                 </Button>
@@ -119,14 +119,14 @@ export default function Header() {
                                 { !session ? (
                                     <Link
                                         href="/auth/login"
-                                        className="rounded-md px-3 py-2 text-sm font-semibold leading-6 text-shadow-900 hover:bg-stone-300 focus:outline-2 focus:outline-offset-2 focus:outline-shadow-900 active:bg-shadow-700">
+                                        className="text-shadow-900 focus:outline-shadow-900 active:bg-shadow-700 rounded-md px-3 py-2 text-sm leading-6 font-semibold hover:bg-stone-300 focus:outline-2 focus:outline-offset-2">
                                         Log in <span aria-hidden="true">&rarr;</span>
                                     </Link>
                                 ) : (
                                       <>
                                         <Button
                                             type="button"
-                                            className="relative mr-4 shrink-0 rounded-full bg-stone-50 p-1 text-shadow-400 hover:text-shadow-500 focus:outline-2 focus:outline-offset-2 focus:outline-marigold-900">
+                                            className="text-shadow-400 hover:text-shadow-500 focus:outline-marigold-900 relative mr-4 shrink-0 rounded-full bg-stone-50 p-1 focus:outline-2 focus:outline-offset-2">
                                             <span className="absolute -inset-1.5" />
                                             <span className="sr-only">View notifications</span>
                                             <FaRegBell aria-hidden="true" className="h-6 w-7" />
@@ -147,7 +147,7 @@ export default function Header() {
                                     href={ item.href }
                                     data-current={ pathname === item.href ? "page" : undefined }
                                     aria-current={ pathname === item.href ? "page" : undefined }
-                                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-shadow-900 hover:bg-stone-300 data-[current=page]:bg-stone-400 data-[current=page]:text-shadow-800">
+                                    className="text-shadow-900 data-[current=page]:text-shadow-800 -mx-3 block rounded-lg px-3 py-2 text-base leading-7 font-semibold hover:bg-stone-300 data-[current=page]:bg-stone-400">
                                     { item.name }
                                 </Link>
                             )) }
