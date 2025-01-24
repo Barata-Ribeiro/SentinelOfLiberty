@@ -1,6 +1,6 @@
-import { auth }               from "auth"
-import { notFound, redirect } from "next/navigation"
-import { ReactNode }          from "react"
+import DashboardSideBar from "@/components/dashboard-sidebar"
+import { notFound }     from "next/navigation"
+import { ReactNode }    from "react"
 
 interface DashboardLayoutProps {
     children?: ReactNode
@@ -11,12 +11,9 @@ export default async function DashboardLayout({ children, params }: DashboardLay
     const username = (await params).username
     if (!username) return notFound()
     
-    const session = await auth()
-    if (!session) return redirect("/auth/login")
-    
     return (
-        <main>
-            <div>{ JSON.stringify(session) }</div>
+        <main className="flex items-start gap-4 w-full h-full container">
+            <DashboardSideBar />
             { children }
         </main>
     )
