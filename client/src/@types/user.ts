@@ -1,3 +1,6 @@
+import { ArticleSummary } from "@/@types/articles"
+import { Suggestion }     from "@/@types/suggestions"
+
 type Roles = "NONE" | "USER" | "ADMIN" | "BANNED"
 
 interface User {
@@ -31,6 +34,15 @@ interface Account extends User, Profile {
     unreadNotificationsCount: number
 }
 
-interface Author extends Omit<User, "createdAt" | "updatedAt"> {}
+type Author = Omit<User, "createdAt" | "updatedAt">
 
-export type { Roles, User, Profile, Account, Author }
+interface Dashboard {
+    latestWrittenArticle: ArticleSummary;
+    latestThreeSuggestions: Set<Suggestion>;
+    latestThreeComments: Set<object>;
+    totalWrittenArticles: number;
+    totalWrittenSuggestions: number;
+    totalWrittenComments: number;
+}
+
+export type { Roles, User, Profile, Account, Author, Dashboard }
