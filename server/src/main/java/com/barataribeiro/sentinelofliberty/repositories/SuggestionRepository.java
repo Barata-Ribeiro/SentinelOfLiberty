@@ -8,6 +8,9 @@ import java.util.Set;
 
 public interface SuggestionRepository extends JpaRepository<Suggestion, Long> {
     @EntityGraph(attributePaths = {"user", "articles.references"})
+    Set<Suggestion> findTop3ByUser_UsernameOrderByCreatedAtDesc(String username);
+
+    @EntityGraph(attributePaths = {"user", "articles.references"})
     Set<Suggestion> findTop10ByOrderByCreatedAtDesc();
 
     long deleteByIdAndUser_UsernameAllIgnoreCase(Long id, String username);

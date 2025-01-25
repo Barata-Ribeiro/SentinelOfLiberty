@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
 import java.util.Set;
 
 public interface ArticleRepository extends JpaRepository<Article, Long> {
@@ -38,6 +39,9 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     @EntityGraph(attributePaths = {"author", "categories", "references"})
     Page<Article> findAllByCategories_Name(String name, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"author", "categories", "references"})
+    Optional<Article> findTopByAuthor_UsernameOrderByCreatedAtDesc(String username);
 
     @EntityGraph(attributePaths = {"author", "categories", "references"})
     Set<Article> findTop10ByOrderByCreatedAtDesc();
