@@ -1,5 +1,6 @@
 package com.barataribeiro.sentinelofliberty.services;
 
+import com.barataribeiro.sentinelofliberty.dtos.user.DashboardDTO;
 import com.barataribeiro.sentinelofliberty.dtos.user.ProfileUpdateRequestDTO;
 import com.barataribeiro.sentinelofliberty.dtos.user.UserAccountDTO;
 import com.barataribeiro.sentinelofliberty.dtos.user.UserProfileDTO;
@@ -11,6 +12,8 @@ public interface UserService {
     UserProfileDTO updateUserProfile(ProfileUpdateRequestDTO body, Authentication authentication);
 
     UserAccountDTO getOwnProfile(Authentication authentication);
+
+    DashboardDTO getOwnDashboardInformation(Authentication authentication);
 
     void deleteUserProfile(Authentication authentication);
 

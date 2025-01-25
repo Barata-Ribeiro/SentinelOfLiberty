@@ -13,4 +13,7 @@ public interface SuggestionRepository extends JpaRepository<Suggestion, Long> {
     long deleteByIdAndUser_UsernameAllIgnoreCase(Long id, String username);
 
     long countDistinctByTitleAllIgnoreCase(String title);
+
+    @EntityGraph(attributePaths = {"user"})
+    long countDistinctByUser_Username(String username);
 }

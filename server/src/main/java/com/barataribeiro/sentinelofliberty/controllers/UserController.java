@@ -1,6 +1,7 @@
 package com.barataribeiro.sentinelofliberty.controllers;
 
 import com.barataribeiro.sentinelofliberty.dtos.ApplicationResponseDTO;
+import com.barataribeiro.sentinelofliberty.dtos.user.DashboardDTO;
 import com.barataribeiro.sentinelofliberty.dtos.user.ProfileUpdateRequestDTO;
 import com.barataribeiro.sentinelofliberty.dtos.user.UserAccountDTO;
 import com.barataribeiro.sentinelofliberty.dtos.user.UserProfileDTO;
@@ -40,6 +41,16 @@ public class UserController {
         UserAccountDTO response = userService.getOwnProfile(authentication);
         return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
                                                               "Account info retrieved successfully", response));
+    }
+
+    @Operation(summary = "Get Dashboard Information", description = "This endpoint allows an user to retrieve all the" +
+            " necessary dashboard information for statistical control.")
+    @GetMapping("/me/dashboard")
+    public ResponseEntity<ApplicationResponseDTO<DashboardDTO>> getOwnDashboardInformation(
+            Authentication authentication) {
+        DashboardDTO response = userService.getOwnDashboardInformation(authentication);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "Dashboard info retrieved successfully", response));
     }
 
     @Operation(summary = "Update own account",

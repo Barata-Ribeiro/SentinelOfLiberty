@@ -1,6 +1,13 @@
 package com.barataribeiro.sentinelofliberty.services.impl;
 
+import com.barataribeiro.sentinelofliberty.builders.ArticleMapper;
+import com.barataribeiro.sentinelofliberty.builders.CommentMapper;
+import com.barataribeiro.sentinelofliberty.builders.SuggestionMapper;
 import com.barataribeiro.sentinelofliberty.builders.UserMapper;
+import com.barataribeiro.sentinelofliberty.dtos.article.ArticleSummaryDTO;
+import com.barataribeiro.sentinelofliberty.dtos.comment.CommentDTO;
+import com.barataribeiro.sentinelofliberty.dtos.suggestion.SuggestionDTO;
+import com.barataribeiro.sentinelofliberty.dtos.user.DashboardDTO;
 import com.barataribeiro.sentinelofliberty.dtos.user.ProfileUpdateRequestDTO;
 import com.barataribeiro.sentinelofliberty.dtos.user.UserAccountDTO;
 import com.barataribeiro.sentinelofliberty.dtos.user.UserProfileDTO;
@@ -9,6 +16,9 @@ import com.barataribeiro.sentinelofliberty.exceptions.throwables.IllegalRequestE
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.InvalidCredentialsException;
 import com.barataribeiro.sentinelofliberty.models.entities.User;
 import com.barataribeiro.sentinelofliberty.models.enums.Roles;
+import com.barataribeiro.sentinelofliberty.repositories.ArticleRepository;
+import com.barataribeiro.sentinelofliberty.repositories.CommentRepository;
+import com.barataribeiro.sentinelofliberty.repositories.SuggestionRepository;
 import com.barataribeiro.sentinelofliberty.repositories.UserRepository;
 import com.barataribeiro.sentinelofliberty.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +29,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -27,6 +39,12 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ArticleMapper articleMapper;
+    private final SuggestionMapper suggestionMapper;
+    private final ArticleRepository articleRepository;
+    private final CommentRepository commentRepository;
+    private final SuggestionRepository suggestionRepository;
+    private final CommentMapper commentMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -59,6 +77,41 @@ public class UserServiceImpl implements UserService {
                 userRepository.findByUsername(authentication.getName())
                               .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName()))
         );
+    }
+
+    @Override
+    @Transactional
+    public DashboardDTO getOwnDashboardInformation(@NotNull Authentication authentication) {
+        User user = userRepository.findByUsername(authentication.getName())
+                                  .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName()));
+
+        ArticleSummaryDTO latestWrittenArticle = user.getArticles().parallelStream()
+                                                     .max((a1, a2) -> a1.getCreatedAt().compareTo(a2.getCreatedAt()))
+                                                     .map(articleMapper::toArticleSummaryDTO)
+                                                     .orElse(null);
+
+        LinkedHashSet<SuggestionDTO> latestThreeSuggestions = user.getSuggestions().parallelStream()
+                                                                  .sorted((s1, s2) -> s2
+                                                                          .getCreatedAt()
+                                                                          .compareTo(s1.getCreatedAt()))
+                                                                  .limit(3)
+                                                                  .map(suggestionMapper::toSuggestionDTO)
+                                                                  .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        LinkedHashSet<CommentDTO> latestThreeComments = user.getComments().parallelStream()
+                                                            .sorted((c1, c2) -> c2
+                                                                    .getCreatedAt()
+                                                                    .compareTo(c1.getCreatedAt()))
+                                                            .limit(3)
+                                                            .map(commentMapper::toCommentDTO)
+                                                            .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        Long totalWrittenArticles = articleRepository.countDistinctByAuthor_Username(authentication.getName());
+        Long totalWrittenSuggestions = suggestionRepository.countDistinctByUser_Username(authentication.getName());
+        Long totalWrittenComments = commentRepository.countDistinctByUser_Username(authentication.getName());
+
+        return new DashboardDTO(latestWrittenArticle, latestThreeSuggestions, latestThreeComments, totalWrittenArticles,
+                                totalWrittenSuggestions, totalWrittenComments);
     }
 
     @Override
