@@ -82,29 +82,20 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public DashboardDTO getOwnDashboardInformation(@NotNull Authentication authentication) {
-        User user = userRepository.findByUsername(authentication.getName())
-                                  .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName()));
+        ArticleSummaryDTO latestWrittenArticle = articleRepository
+                .findTopByAuthor_UsernameOrderByCreatedAtDesc(authentication.getName())
+                .map(articleMapper::toArticleSummaryDTO).orElse(null);
 
-        ArticleSummaryDTO latestWrittenArticle = user.getArticles().parallelStream()
-                                                     .max((a1, a2) -> a1.getCreatedAt().compareTo(a2.getCreatedAt()))
-                                                     .map(articleMapper::toArticleSummaryDTO)
-                                                     .orElse(null);
+        LinkedHashSet<SuggestionDTO> latestThreeSuggestions = suggestionRepository
+                .findTop3ByUser_UsernameOrderByCreatedAtDesc(authentication.getName())
+                .parallelStream()
+                .map(suggestionMapper::toSuggestionDTO)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        LinkedHashSet<SuggestionDTO> latestThreeSuggestions = user.getSuggestions().parallelStream()
-                                                                  .sorted((s1, s2) -> s2
-                                                                          .getCreatedAt()
-                                                                          .compareTo(s1.getCreatedAt()))
-                                                                  .limit(3)
-                                                                  .map(suggestionMapper::toSuggestionDTO)
-                                                                  .collect(Collectors.toCollection(LinkedHashSet::new));
-
-        LinkedHashSet<CommentDTO> latestThreeComments = user.getComments().parallelStream()
-                                                            .sorted((c1, c2) -> c2
-                                                                    .getCreatedAt()
-                                                                    .compareTo(c1.getCreatedAt()))
-                                                            .limit(3)
-                                                            .map(commentMapper::toCommentDTO)
-                                                            .collect(Collectors.toCollection(LinkedHashSet::new));
+        LinkedHashSet<CommentDTO> latestThreeComments = commentRepository
+                .findTop3ByUser_UsernameOrderByCreatedAtDesc(authentication.getName())
+                .parallelStream().map(commentMapper::toCommentDTO)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
         Long totalWrittenArticles = articleRepository.countDistinctByAuthor_Username(authentication.getName());
         Long totalWrittenSuggestions = suggestionRepository.countDistinctByUser_Username(authentication.getName());
