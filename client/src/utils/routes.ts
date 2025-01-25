@@ -52,6 +52,8 @@ export function getOwnProfileUrl(): string {
     return `${ API_URL }/users/me`
 }
 
+export function getOwnDashboardUrl(): string {return `${ API_URL }/users/me/dashboard`}
+
 export function updateOwnProfileUrl(): string {
     return `${ API_URL }/users/me`
 }
