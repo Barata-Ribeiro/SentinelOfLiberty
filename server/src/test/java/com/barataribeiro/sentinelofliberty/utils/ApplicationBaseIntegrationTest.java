@@ -13,17 +13,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.assertj.MockMvcTester;
 
 import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants.VALID_ADMIN_LOGIN_PAYLOAD;
 import static com.barataribeiro.sentinelofliberty.utils.ApplicationTestConstants.VALID_LOGIN_PAYLOAD;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -41,7 +41,7 @@ public abstract class ApplicationBaseIntegrationTest {
     @BeforeAll
     static void createTestingAdmin(@Autowired @NotNull PasswordEncoder passwordEncoder,
                                    @Autowired @NotNull UserRepository userRepository,
-                                   @Autowired @NotNull MockMvc mockMvc) throws Exception {
+                                   @Autowired @NotNull MockMvcTester mockMvcTester) {
         if (!userRepository.existsByUsernameOrEmailAllIgnoreCase("testadmin", "testadmin@example.com")) {
             User admin = User.builder()
                              .username("testadmin")
@@ -66,63 +66,59 @@ public abstract class ApplicationBaseIntegrationTest {
 
         // Authenticate and get the token
         if (accessToken == null || userAccessToken == null) {
-            mockMvc.perform(post("/api/v1/auth/login")
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(VALID_ADMIN_LOGIN_PAYLOAD))
-                   .andExpect(status().isOk())
-                   .andDo(print())
-                   .andDo(result -> {
-                       String responseBody = result.getResponse().getContentAsString();
-                       accessToken = JsonPath.read(responseBody, "$.data.accessToken");
-                   });
+            mockMvcTester.post().uri("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON)
+                         .content(VALID_ADMIN_LOGIN_PAYLOAD).assertThat().hasStatusOk()
+                         .bodyJson().satisfies(jsonContent -> {
+                             String token = JsonPath.read(jsonContent.getJson(), "$.data.accessToken");
+                             assertTrue(token != null && !token.isEmpty());
+                             accessToken = token;
+                         });
 
-            mockMvc.perform(post("/api/v1/auth/login")
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content(VALID_LOGIN_PAYLOAD))
-                   .andExpect(status().isOk())
-                   .andDo(print())
-                   .andDo(result -> {
-                       String responseBody = result.getResponse().getContentAsString();
-                       userAccessToken = JsonPath.read(responseBody, "$.data.accessToken");
-                   });
+            mockMvcTester.post().uri("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON)
+                         .content(VALID_LOGIN_PAYLOAD).assertThat().hasStatusOk()
+                         .bodyJson().satisfies(jsonContent -> {
+                             String token = JsonPath.read(jsonContent.getJson(), "$.data.accessToken");
+                             assertTrue(token != null && !token.isEmpty());
+                             userAccessToken = token;
+                         });
         }
 
         // Generate list of new articles
         for (int i = 0; i < 10; i++) {
             final int index = i;
-            mockMvc.perform(post("/api/v1/articles")
-                                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content("""
-                                             {
-                                                 "title": "Test Article %d-%d",
-                                                 "subTitle": "Short Test",
-                                                 "content": "This is a test article. It is a very good test article. This additional text ensures the content is at least 100 characters.",
-                                                 "references": ["https://exampleOne.com", "https://exampleTwo.com"],
-                                                 "categories": ["%s", "listTest"]
-                                             }
-                                             """.formatted(index, System.currentTimeMillis(), "testing" + index)))
-                   .andDo(print());
+            mockMvcTester.post().uri("/api/v1/articles")
+                         .contentType(MediaType.APPLICATION_JSON)
+                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                         .content("""
+                                  {
+                                      "title": "Test Article %d-%d",
+                                      "subTitle": "Short Test",
+                                      "content": "This is a test article. It is a very good test article. This additional text ensures the content is at least 100 characters.",
+                                      "references": ["https://exampleOne.com", "https://exampleTwo.com"],
+                                      "categories": ["%s", "listTest"]
+                                  }
+                                  """.formatted(index, System.currentTimeMillis(), "testing" + index))
+                         .assertThat().hasStatus(HttpStatus.CREATED).hasStatus2xxSuccessful();
 
-            mockMvc.perform(post("/api/v1/suggestions")
-                                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken)
-                                    .contentType(MediaType.APPLICATION_JSON)
-                                    .content("""
-                                             {
-                                                 "title": "Test Suggestion %d-%d",
-                                                 "content": "This is a test suggestion. It is a very good test suggestion. This additional text ensures the content is at least 100 characters.",
-                                                 "mediaUrl": "https://exampleOne.com/image.jpg",
-                                                 "sourceUrl": "https://exampleTwo.com"
-                                             }
-                                             """.formatted(index, System.currentTimeMillis()))
-                                    .accept(MediaType.APPLICATION_JSON))
-                   .andDo(print())
-                   .andDo(result -> {
-                       String responseBody = result.getResponse().getContentAsString();
-                       Integer suggestionId = JsonPath.read(responseBody, "$.data.id");
-                       if (index == 0) suggestionIdToBeDeleted = Long.valueOf(suggestionId);
-                       else if (index == 1) suggestionIdToBeUsedInTests = Long.valueOf(suggestionId);
-                   });
+            mockMvcTester.post().uri("/api/v1/suggestions")
+                         .contentType(MediaType.APPLICATION_JSON)
+                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken)
+                         .accept(MediaType.APPLICATION_JSON)
+                         .content("""
+                                  {
+                                      "title": "Test Suggestion %d-%d",
+                                      "content": "This is a test suggestion. It is a very good test suggestion. This additional text ensures the content is at least 100 characters.",
+                                      "mediaUrl": "https://exampleOne.com/image.jpg",
+                                      "sourceUrl": "https://exampleTwo.com"
+                                  }
+                                  """.formatted(index, System.currentTimeMillis()))
+                         .assertThat().hasStatus(HttpStatus.CREATED).hasStatus2xxSuccessful().bodyJson()
+                         .satisfies(jsonContent -> {
+                             assertNotNull(JsonPath.read(jsonContent.getJson(), "$.data.id"));
+                             Integer suggestionId = JsonPath.read(jsonContent.getJson(), "$.data.id");
+                             if (index == 0) suggestionIdToBeDeleted = Long.valueOf(suggestionId);
+                             else if (index == 1) suggestionIdToBeUsedInTests = Long.valueOf(suggestionId);
+                         });
         }
     }
 
