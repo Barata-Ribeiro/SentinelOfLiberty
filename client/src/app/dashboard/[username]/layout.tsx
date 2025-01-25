@@ -1,6 +1,5 @@
-import DashboardSideBar from "@/components/dashboard-sidebar"
-import { notFound }     from "next/navigation"
-import { ReactNode }    from "react"
+import { notFound }  from "next/navigation"
+import { ReactNode } from "react"
 
 interface DashboardLayoutProps {
     children?: ReactNode
@@ -11,10 +10,5 @@ export default async function DashboardLayout({ children, params }: Readonly<Das
     const username = (await params).username
     if (!username) return notFound()
     
-    return (
-        <main className="container flex h-full w-full items-start gap-4">
-            <DashboardSideBar />
-            { children }
-        </main>
-    )
+    return <div className="container">{ children }</div>
 }
