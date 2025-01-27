@@ -4,7 +4,7 @@ import { Suggestion }             from "@/@types/suggestions"
 import getLatestPublicArticles    from "@/actions/articles/get-latest-public-articles"
 import getLatestNotices           from "@/actions/notices/get-latest-notices"
 import getLatestPublicSuggestions from "@/actions/suggestions/get-latest-public-suggestions"
-import HomeNotices                from "@/components/home-notices"
+import HomeNotices                from "@/components/home/home-notices"
 import { auth }                   from "auth"
 import { Metadata }               from "next"
 

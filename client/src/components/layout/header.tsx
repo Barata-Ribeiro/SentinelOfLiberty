@@ -1,6 +1,6 @@
 "use client"
 
-import AvatarWithText                            from "@/components/avatar-with-text"
+import AvatarWithText                            from "@/components/shared/avatar-with-text"
 import SessionVerifier                           from "@/helpers/session-verifier"
 import { getBackgroundImage }                    from "@/utils/functions"
 import { Button, Dialog, DialogPanel }           from "@headlessui/react"
