@@ -142,9 +142,13 @@ class UserControllerTestIT extends ApplicationBaseIntegrationTest {
                      .bodyJson()
                      .extractingPath("$.data")
                      .satisfies(data -> {
-                         assertEquals("testadminupdated", JsonPath.read(data, "$.username"));
-                         assertEquals("testadminnewemail@example.com", JsonPath.read(data, "$.email"));
-                         assertEquals("New Admin", JsonPath.read(data, "$.displayName"));
+                         String expectedUsername = JsonPath.read(ADMIN_UPDATE_PROFILE_PAYLOAD, "$.username");
+                         String expectedEmail = JsonPath.read(ADMIN_UPDATE_PROFILE_PAYLOAD, "$.email");
+                         String expectedDisplayName = JsonPath.read(ADMIN_UPDATE_PROFILE_PAYLOAD, "$.displayName");
+
+                         assertEquals(expectedUsername, JsonPath.read(data, "$.username"));
+                         assertEquals(expectedEmail, JsonPath.read(data, "$.email"));
+                         assertEquals(expectedDisplayName, JsonPath.read(data, "$.displayName"));
                      });
     }
 
