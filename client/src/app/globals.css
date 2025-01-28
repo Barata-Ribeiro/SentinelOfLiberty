@@ -11,6 +11,12 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
+    :root {
+        --sb-track-color: #3f2109;
+        --sb-thumb-color: #bd890f;
+        --sb-size: 10px;
+    }
+
     *,
     ::after,
     ::before,
@@ -23,6 +29,20 @@
     *::before,
     *::after {
         @apply transition-colors duration-100;
+    }
+
+    *::-webkit-scrollbar {
+        width: var(--sb-size);
+    }
+
+    *::-webkit-scrollbar-track {
+        background: var(--sb-track-color);
+        border-radius: 0;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background: var(--sb-thumb-color);
+        border-radius: 0;
     }
 
     h1,
@@ -42,5 +62,11 @@
     textarea,
     li {
         @apply font-body;
+    }
+
+    @supports not selector(::-webkit-scrollbar) {
+        * {
+            scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
+        }
     }
 }
