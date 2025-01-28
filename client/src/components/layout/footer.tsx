@@ -1,7 +1,7 @@
 import Image                 from "next/image"
 import Link                  from "next/link"
 import { FaGithub, FaGlobe } from "react-icons/fa6"
-import miniLogo              from "../../public/sentinel-of-liberty-S-final.svg"
+import miniLogo              from "../../../public/sentinel-of-liberty-S-final.svg"
 
 const navigation = [
     {

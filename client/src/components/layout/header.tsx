@@ -11,8 +11,8 @@ import { usePathname }                           from "next/navigation"
 import { useState }                              from "react"
 import { FaRegBell }                             from "react-icons/fa6"
 import { HiMiniXMark, HiOutlineBars3CenterLeft } from "react-icons/hi2"
-import headerImage                               from "../../public/city-of-liberty.png"
-import solLogo                                   from "../../public/sentinel-of-liberty-final.svg"
+import headerImage                               from "../../../public/city-of-liberty.png"
+import solLogo                                   from "../../../public/sentinel-of-liberty-final.svg"
 
 const navigation = [
     { name: "Home", href: "/" },
