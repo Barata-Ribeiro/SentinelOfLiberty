@@ -1,5 +1,6 @@
 import Footer                 from "@/components/layout/footer"
 import Header                 from "@/components/layout/header"
+import { WebsocketProvider }  from "@/providers/websocket-provider"
 import tw                     from "@/utils/tw"
 import type { Metadata }      from "next"
 import { SessionProvider }    from "next-auth/react"
@@ -39,14 +40,16 @@ export default function RootLayout({
     const bodyStyles = tw`${ lora.variable } ${ merriWeather.variable } h-full antialiased`
     
     return (
-        <html lang="en" suppressHydrationWarning>
-            <body className={ bodyStyles }>
-                <SessionProvider>
-                    <Header />
-                    { children }
-                    <Footer />
-                </SessionProvider>
-            </body>
-        </html>
+        <SessionProvider>
+            <WebsocketProvider>
+                <html lang="en" suppressHydrationWarning>
+                    <body className={ bodyStyles }>
+                        <Header />
+                        { children }
+                        <Footer />
+                    </body>
+                </html>
+            </WebsocketProvider>
+        </SessionProvider>
     )
 }
