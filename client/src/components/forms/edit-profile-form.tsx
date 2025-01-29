@@ -7,6 +7,7 @@ import InputValidationError        from "@/components/feedback/input-validation-
 import Spinner                     from "@/components/helpers/spinner"
 import FormButton                  from "@/components/shared/form-button"
 import FormInput                   from "@/components/shared/form-input"
+import FormTextarea                from "@/components/shared/form-textarea"
 import { getInitialFormState }     from "@/utils/functions"
 import { Fieldset, Legend }        from "@headlessui/react"
 import { useActionState }          from "react"
@@ -30,6 +31,7 @@ export default function EditProfileForm() {
                 <FormInput label="Username" type="text" name="username" />
                 <FormInput label="Email" type="email" name="email" />
                 <FormInput label="Display Name" type="text" name="displayName" />
+                <FormTextarea label="Biography" name="biography" maxLength={ 160 } />
             </Fieldset>
 
             <Fieldset className="w-full space-y-4">
