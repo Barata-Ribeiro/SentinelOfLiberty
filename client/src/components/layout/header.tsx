@@ -1,6 +1,8 @@
 "use client"
 
+import HeaderAvatarSkeleton                      from "@/components/layout/skeletons/header-avatar-skeleton"
 import AvatarWithText                            from "@/components/shared/avatar-with-text"
+import NotificationButton                        from "@/components/shared/notification-button"
 import SessionVerifier                           from "@/helpers/session-verifier"
 import { getBackgroundImage }                    from "@/utils/functions"
 import { Button, Dialog, DialogPanel }           from "@headlessui/react"
@@ -9,7 +11,6 @@ import Image, { getImageProps }                  from "next/image"
 import Link                                      from "next/link"
 import { usePathname }                           from "next/navigation"
 import { useState }                              from "react"
-import { FaRegBell }                             from "react-icons/fa6"
 import { HiMiniXMark, HiOutlineBars3CenterLeft } from "react-icons/hi2"
 import headerImage                               from "../../../public/city-of-liberty.png"
 import solLogo                                   from "../../../public/sentinel-of-liberty-final.svg"
@@ -21,7 +22,7 @@ const navigation = [
 ]
 
 export default function Header() {
-    const { data: session } = useSession()
+    const { data: session, status } = useSession()
     const pathname = usePathname()
     
     const [ mobileMenuOpen, setMobileMenuOpen ] = useState(false)
@@ -29,6 +30,36 @@ export default function Header() {
         props: { srcSet },
     } = getImageProps({ alt: "", width: 1700, height: 280, src: headerImage })
     const backgroundImage = getBackgroundImage(srcSet)
+    
+    function getProfileAvatarElementOrLoginButton() {
+        return status === "authenticated" && session !== null ? (
+            <>
+                <NotificationButton />
+                <AvatarWithText name={ session.user.username } size={ 36 } src={ session.user?.avatarUrl } />
+            </>
+        ) : (
+                   <Link
+                       href="/auth/login"
+                       className="text-shadow-900 focus:outline-shadow-900 active:bg-shadow-700 rounded-md px-3 py-2 text-sm leading-6 font-semibold hover:bg-stone-300 focus:outline-2 focus:outline-offset-2">
+                Log in <span aria-hidden="true">&rarr;</span>
+            </Link>
+               )
+    }
+    
+    function getProfileAvatarElementOrLoginButtonForBurgerMenu() {
+        return status === "authenticated" && session !== null ? (
+            <>
+                <NotificationButton />
+                <AvatarWithText name={ session.user.username } size={ 36 } src={ session.user?.avatarUrl } />
+            </>
+        ) : (
+                   <Link
+                       href="/auth/login"
+                       className="text-shadow-900 hover:bg-marigold-400 focus:outline-marigold-900 active:bg-marigold-700 rounded-md px-3 py-2 text-sm leading-6 font-semibold focus:outline-2 focus:outline-offset-2">
+                Log in <span aria-hidden="true">&rarr;</span>
+            </Link>
+               )
+    }
     
     return (
         <header className="z-10 shadow-sm">
@@ -73,31 +104,16 @@ export default function Header() {
                                 onClick={ () => setMobileMenuOpen(true) }
                                 className="text-shadow-700 hover:bg-marigold-400 -m-2.5 inline-flex items-center justify-center rounded-md p-2.5">
                                 <span className="sr-only">Open main menu</span>
-                                <HiOutlineBars3CenterLeft aria-hidden="true" className="h-6 w-6" />
+                                <HiOutlineBars3CenterLeft aria-hidden="true" className="size-6" />
                             </Button>
                         </div>
                     </div>
 
                     <div className="flex flex-1 justify-end">
-                        { !session ? (
-                            <Link
-                                href="/auth/login"
-                                className="text-shadow-900 hover:bg-marigold-400 focus:outline-marigold-900 active:bg-marigold-700 rounded-md px-3 py-2 text-sm leading-6 font-semibold focus:outline-2 focus:outline-offset-2">
-                                Log in <span aria-hidden="true">&rarr;</span>
-                            </Link>
+                        { status === "loading" ? (
+                            <HeaderAvatarSkeleton />
                         ) : (
-                              <>
-                                <Button
-                                    type="button"
-                                    className="bg-shadow-50 text-shadow-400 hover:text-shadow-600 focus:outline-marigold-900 active:text-shadow-700 relative mr-4 shrink-0 rounded-full p-1 focus:outline-2 focus:outline-offset-2">
-                                    <span className="absolute -inset-1.5" />
-                                    <span className="sr-only">View notifications</span>
-                                    <FaRegBell aria-hidden="true" className="h-6 w-7" />
-                                </Button>
-                                <AvatarWithText name={ session.user.username }
-                                                size={ 36 }
-                                                src={ session.user?.avatarUrl } />
-                            </>
+                              getProfileAvatarElementOrLoginButtonForBurgerMenu()
                           ) }
                     </div>
                 </nav>
@@ -111,32 +127,15 @@ export default function Header() {
                                     onClick={ () => setMobileMenuOpen(false) }
                                     className="text-shadow-700 -m-2.5 rounded-md p-2.5 hover:bg-stone-300">
                                     <span className="sr-only">Close menu</span>
-                                    <HiMiniXMark aria-hidden="true" className="h-6 w-6" />
+                                    <HiMiniXMark aria-hidden="true" className="size-6" />
                                 </Button>
                             </div>
 
                             <div className="flex flex-1 justify-end">
-                                { !session ? (
-                                    <Link
-                                        href="/auth/login"
-                                        className="text-shadow-900 focus:outline-shadow-900 active:bg-shadow-700 rounded-md px-3 py-2 text-sm leading-6 font-semibold hover:bg-stone-300 focus:outline-2 focus:outline-offset-2">
-                                        Log in <span aria-hidden="true">&rarr;</span>
-                                    </Link>
+                                { status === "loading" ? (
+                                    <HeaderAvatarSkeleton />
                                 ) : (
-                                      <>
-                                        <Button
-                                            type="button"
-                                            className="text-shadow-400 hover:text-shadow-500 focus:outline-marigold-900 relative mr-4 shrink-0 rounded-full bg-stone-50 p-1 focus:outline-2 focus:outline-offset-2">
-                                            <span className="absolute -inset-1.5" />
-                                            <span className="sr-only">View notifications</span>
-                                            <FaRegBell aria-hidden="true" className="h-6 w-7" />
-                                        </Button>
-                                        <AvatarWithText
-                                            name={ session.user.username }
-                                            size={ 36 }
-                                            src={ session.user?.avatarUrl }
-                                        />
-                                    </>
+                                      getProfileAvatarElementOrLoginButton()
                                   ) }
                             </div>
                         </div>
