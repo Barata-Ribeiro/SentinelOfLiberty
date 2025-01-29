@@ -45,4 +45,17 @@ interface Dashboard {
     totalWrittenComments: number;
 }
 
-export type { Roles, User, Profile, Account, Author, Dashboard }
+type NotificationType = "INFO" | "SUCCESS" | "WARNING" | "ERROR";
+
+interface Notification {
+    id: number;
+    title: string;
+    message: string;
+    type: NotificationType;
+    recipient: Author;
+    isRead: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export type { Roles, User, Profile, Account, Author, Dashboard, NotificationType, Notification }
