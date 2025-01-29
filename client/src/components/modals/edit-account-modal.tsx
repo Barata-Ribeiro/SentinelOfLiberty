@@ -1,24 +1,21 @@
 "use client"
 
-import EditProfileForm                                 from "@/components/forms/edit-profile-form"
-import { Button, Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react"
+import EditProfileForm                         from "@/components/forms/edit-profile-form"
+import RegularButton                           from "@/components/shared/regular-button"
+import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react"
 import {
     DialogHeader,
-}                                                      from "next/dist/client/components/react-dev-overlay/internal/components/Dialog"
-import { useState }                                    from "react"
+}                                              from "next/dist/client/components/react-dev-overlay/internal/components/Dialog"
+import { useState }                            from "react"
 
 export default function EditAccountModal() {
     const [ open, setOpen ] = useState(false)
     
     return (
         <>
-            <Button
-                type="button"
-                onClick={ () => setOpen(true) }
-                className="bg-marigold-600 hover:bg-marigold-700 active:bg-marigold-800 focus:ring-marigold-200 text-marigold-50 inline-flex w-max cursor-pointer items-center rounded-lg px-4 py-2 text-center text-sm font-medium select-none focus:ring-4 focus:outline-none"
-                aria-label="Edit profile">
+            <RegularButton onClick={ () => setOpen(true) } aria-label="Edit profile">
                 Edit Profile
-            </Button>
+            </RegularButton>
 
             <Dialog open={ open } onClose={ setOpen } className="relative z-10">
                 <DialogBackdrop
