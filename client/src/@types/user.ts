@@ -7,7 +7,7 @@ interface User {
     id: string
     username: string
     email: string
-    roles: Roles
+    role: Roles
     avatarUrl: string
     isPrivate: boolean
     isVerified: boolean

@@ -27,7 +27,7 @@ export default function DashboardUserProfile({ name, profile }: Readonly<Dashboa
                 }) }
             </time>
             
-            { profile.roles === "ADMIN" ? (
+            { profile.role === "ADMIN" ? (
                 <span
                     className="mt-2 rounded-full border border-red-400 bg-red-100 px-2.5 py-1 text-xs leading-none font-medium text-red-800 select-none dark:bg-red-900 dark:text-red-300"
                     aria-label="You are an admin">
