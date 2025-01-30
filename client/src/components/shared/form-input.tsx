@@ -14,7 +14,7 @@ export default function FormInput({
                                       description,
                                       disabledField,
                                       onChange,
-                                      defaultValue = "",
+                                      defaultValue,
                                       value,
                                       ...props
                                   }: Readonly<FormInputProps>) {
@@ -25,13 +25,13 @@ export default function FormInput({
         onChange?.(e)
     }
     
-    const labelStyle = tw`absolute left-2.5 origin-left transform cursor-text bg-white px-1 text-sm text-shadow-400 transition-all peer-focus:-top-2 peer-focus:scale-90 peer-focus:text-xs peer-focus:text-shadow-400 data-disabled:pointer-events-none data-disabled:select-none data-disabled:opacity-50`
+    const labelStyle = tw`text-shadow-400 peer-focus:text-shadow-400 absolute left-2.5 origin-left transform cursor-text bg-white px-1 text-sm transition-all peer-focus:-top-2 peer-focus:scale-90 peer-focus:text-xs data-disabled:pointer-events-none data-disabled:opacity-50 data-disabled:select-none`
     
     return (
         <div className="w-full min-w-[200px]">
             <Field className="relative" disabled={ disabledField }>
                 <Input
-                    className="data-disabled:bg-gray-100 peer w-full rounded-md border border-stone-200 bg-transparent px-3 py-2 text-sm text-shadow-700 shadow-xs transition duration-300 placeholder:text-shadow-400 hover:border-stone-300 focus:border-stone-400 focus:shadow-sm focus:outline-hidden focus:ring-1 focus:ring-stone-400/50 data-disabled:pointer-events-none"
+                    className="peer text-shadow-700 placeholder:text-shadow-400 w-full rounded-md border border-stone-200 bg-transparent px-3 py-2 text-sm shadow-xs transition duration-300 hover:border-stone-300 focus:border-stone-400 focus:ring-1 focus:shadow-sm focus:ring-stone-400/50 focus:outline-hidden data-disabled:pointer-events-none data-disabled:bg-gray-100"
                     value={ value }
                     defaultValue={ defaultValue }
                     onChange={ handleChange }
@@ -40,12 +40,12 @@ export default function FormInput({
                 <Label
                     className={ twMerge(
                         labelStyle,
-                        hasValue ? "-top-2 scale-90 text-xs text-shadow-400" : "top-2.5 scale-100 text-sm",
+                        hasValue ? "text-shadow-400 -top-2 scale-90 text-xs" : "top-2.5 scale-100 text-sm",
                     ) }>
                     { label }
                 </Label>
                 { description && (
-                    <Description className="mt-1 px-1.5 text-xs text-shadow-300 data-disabled:pointer-events-none data-disabled:opacity-50">
+                    <Description className="text-shadow-300 mt-1 px-1.5 text-xs data-disabled:pointer-events-none data-disabled:opacity-50">
                         { description }
                     </Description>
                 ) }
