@@ -88,7 +88,8 @@ const userProfileUpdateSchema = z
                              path: [ "confirmNewPassword" ],
                          })
         }
-    }).transform(data => {
+    })
+    .transform(data => {
         if (data.username === "") delete data.username
         if (data.displayName === "") delete data.displayName
         if (data.email === "") delete data.email
@@ -99,4 +100,41 @@ const userProfileUpdateSchema = z
         return data
     })
 
-export { authLoginSchema, authRegisterSchema, userProfileUpdateSchema }
+// ARTICLES
+const articleRequestSchema = z.object({
+                                          suggestionId: z.number().optional(),
+                                          title: z
+                                              .string()
+                                              .min(3, "Title must be between 3 and 100 characters.")
+                                              .max(100, "Title must be between 3 and 100 characters."),
+                                          subTitle: z
+                                              .string()
+                                              .min(3, "Subtitle must be between 3 and 100 characters.")
+                                              .max(100, "Subtitle must be between 3 and 100 characters."),
+                                          content: z.string().min(100, "Content must be at least 100 characters."),
+                                          mediaUrl: z
+                                              .string()
+                                              .url("Invalid URL format.")
+                                              .regex(/^(https:\/\/)/, "URL must start with https://"),
+                                          references: z
+                                              .string()
+                                              .transform(val => val
+                                                  .split(",")
+                                                  .map(ref => ref.trim())
+                                                  .filter(ref => ref.length > 0))
+                                              .refine(refs => refs.length > 0,
+                                                      "At least one reference must be provided.")
+                                              .refine(refs => refs
+                                                  .every(ref => /^(https?):\/\/[^\s/$.?#].\S*$/
+                                                      .test(ref)), "Invalid URL format in references."),
+                                          categories: z
+                                              .string()
+                                              .transform(val => val
+                                                  .split(",")
+                                                  .map(cat => cat.trim())
+                                                  .filter(cat => cat.length > 0))
+                                              .refine(cats => cats.length > 0,
+                                                      "At least one category must be provided."),
+                                      })
+
+export { authLoginSchema, authRegisterSchema, userProfileUpdateSchema, articleRequestSchema }
