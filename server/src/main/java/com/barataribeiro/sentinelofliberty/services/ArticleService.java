@@ -1,9 +1,6 @@
 package com.barataribeiro.sentinelofliberty.services;
 
-import com.barataribeiro.sentinelofliberty.dtos.article.ArticleDTO;
-import com.barataribeiro.sentinelofliberty.dtos.article.ArticleRequestDTO;
-import com.barataribeiro.sentinelofliberty.dtos.article.ArticleSummaryDTO;
-import com.barataribeiro.sentinelofliberty.dtos.article.ArticleUpdateRequestDTO;
+import com.barataribeiro.sentinelofliberty.dtos.article.*;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 
@@ -18,6 +15,8 @@ public interface ArticleService {
 
     Page<ArticleSummaryDTO> getAllArticlesByCategory(String category, int page, int perPage, String direction,
                                                      String orderBy);
+
+    Set<CategoryDTO> getAllCategories();
 
     Page<ArticleSummaryDTO> getAllOwnArticles(String search, int page, int perPage, String direction, String orderBy,
                                               Authentication authentication);

@@ -1,10 +1,7 @@
 package com.barataribeiro.sentinelofliberty.services.impl;
 
 import com.barataribeiro.sentinelofliberty.builders.ArticleMapper;
-import com.barataribeiro.sentinelofliberty.dtos.article.ArticleDTO;
-import com.barataribeiro.sentinelofliberty.dtos.article.ArticleRequestDTO;
-import com.barataribeiro.sentinelofliberty.dtos.article.ArticleSummaryDTO;
-import com.barataribeiro.sentinelofliberty.dtos.article.ArticleUpdateRequestDTO;
+import com.barataribeiro.sentinelofliberty.dtos.article.*;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.IllegalRequestException;
 import com.barataribeiro.sentinelofliberty.models.entities.Article;
@@ -76,6 +73,13 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     @Transactional(readOnly = true)
+    public Set<CategoryDTO> getAllCategories() {
+        return categoryRepository.findAll().parallelStream()
+                                 .map(articleMapper::toCategoryDTO).collect(Collectors.toSet());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<ArticleSummaryDTO> getAllOwnArticles(String search, int page, int perPage, String direction,
                                                      String orderBy, Authentication authentication) {
         final PageRequest pageable = getPageRequest(page, perPage, direction, orderBy);
@@ -109,7 +113,7 @@ public class ArticleServiceImpl implements ArticleService {
                                  .author(author)
                                  .build();
 
-        String generatedSlug = article.getId() + "-" + StringNormalizer.toSlug(body.getTitle()) + "-" +
+        String generatedSlug = author.getUsername() + "-" + StringNormalizer.toSlug(body.getTitle()) + "-" +
                 StringNormalizer.toSlug(body.getSubTitle());
         article.setSlug(generatedSlug);
 

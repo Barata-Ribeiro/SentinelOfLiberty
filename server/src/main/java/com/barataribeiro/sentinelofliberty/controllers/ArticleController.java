@@ -1,10 +1,7 @@
 package com.barataribeiro.sentinelofliberty.controllers;
 
 import com.barataribeiro.sentinelofliberty.dtos.ApplicationResponseDTO;
-import com.barataribeiro.sentinelofliberty.dtos.article.ArticleDTO;
-import com.barataribeiro.sentinelofliberty.dtos.article.ArticleRequestDTO;
-import com.barataribeiro.sentinelofliberty.dtos.article.ArticleSummaryDTO;
-import com.barataribeiro.sentinelofliberty.dtos.article.ArticleUpdateRequestDTO;
+import com.barataribeiro.sentinelofliberty.dtos.article.*;
 import com.barataribeiro.sentinelofliberty.services.ArticleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -78,6 +75,16 @@ public class ArticleController {
                 .getAllArticlesByCategory(category, page, perPage, direction, orderBy);
         final String message = "You have successfully retrieved all articles for the category " + category;
         return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(), message, response));
+    }
+
+    @Operation(summary = "Get all available categories",
+               description = "This endpoint allows an user to get all available categories.")
+    @GetMapping("/public/categories")
+    public ResponseEntity<ApplicationResponseDTO<Set<CategoryDTO>>> getAllCategories() {
+        Set<CategoryDTO> response = articleService.getAllCategories();
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully retrieved all categories",
+                                                              response));
     }
 
     @GetMapping
