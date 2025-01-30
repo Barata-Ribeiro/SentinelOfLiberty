@@ -94,6 +94,10 @@ export function getArticleUrl(articleId: number): string {
     return `${ API_URL }/articles/public/article/${ articleId }`
 }
 
+export function getAllCategoriesUrl(): string {
+    return `${ API_URL }/articles/public/categories`
+}
+
 export function getAllOwnArticlesUrl(
     search?: string,
     page: number = 0,
