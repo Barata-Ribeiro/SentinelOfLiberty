@@ -18,6 +18,9 @@ public class ArticleUpdateRequestDTO {
     @Size(min = 3, max = 100, message = "Subtitle must be between 3 and 100 characters.")
     private String subTitle;
 
+    @Size(min = 50, max = 250, message = "Summary must be between 50 and 250 characters.")
+    private String summary;
+
     @Size(min = 100, message = "Content must be at least 100 characters.")
     private String content;
 

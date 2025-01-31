@@ -24,18 +24,21 @@ public class ArticleRequestDTO {
     private String subTitle;
 
     @NotBlank
+    @Size(min = 50, max = 250, message = "Summary must be between 50 and 250 characters.")
+    private String summary;
+
+    @NotBlank
     @Size(min = 100, message = "Content must be at least 100 characters.")
     private String content;
 
     @URL(message = "Invalid URL format.", protocol = "https",
-         regexp = "((((https?|ftps?|gopher|telnet|nntp)://)|(mailto:|news:))([-%()_.!~*';/?:@&=+$,A-Za-z0-9])+)")
+         regexp = "((((https?)://)|(mailto:|news:))([-%()_.!~*';/?:@&=+$,A-Za-z0-9])+)")
     private String mediaUrl;
 
     @NotEmpty
     @Size(min = 1, message = "At least one reference must be provided.")
     private List<@NotBlank @URL(message = "Invalid URL format.",
-                                regexp = "((((https?|ftps?|gopher|telnet|nntp)://)|(mailto:|news:))([-%()_.!~*';" +
-                                        "/?:@&=+$,A-Za-z0-9])+)") String> references;
+                                regexp = "((((https?)://)|(mailto:|news:))([-%()_.!~*';/?:@&=+$,A-Za-z0-9])+)") String> references;
 
     @NotEmpty
     @Size(min = 1, message = "At least one category must be provided.")

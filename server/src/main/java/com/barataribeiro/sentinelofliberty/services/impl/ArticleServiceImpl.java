@@ -108,7 +108,7 @@ public class ArticleServiceImpl implements ArticleService {
                                  .title(body.getTitle())
                                  .subTitle(body.getSubTitle())
                                  .content(body.getContent())
-                                 .summary(StringNormalizer.toSummary(body.getContent(), 100))
+                                 .summary(body.getSummary())
                                  .references(body.getReferences())
                                  .author(author)
                                  .build();
@@ -190,10 +190,9 @@ public class ArticleServiceImpl implements ArticleService {
 
         Optional.ofNullable(body.getSubTitle()).ifPresent(article::setSubTitle);
 
-        Optional.ofNullable(body.getContent()).ifPresent(content -> {
-            article.setContent(content);
-            article.setSummary(StringNormalizer.toSummary(content, 100));
-        });
+        Optional.ofNullable(body.getSummary()).ifPresent(article::setSummary);
+
+        Optional.ofNullable(body.getContent()).ifPresent(article::setContent);
 
         Optional.ofNullable(body.getMediaUrl()).ifPresent(article::setMediaUrl);
 
