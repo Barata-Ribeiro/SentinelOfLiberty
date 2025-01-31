@@ -29,4 +29,10 @@ function getInitialFormState(): State {
     }
 }
 
-export { getBackgroundImage, problemDetailsFactory, getInitialFormState }
+function extractTextFromHTML(html: string) {
+    const parser = new DOMParser()
+    const doc = parser.parseFromString(html, "text/html")
+    return doc.body.textContent?.trim() ?? ""
+}
+
+export { getBackgroundImage, problemDetailsFactory, getInitialFormState, extractTextFromHTML }

@@ -1,4 +1,5 @@
-import { z } from "zod"
+import { extractTextFromHTML } from "@/utils/functions"
+import { z }                   from "zod"
 
 // AUTH
 const authLoginSchema = z.object({
@@ -111,28 +112,28 @@ const articleRequestSchema = z.object({
                                               .string()
                                               .min(3, "Subtitle must be between 3 and 100 characters.")
                                               .max(100, "Subtitle must be between 3 and 100 characters."),
-                                          content: z.string().min(100, "Content must be at least 100 characters."),
+                                          summary: z
+                                              .string()
+                                              .min(50, "Summary must be at least 100 characters.")
+                                              .max(250, "Summary must be at most 250 characters."),
+                                          content: z.string()
+                                              .refine(content => extractTextFromHTML(content).trim().length > 100,
+                                                      "Content must be at least 100 characters."),
                                           mediaUrl: z
                                               .string()
                                               .url("Invalid URL format.")
                                               .regex(/^(https:\/\/)/, "URL must start with https://"),
                                           references: z
                                               .string()
-                                              .transform(val => val
-                                                  .split(",")
-                                                  .map(ref => ref.trim())
-                                                  .filter(ref => ref.length > 0))
+                                              .transform(val => val.split(",").map(ref => ref.trim())
+                                                  .filter(ref => ref.length > 0),
+                                              )
                                               .refine(refs => refs.length > 0,
                                                       "At least one reference must be provided.")
-                                              .refine(refs => refs
-                                                  .every(ref => /^(https?):\/\/[^\s/$.?#].\S*$/
-                                                      .test(ref)), "Invalid URL format in references."),
-                                          categories: z
-                                              .string()
-                                              .transform(val => val
-                                                  .split(",")
-                                                  .map(cat => cat.trim())
-                                                  .filter(cat => cat.length > 0))
+                                              .refine(refs => refs.every(ref => /^(https?):\/\/[^\s/$.?#].\S*$/
+                                                  .test(ref)), "Invalid URL format in references."),
+                                          categories: z.string().transform(val => val.split(",").map(cat => cat.trim())
+                                              .filter(cat => cat.length > 0))
                                               .refine(cats => cats.length > 0,
                                                       "At least one category must be provided."),
                                       })
