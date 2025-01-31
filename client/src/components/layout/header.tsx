@@ -84,7 +84,7 @@ export default function Header() {
             </div>
 
             <div className="bg-marigold-600">
-                <nav aria-label="Global" className="container flex items-center justify-between p-6 lg:px-8">
+                <nav aria-label="Global" className="container flex items-center justify-between py-6">
                     <div className="flex flex-1">
                         <div className="hidden lg:flex lg:gap-x-12">
                             { navigation.map(item => (
