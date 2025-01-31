@@ -1,27 +1,6 @@
 package com.barataribeiro.sentinelofliberty.utils;
 
 public final class ApplicationTestConstants {
-
-    public static final String NEW_ARTICLE_PAYLOAD = """
-                                                     {
-                                                         "title": "Test Article",
-                                                         "subTitle": "Short Test",
-                                                         "content": "This is a test article. It is a very good test article. This additional text ensures the content is at least 100 characters.",
-                                                         "references": ["https://exampleOne.com", "https://exampleTwo.com"],
-                                                         "categories": ["test"]
-                                                     }
-                                                     """;
-    public static final String UPDATE_ARTICLE_PAYLOAD = """
-                                                        {
-                                                            "title": "Updated Test Article",
-                                                            "subTitle": "Updated Short Test",
-                                                            "content": "This is an update to the testing article. It is a very good testing article. This additional text ensures the content is at least 100 characters. Now it is updated with more text.",
-                                                            "mediaUrl": "https://example.com/image.jpg",
-                                                            "references": ["https://exampleTwo.com", "https://exampleThree.com"],
-                                                            "categories": ["testing", "update"]
-                                                        }
-                                                        """;
-
     public static final String NEW_NOTICE_PAYLOAD = """
                                                     {
                                                         "title": "Test Notice",
@@ -84,6 +63,27 @@ public final class ApplicationTestConstants {
             "luctus brute cras iuvaret elit diam commune morbi eruditi omittantur elementum pertinax montes sit " +
             "mediocrem habeo pri petentium ubique.";
 
+    public static final String NEW_ARTICLE_PAYLOAD = String.format("""
+                                                                   {
+                                                                       "title": "Test Article",
+                                                                       "subTitle": "Short Test",
+                                                                       "summary": "This is a test article. It is a very good test article. This additional text ensures the content is at least 100 characters.",
+                                                                       "content": "%s",
+                                                                       "references": ["https://exampleOne.com", "https://exampleTwo.com"],
+                                                                       "categories": ["test"]
+                                                                   }
+                                                                   """, LONG_LOREM_IPSUM);
+    public static final String UPDATE_ARTICLE_PAYLOAD = """
+                                                        {
+                                                            "title": "Updated Test Article",
+                                                            "subTitle": "Updated Short Test",
+                                                            "summary": "This is an update to the testing article. It is a very good testing article. This additional text ensures the content is at least 100 characters.",
+                                                            "content": "This is an update to the testing article. It is a very good testing article. This additional text ensures the content is at least 100 characters. Now it is updated with more text. This additional text ensures the content is at least enough updated characters.",
+                                                            "mediaUrl": "https://example.com/image.jpg",
+                                                            "references": ["https://exampleTwo.com", "https://exampleThree.com"],
+                                                            "categories": ["testing", "update"]
+                                                        }
+                                                        """;
 
     private ApplicationTestConstants() {
         throw new UnsupportedOperationException("This class cannot be instantiated.");

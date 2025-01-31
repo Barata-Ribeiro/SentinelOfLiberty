@@ -91,11 +91,12 @@ public abstract class ApplicationBaseIntegrationTest {
                          .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                          .content("""
                                   {
-                                      "title": "Test Article %d-%d",
-                                      "subTitle": "Short Test",
-                                      "content": "This is a test article. It is a very good test article. This additional text ensures the content is at least 100 characters.",
-                                      "references": ["https://exampleOne.com", "https://exampleTwo.com"],
-                                      "categories": ["%s", "listTest"]
+                                    "title": "Test Article %d-%d",
+                                    "subTitle": "Short Test",
+                                    "summary": "This is a test summary with sufficient length to pass validation.",
+                                    "content": "This is a test article. It is a very good test article. This additional text ensures the content is at least 100 characters.",
+                                    "references": ["https://exampleOne.com", "https://exampleTwo.com"],
+                                    "categories": ["%s", "listTest"]
                                   }
                                   """.formatted(index, System.currentTimeMillis(), "testing" + index))
                          .assertThat().hasStatus(HttpStatus.CREATED).hasStatus2xxSuccessful();

@@ -221,6 +221,7 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
                                        "suggestionId": %d,
                                        "title": "Test Article from Suggestion",
                                        "subTitle": "Based on a Suggestion",
+                                       "summary": "This is a test summary with sufficient length to pass validation.",
                                        "content": "This is a test article from a suggestion. It is a very good test article based on a suggestion. This additional text ensures the content is at least 100 characters.",
                                        "references": ["https://exampleOne.com", "https://exampleTwo.com"],
                                        "categories": ["test"]
@@ -250,6 +251,7 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
                                        "suggestionId": 80,
                                        "title": "Test Article from Suggestion",
                                        "subTitle": "Based on a Suggestion",
+                                       "summary": "This is a test summary with sufficient length to pass validation.",
                                        "content": "This is a test article from a suggestion. It is a very good test article based on a suggestion. This additional text ensures the content is at least 100 characters.",
                                        "references": ["https://exampleOne.com", "https://exampleTwo.com"],
                                        "categories": ["test"]
