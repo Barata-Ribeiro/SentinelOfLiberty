@@ -9,13 +9,19 @@ const nextConfig: NextConfig = {
             {
                 protocol: "https",
                 hostname: "**",
-                port: ""
-            }
-        ]
+                port: "",
+            },
+        ],
     },
     experimental: {
-        optimizePackageImports: [ "tailwindcss", "@headlessui/react" ]
-    }
+        optimizePackageImports: [
+            "tailwindcss",
+            "@headlessui/react",
+            "react-icons/lu",
+            "react-icons/fa6",
+            "react-icons/hi2",
+        ],
+    },
 }
 
 export default nextConfig
