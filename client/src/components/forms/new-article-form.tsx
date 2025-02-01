@@ -36,14 +36,9 @@ import {
     FaCircleExclamation,
 }                                                                                                     from "react-icons/fa6"
 
-export interface EditorContentResponse {
-    json: string
-    html: string
-}
-
 export default function NewArticleForm() {
     const [ categories, setCategories ] = useState<Category[] | null>(null)
-    const [ editorContent, setEditorContent ] = useState<EditorContentResponse>({ json: "", html: "" })
+    const [ editorContent, setEditorContent ] = useState("")
     const [ formState, formAction, pending ] = useActionState(postNewArticle, getInitialFormState())
     const [ imgUrl, setImgUrl ] = useState("")
     const [ isPending, startTransition ] = useTransition()
@@ -98,6 +93,7 @@ export default function NewArticleForm() {
 
                 <FormInput label="Title" name="title" type="text" required aria-required />
                 <FormInput label="Sub Title" name="subTitle" type="text" required aria-required />
+                <FormTextarea label="Summary" name="summary" maxLength={ 250 } required aria-required />
             </Fieldset>
 
             <Fieldset className="mx-auto w-full max-w-2xl space-y-3">
@@ -110,7 +106,7 @@ export default function NewArticleForm() {
 
                 <TextEditor onUpdate={ setEditorContent } />
 
-                <input type="hidden" name="content" value={ JSON.stringify(editorContent) } />
+                <input type="hidden" name="content" value={ editorContent } />
             </Fieldset>
 
             <Field className="mx-auto w-full max-w-2xl space-y-3">
