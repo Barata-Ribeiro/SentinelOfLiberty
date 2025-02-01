@@ -1,6 +1,7 @@
 "use client"
 
 import { configuredExtensions }     from "@/components/helpers/text-editor"
+import tw                           from "@/utils/tw"
 import { generateJSON }             from "@tiptap/html"
 import { EditorContent, useEditor } from "@tiptap/react"
 import { useMemo }                  from "react"
@@ -15,6 +16,11 @@ export default function MemoizedContent({ html }: MemoizedContentProps) {
                                  editable: false,
                                  content: memoized,
                                  extensions: [ ...configuredExtensions ],
+                                 editorProps: {
+                                     attributes: {
+                                         class: tw`prose prose-sm sm:prose-base block !max-w-none`,
+                                     },
+                                 },
                                  immediatelyRender: false,
                              })
     

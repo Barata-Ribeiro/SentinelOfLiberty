@@ -17,7 +17,10 @@ export default auth((request: NextRequest) => {
         return NextResponse.redirect(loginUrl)
     }
     
-    return NextResponse.next()
+    const headers = new Headers(request.headers)
+    headers.set("x-current-path",
+                `${ request.nextUrl.protocol }//${ request.nextUrl.host }${ request.nextUrl.pathname }`)
+    return NextResponse.next({ headers })
 })
 
 export const config = {
