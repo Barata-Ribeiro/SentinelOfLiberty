@@ -14,6 +14,8 @@ import InputValidationError
                                                                                                       from "@/components/feedback/input-validation-error"
 import Spinner
                                                                                                       from "@/components/helpers/spinner"
+import TextEditor
+                                                                                                      from "@/components/helpers/text-editor"
 import FormButton
                                                                                                       from "@/components/shared/form-button"
 import FormInput
@@ -34,12 +36,18 @@ import {
     FaCircleExclamation,
 }                                                                                                     from "react-icons/fa6"
 
+export interface EditorContentResponse {
+    json: string
+    html: string
+}
+
 export default function NewArticleForm() {
     const [ categories, setCategories ] = useState<Category[] | null>(null)
-    const [ selectedCategories, setSelectedCategories ] = useState<string[]>([])
+    const [ editorContent, setEditorContent ] = useState<EditorContentResponse>({ json: "", html: "" })
     const [ formState, formAction, pending ] = useActionState(postNewArticle, getInitialFormState())
     const [ imgUrl, setImgUrl ] = useState("")
     const [ isPending, startTransition ] = useTransition()
+    const [ selectedCategories, setSelectedCategories ] = useState<string[]>([])
     
     async function getServersideCategories() {
         const state = await getAllAvailableCategories()
@@ -92,14 +100,17 @@ export default function NewArticleForm() {
                 <FormInput label="Sub Title" name="subTitle" type="text" required aria-required />
             </Fieldset>
 
-            <Fieldset className="mx-auto h-fit w-full max-w-2xl space-y-3">
+            <Fieldset className="mx-auto w-full max-w-2xl space-y-3">
                 <Legend>
                     <h2 className="text-shadow-900 text-base/7 font-semibold">Content</h2>
                     <p className="text-shadow-600 mt-1 mb-6 text-sm/6">
                         Please, follow the guidelines when writing the content of your article.
                     </p>
                 </Legend>
-                <FormTextarea rows={ 16 } label="Content" name="content" required aria-required />
+
+                <TextEditor onUpdate={ setEditorContent } />
+
+                <input type="hidden" name="content" value={ JSON.stringify(editorContent) } />
             </Fieldset>
 
             <Field className="mx-auto w-full max-w-2xl space-y-3">
@@ -114,15 +125,20 @@ export default function NewArticleForm() {
                 />
                 
                 { imgUrl && (
-                    <img
-                        src={ imgUrl }
-                        alt="Preview"
-                        title="Preview"
-                        className="mx-auto max-h-[50%] min-w-none w-full rounded-lg object-cover shadow"
-                        onError={ e => {
-                            e.currentTarget.src = "https://placehold.co/1920x1080?text=Error\\nTry+again&font=Lora.png"
-                        } }
-                    />
+                    <div className="min-w-none mx-auto rounded-md shadow">
+                        <img
+                            src={ imgUrl }
+                            alt="Preview"
+                            title="Preview"
+                            className="min-h-96 w-full rounded-md object-cover object-center"
+                            onError={ event => {
+                                event.currentTarget.id =
+                                    "https://placehold.co/1920x1080?text=Error\\nTry+again&font=Lora.png"
+                                event.currentTarget.src =
+                                    "https://placehold.co/1920x1080?text=Error\\nTry+again&font=Lora.png"
+                            } }
+                        />
+                    </div>
                 ) }
             </Field>
 
@@ -139,6 +155,7 @@ export default function NewArticleForm() {
                 <FormInput
                     label="Categories"
                     name="categories"
+                    className="capitalize"
                     onChange={ handleCategoryInputChange }
                     onKeyDown={ handleCategoryInputKeyDown }
                     value={ selectedCategories.join(", ") }
@@ -166,18 +183,23 @@ export default function NewArticleForm() {
                                 type="button"
                                 data-selected={ selectedCategories.includes(category.name) }
                                 onClick={ handleCategorySelection }
-                                className="text-shadow-700 data-[selected=true]:text-shadow-300 cursor-pointer rounded bg-stone-100 px-2 py-1 select-none hover:bg-stone-300 focus:outline-none data-[selected=true]:bg-stone-900">
+                                className="text-shadow-700 data-[selected=true]:text-shadow-300 cursor-pointer rounded bg-stone-100 px-2 py-1 capitalize select-none hover:bg-stone-300 focus:outline-none data-[selected=true]:bg-stone-900">
                                 { category.name }
                             </Button>
                         )) }
                         { isPending &&
-                            Array.from({ length: 5 }).map((_, index) => (
+                            Array.from({ length: Math.floor(Math.random() * 16) + 5 }).map(() => (
                                 <Button
-                                    key={ `category-${ index }-loading` }
+                                    key={ `category-loading-${ Math.random().toString(36).substring(2, 11) }` }
                                     type="button"
-                                    className="animate-pulse rounded bg-stone-500 px-2 py-1 select-none">
-                                    Tag
-                                </Button>
+                                    className="animate-pulse rounded bg-stone-500 px-4 py-2 select-none"></Button>
+                            )) }
+                        
+                        { !categories ||
+                            (categories.length === 0 && (
+                                <p className="text-shadow-400 w-full text-center">
+                                    No categories available at the moment.
+                                </p>
                             )) }
                     </div>
                 </div>
