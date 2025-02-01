@@ -8,11 +8,11 @@ import { useCallback, useEffect } from "react"
 
 export default function SessionVerifier() {
     const router = useRouter()
-    const { data: session } = useSession()
+    const { data: session, update } = useSession()
     
     const logout = useCallback(() => {
         console.error("There was an error with the session, logging out...")
-        
+        update().catch(console.error)
         deleteSession()
             .then(response => console.log(response.message))
             .catch(console.error)
@@ -21,7 +21,7 @@ export default function SessionVerifier() {
                     router.push(`${ window.location.origin }/auth/login` as Route<string>)
                 })
             })
-    }, [ router ])
+    }, [ router, update ])
     
     useEffect(() => {
         if (session?.error === "RefreshAccessTokenError") logout()
