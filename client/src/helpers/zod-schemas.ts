@@ -101,73 +101,95 @@ const userProfileUpdateSchema = z
         return data
     })
 
-// ARTICLES
-const articleRequestSchema = z
-    .object({
-                suggestionId: z.number().optional(),
-                title: z
-                    .string()
-                    .min(3, "Title must be between 3 and 100 characters.")
-                    .max(100, "Title must be between 3 and 100 characters."),
-                subTitle: z
-                    .string()
-                    .min(3, "Subtitle must be between 3 and 100 characters.")
-                    .max(100, "Subtitle must be between 3 and 100 characters."),
-                summary: z
-                    .string()
-                    .min(50, "Summary must be at least 100 characters.")
-                    .max(250, "Summary must be at most 250 characters."),
-                content: z.string().transform((data, ctx) => {
-                    const parsedDom = new JSDOM(data)
-                    if (!parsedDom?.window.document.body.textContent) {
-                        ctx.addIssue({
-                                         code: z.ZodIssueCode.custom,
-                                         message: "Invalid content format.",
-                                     })
-                        
-                        return z.NEVER
-                    }
-                    
-                    if (parsedDom?.window.document.body.textContent.length < 100) {
-                        ctx.addIssue({
-                                         code: z.ZodIssueCode.too_small,
-                                         message: "Content must be at least 100 characters.",
-                                         minimum: 100,
-                                         inclusive: true,
-                                         type: "string",
-                                     })
-                        
-                        return z.NEVER
-                    }
-                    
-                    return data
-                }),
-                mediaUrl: z
-                    .string()
-                    .url("Invalid URL format.")
-                    .regex(/^(https:\/\/)/, "URL must start with https://"),
-                references: z
-                    .string()
-                    .transform(val =>
-                                   val
-                                       .split(",")
-                                       .map(ref => ref.trim())
-                                       .filter(ref => ref.length > 0),
-                    )
-                    .refine(refs => refs.length > 0, "At least one reference must be provided.")
-                    .refine(
-                        refs => refs.every(ref => /^(https?):\/\/[^\s/$.?#].\S*$/.test(ref)),
-                        "Invalid URL format in references.",
-                    ),
-                categories: z
-                    .string()
-                    .transform(val => val
-                        .split(",")
-                        .map(cat => cat.trim())
-                        .filter(cat => cat.length > 0)
-                        .map(cat => cat.toLowerCase()),
-                    )
-                    .refine(cats => cats.length > 0, "At least one category must be provided."),
-            })
+// SUGGESTIONS
+const suggestionRequestSchema = z.object({
+                                             title: z
+                                                 .string()
+                                                 .min(3, "Title must be between 3 and 100 characters.")
+                                                 .max(100, "Title must be between 3 and 100 characters."),
+                                             sourceUrl: z
+                                                 .string()
+                                                 .url("Invalid URL format.")
+                                                 .regex(/^(https?):\/\/[^\s/$.?#].\S*$/, "Url must be a valid URL."),
+                                             content: z
+                                                 .string()
+                                                 .min(10, "Content must be at least 10 characters.")
+                                                 .max(500, "Content must be at most 500 characters."),
+                                             mediaUrl: z
+                                                 .string()
+                                                 .url("Invalid URL format.")
+                                                 .regex(/^(https?):\/\/[^\s/$.?#].\S*$/, "Url must be a valid URL."),
+                                         })
 
-export { authLoginSchema, authRegisterSchema, userProfileUpdateSchema, articleRequestSchema }
+// ARTICLES
+const articleRequestSchema = z.object({
+                                          suggestionId: z.number().optional(),
+                                          title: z
+                                              .string()
+                                              .min(3, "Title must be between 3 and 100 characters.")
+                                              .max(100, "Title must be between 3 and 100 characters."),
+                                          subTitle: z
+                                              .string()
+                                              .min(3, "Subtitle must be between 3 and 100 characters.")
+                                              .max(100, "Subtitle must be between 3 and 100 characters."),
+                                          summary: z
+                                              .string()
+                                              .min(50, "Summary must be at least 100 characters.")
+                                              .max(250, "Summary must be at most 250 characters."),
+                                          content: z.string().transform((data, ctx) => {
+                                              const parsedDom = new JSDOM(data)
+                                              if (!parsedDom?.window.document.body.textContent) {
+                                                  ctx.addIssue({
+                                                                   code: z.ZodIssueCode.custom,
+                                                                   message: "Invalid content format.",
+                                                               })
+                                                  
+                                                  return z.NEVER
+                                              }
+                                              
+                                              if (parsedDom?.window.document.body.textContent.length < 100) {
+                                                  ctx.addIssue({
+                                                                   code: z.ZodIssueCode.too_small,
+                                                                   message: "Content must be at least 100 characters.",
+                                                                   minimum: 100,
+                                                                   inclusive: true,
+                                                                   type: "string",
+                                                               })
+                                                  
+                                                  return z.NEVER
+                                              }
+                                              
+                                              return data
+                                          }),
+                                          mediaUrl: z
+                                              .string()
+                                              .url("Invalid URL format.")
+                                              .regex(/^(https?):\/\/[^\s/$.?#].\S*$/, "Invalid URL format."),
+                                          references: z
+                                              .string()
+                                              .transform(val =>
+                                                             val
+                                                                 .split(",")
+                                                                 .map(ref => ref.trim())
+                                                                 .filter(ref => ref.length > 0),
+                                              )
+                                              .refine(refs => refs.length > 0,
+                                                      "At least one reference must be provided.")
+                                              .refine(
+                                                  refs => refs.every(ref => /^(https?):\/\/[^\s/$.?#].\S*$/.test(ref)),
+                                                  "Invalid URL format in references.",
+                                              ),
+                                          categories: z
+                                              .string()
+                                              .transform(val =>
+                                                             val
+                                                                 .split(",")
+                                                                 .map(cat => cat.trim())
+                                                                 .filter(cat => cat.length > 0)
+                                                                 .map(cat => cat.toLowerCase()),
+                                              )
+                                              .refine(cats => cats.length > 0,
+                                                      "At least one category must be provided."),
+                                      })
+
+export { authLoginSchema, authRegisterSchema, userProfileUpdateSchema, suggestionRequestSchema, articleRequestSchema }
