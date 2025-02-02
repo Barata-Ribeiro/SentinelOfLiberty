@@ -6,7 +6,7 @@ import ResponseError             from "@/actions/application/response-error"
 import { signIn }                from "@/auth"
 import { authLoginSchema }       from "@/helpers/zod-schemas"
 import { problemDetailsFactory } from "@/utils/functions"
-import { redirect }              from "next/navigation"
+import { permanentRedirect }     from "next/navigation"
 
 export default async function postAuthLogin(state: State, formData: unknown) {
     if (!(formData instanceof FormData)) {
@@ -40,5 +40,5 @@ export default async function postAuthLogin(state: State, formData: unknown) {
         return ResponseError(error)
     }
     
-    redirect(`/dashboard/${ formData.get("username")?.toString() }`)
+    permanentRedirect(`/dashboard/${ formData.get("username")?.toString() }`)
 }

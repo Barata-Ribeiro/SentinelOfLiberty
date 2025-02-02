@@ -8,7 +8,7 @@ import { problemDetailsFactory }               from "@/utils/functions"
 import { updateOwnProfileUrl }                 from "@/utils/routes"
 import { auth, unstable_update }               from "auth"
 import { revalidateTag }                       from "next/cache"
-import { redirect }                            from "next/navigation"
+import { permanentRedirect }                   from "next/navigation"
 
 export default async function patchOwnProfile(state: State, formData: unknown) {
     if (!(formData instanceof FormData)) {
@@ -70,5 +70,5 @@ export default async function patchOwnProfile(state: State, formData: unknown) {
         return ResponseError(error)
     }
     
-    redirect(`/dashboard/${ updatedResponse.username }`)
+    permanentRedirect(`/dashboard/${ updatedResponse.username }`)
 }
