@@ -46,7 +46,8 @@ export default async function ArticlesPage({ searchParams }: Readonly<ArticlePag
                     Our Articles
                 </h1>
                 <p className="text-shadow-600 mt-2 text-lg/8">
-                    There are currently { pagination.totalElements } articles available. Enjoy reading!
+                    There are currently { pagination.totalElements } article(s) available.{ " " }
+                    { pagination.totalElements > 0 ? "Enjoy reading them!" : "Wait for our authors to publish some!" }
                 </p>
             </header>
 
@@ -56,7 +57,7 @@ export default async function ArticlesPage({ searchParams }: Readonly<ArticlePag
                 )) }
                 
                 { content.length === 0 && (
-                    <p className="text-shadow-600 col-span-3 text-lg/8">
+                    <p className="text-shadow-400 col-span-3 text-lg/8">
                         There are no articles available at the moment.
                     </p>
                 ) }
