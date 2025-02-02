@@ -1,5 +1,7 @@
 import { Article }                                                from "@/@types/articles"
 import getArticleById                                             from "@/actions/articles/get-article-by-id"
+import getLatestPublicArticles                                    from "@/actions/articles/get-latest-public-articles"
+import LatestArticlesListing                                      from "@/components/articles/latest-articles-listing"
 import MemoizedContent                                            from "@/components/helpers/memoized-content"
 import { auth }                                                   from "auth"
 import { Metadata, ResolvingMetadata }                            from "next"
@@ -7,6 +9,7 @@ import { headers }                                                from "next/hea
 import Image                                                      from "next/image"
 import Link                                                       from "next/link"
 import { notFound }                                               from "next/navigation"
+import { Suspense }                                               from "react"
 import { FaLink, FaLinkedin, FaSquareFacebook, FaSquareXTwitter } from "react-icons/fa6"
 
 interface ArticlePageProps {
@@ -45,6 +48,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     const headerPromise = headers()
     const sessionPromise = auth()
     const articlePromise = getArticleById({ id: parseInt(id) })
+    const latestAriclesPromise = getLatestPublicArticles()
     
     // TODO: Use session to verify if the user is the author of the article
     const [ headersList, session, articleState ] = await Promise.all([ headerPromise, sessionPromise, articlePromise ])
@@ -54,13 +58,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     const article = articleState.response?.data as Article
     
     return (
-        <div className="container grid grid-cols-1 gap-4">
-            <article className="space-y-6">
+        <div className="grid grid-cols-1 gap-4">
+            <article className="container space-y-6">
                 <header className="grid grid-cols-1 items-center justify-between gap-4 md:grid-cols-2">
                     <div className="mt-4 space-y-2 text-center md:mt-0 md:text-left">
                         <time dateTime={ String(article.createdAt) } className="text-shadow-300 text-sm">
                             { new Date(article.createdAt)
-                                .toLocaleDateString(undefined, {
+                                .toLocaleDateString("en-US", {
                                     day: "2-digit",
                                     month: "2-digit",
                                     year: "numeric",
@@ -95,7 +99,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                                     title={ `Reference to ${ reference }` }
                                     target="_blank"
                                     rel="noopener noreferrer nofollow"
-                                    className="text-shadow-400 hover:text-shadow-500 flex min-w-0 items-center gap-x-2 text-sm hover:underline">
+                                    className="text-shadow-400 hover:text-shadow-500 flex min-w-0 items-center gap-x-2 text-sm hover:underline max-sm:max-w-[2rem]">
                                     <span className="shrink-0 rounded-full bg-yellow-100 p-2">
                                         <FaLink aria-hidden="true" className="size-4" />
                                     </span>
@@ -155,10 +159,29 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                         </footer>
                     </div>
                 </main>
-                
-                {/*TODO: Implement new comment form*/ }
-                {/*TODO: Implement article comments when entering the comments range*/ }
             </article>
+
+            <section className="bg-stone-200">
+                <div className="container grid grid-cols-1 gap-4 md:grid-cols-[auto_1fr] md:gap-8">
+                    <div className="mt-8 min-w-0 space-y-2 sm:min-w-[19rem]">
+                        <h3 className="text-shadow-900 text-4xl font-semibold text-balance">Latest Articles</h3>
+                        <Link
+                            href="/articles"
+                            className="text-marigold-600 hover:text-marigold-700 active:text-marigold-800 text-sm underline">
+                            View all articles
+                        </Link>
+                    </div>
+
+                    <div className="grid max-w-4xl grid-cols-1 justify-items-center gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        <Suspense fallback={ <p>Loading...</p> }>
+                            <LatestArticlesListing articlesState={ latestAriclesPromise } />
+                        </Suspense>
+                    </div>
+                </div>
+            </section>
+            
+            {/*TODO: Implement new comment form*/ }
+            {/*TODO: Implement article comments when entering the comments range*/ }
         </div>
     )
 }
