@@ -1,60 +1,35 @@
 "use client"
 
-import { ProblemDetails }                                                                             from "@/@types/application"
-import {
-    Category,
-}                                                                                                     from "@/@types/articles"
-import getAllAvailableCategories
-                                                                                                      from "@/actions/articles/get-all-available-categories"
-import postNewArticle
-                                                                                                      from "@/actions/articles/post-new-article"
+import { ProblemDetails }                                                   from "@/@types/application"
+import { Category }                                                         from "@/@types/articles"
+import postNewArticle                                                       from "@/actions/articles/post-new-article"
 import ApplicationRequestFormError
-                                                                                                      from "@/components/feedback/application-request-form-error"
+                                                                            from "@/components/feedback/application-request-form-error"
 import InputValidationError
-                                                                                                      from "@/components/feedback/input-validation-error"
-import Spinner
-                                                                                                      from "@/components/helpers/spinner"
-import TextEditor
-                                                                                                      from "@/components/helpers/text-editor"
-import FormButton
-                                                                                                      from "@/components/shared/form-button"
-import FormInput
-                                                                                                      from "@/components/shared/form-input"
-import FormTextarea
-                                                                                                      from "@/components/shared/form-textarea"
-import {
-    getInitialFormState,
-}                                                                                                     from "@/utils/functions"
-import {
-    Button,
-    Field,
-    Fieldset,
-    Legend,
-}                                                                                                     from "@headlessui/react"
-import { ChangeEvent, KeyboardEvent, MouseEvent, useActionState, useEffect, useState, useTransition } from "react"
-import {
-    FaCircleExclamation,
-}                                                                                                     from "react-icons/fa6"
+                                                                            from "@/components/feedback/input-validation-error"
+import Spinner                                                              from "@/components/helpers/spinner"
+import TextEditor                                                           from "@/components/helpers/text-editor"
+import FormButton                                                           from "@/components/shared/form-button"
+import FormInput                                                            from "@/components/shared/form-input"
+import FormTextarea                                                         from "@/components/shared/form-textarea"
+import { getInitialFormState }                                              from "@/utils/functions"
+import { Button, Field, Fieldset, Legend }                                  from "@headlessui/react"
+import { ChangeEvent, KeyboardEvent, MouseEvent, useActionState, useState } from "react"
+import { FaCircleExclamation }                                              from "react-icons/fa6"
+import placeholderImage
+                                                                            from "../../../public/image-error-placeholder.svg"
 
-export default function NewArticleForm() {
-    const [ categories, setCategories ] = useState<Category[] | null>(null)
+
+interface NewArticleFormProps {
+    categories: Category[]
+    suggestionId?: string
+}
+
+export default function NewArticleForm({ categories, suggestionId }: Readonly<NewArticleFormProps>) {
     const [ editorContent, setEditorContent ] = useState("")
     const [ formState, formAction, pending ] = useActionState(postNewArticle, getInitialFormState())
     const [ imgUrl, setImgUrl ] = useState("")
-    const [ isPending, startTransition ] = useTransition()
     const [ selectedCategories, setSelectedCategories ] = useState<string[]>([])
-    
-    async function getServersideCategories() {
-        const state = await getAllAvailableCategories()
-        if (!state.ok) return
-        
-        startTransition(() => setCategories(state.response?.data as Category[]))
-    }
-    
-    useEffect(() => {
-        getServersideCategories().catch(console.error)
-        return () => setCategories(null)
-    }, [])
     
     function handleCategorySelection(event: MouseEvent<HTMLButtonElement>) {
         const category = event.currentTarget.textContent as string
@@ -122,16 +97,16 @@ export default function NewArticleForm() {
                 
                 { imgUrl && (
                     <div className="min-w-none mx-auto rounded-md shadow">
+                        {/* eslint-disable-next-line @next/next/no-img-element */ }
                         <img
                             src={ imgUrl }
                             alt="Preview"
                             title="Preview"
                             className="min-h-96 w-full rounded-md object-cover object-center"
+                            sizes="100vw"
                             onError={ event => {
-                                event.currentTarget.id =
-                                    "https://placehold.co/1920x1080?text=Error\\nTry+again&font=Lora.png"
-                                event.currentTarget.src =
-                                    "https://placehold.co/1920x1080?text=Error\\nTry+again&font=Lora.png"
+                                event.currentTarget.id = placeholderImage.id
+                                event.currentTarget.src = placeholderImage.src
                             } }
                         />
                     </div>
@@ -183,13 +158,6 @@ export default function NewArticleForm() {
                                 { category.name }
                             </Button>
                         )) }
-                        { isPending &&
-                            Array.from({ length: Math.floor(Math.random() * 16) + 5 }).map(() => (
-                                <Button
-                                    key={ `category-loading-${ Math.random().toString(36).substring(2, 11) }` }
-                                    type="button"
-                                    className="animate-pulse rounded bg-stone-500 px-4 py-2 select-none"></Button>
-                            )) }
                         
                         { !categories ||
                             (categories.length === 0 && (
@@ -200,7 +168,9 @@ export default function NewArticleForm() {
                     </div>
                 </div>
             </Fieldset>
-
+            
+            { suggestionId && <input type="hidden" name="suggestionId" value={ suggestionId } /> }
+            
             <div className="mx-auto w-full max-w-2xl">
                 { formState.error && !Array.isArray(formState.error) && (
                     <ApplicationRequestFormError error={ formState.error as ProblemDetails } />
