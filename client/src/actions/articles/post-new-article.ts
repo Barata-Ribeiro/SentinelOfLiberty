@@ -56,6 +56,7 @@ export default async function postNewArticle(state: State, formData: unknown) {
         articleResponse = (json as RestResponse).data as Article
         
         revalidateTag("articles")
+        revalidateTag("categories")
     } catch (error) {
         return ResponseError(error)
     }
