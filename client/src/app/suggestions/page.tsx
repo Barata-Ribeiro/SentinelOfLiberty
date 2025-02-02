@@ -2,11 +2,19 @@ import { Paginated }              from "@/@types/application"
 import { Suggestion }             from "@/@types/suggestions"
 import getAllSuggestionsPaginated from "@/actions/suggestions/get-all-suggestions-paginated"
 import NavigationPagination       from "@/components/shared/navigation-pagination"
+import { Metadata }               from "next"
 import Link                       from "next/link"
 
 interface SuggestionsPageProps {
     searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }
+
+export const metadata: Metadata = {
+    title: "Suggestions",
+    description: "This is the public suggestions page, where you can see all the suggestions made by the community.",
+    keywords: "suggestions, list, community, articles, write, read",
+}
+
 
 export default async function SuggestionsPage({ searchParams }: Readonly<SuggestionsPageProps>) {
     const pageParams = await searchParams
