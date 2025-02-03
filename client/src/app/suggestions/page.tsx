@@ -1,9 +1,10 @@
 import { Paginated }              from "@/@types/application"
 import { Suggestion }             from "@/@types/suggestions"
 import getAllSuggestionsPaginated from "@/actions/suggestions/get-all-suggestions-paginated"
+import LinkButton                 from "@/components/shared/link-button"
 import NavigationPagination       from "@/components/shared/navigation-pagination"
+import SuggestionCard             from "@/components/suggestions/suggestion-card"
 import { Metadata }               from "next"
-import Link                       from "next/link"
 
 interface SuggestionsPageProps {
     searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
@@ -14,7 +15,6 @@ export const metadata: Metadata = {
     description: "This is the public suggestions page, where you can see all the suggestions made by the community.",
     keywords: "suggestions, list, community, articles, write, read",
 }
-
 
 export default async function SuggestionsPage({ searchParams }: Readonly<SuggestionsPageProps>) {
     const pageParams = await searchParams
@@ -38,18 +38,18 @@ export default async function SuggestionsPage({ searchParams }: Readonly<Suggest
                     </h1>
 
                     <div className="mt-4 flex flex-wrap items-center gap-6 lg:mt-0 lg:flex-shrink-0">
-                        <Link
+                        <LinkButton
                             href="/suggestions/write"
                             aria-label="Start writing your suggestions"
-                            className="bg-marigold-600 text-marigold-50 hover:bg-marigold-500 focus-visible:outline-marigold-600 active:bg-marigold-700 inline-flex items-center justify-center gap-x-2 rounded-md px-3.5 py-2.5 text-center text-sm font-semibold shadow-xs transition duration-200 select-none focus-visible:outline-2 focus-visible:outline-offset-2">
+                            className="bg-marigold-600 text-marigold-50 hover:bg-marigold-500 active:bg-marigold-700 px-3.5 py-2.5 shadow-xs">
                             Get started
-                        </Link>
-                        <Link
-                            href="/articles/rules"
+                        </LinkButton>
+                        <LinkButton
+                            href="/suggestions/rules"
                             aria-label="Learn more about the rules for writing suggestions"
-                            className="text-shadow-900 hover:text-shadow-800 active:text-shadow-700 focus-visible:outline-marigold-600 inline-flex items-center justify-center gap-x-2 rounded-md px-3.5 py-2.5 text-center text-sm font-semibold transition duration-200 select-none focus-visible:outline-2 focus-visible:outline-offset-2">
+                            className="text-shadow-900 hover:text-shadow-800 active:text-shadow-700 px-3.5 py-2.5 hover:bg-stone-100 active:bg-stone-200">
                             Learn more <span aria-hidden="true">&rarr;</span>
-                        </Link>
+                        </LinkButton>
                     </div>
                 </div>
 
@@ -63,12 +63,7 @@ export default async function SuggestionsPage({ searchParams }: Readonly<Suggest
 
             <main className="mx-auto my-8 grid gap-y-4 border-t border-stone-200 pt-8 sm:my-14 sm:pt-14 lg:mx-0">
                 { content.map(suggestion => (
-                    <section key={ suggestion.id } className="rounded-md border border-stone-200 p-4">
-                        <h2 className="text-shadow-900 text-2xl font-semibold tracking-tight text-pretty sm:text-3xl">
-                            { suggestion.title }
-                        </h2>
-                        <p className="text-shadow-600 mt-2 text-lg/8">{ suggestion.content }</p>
-                    </section>
+                    <SuggestionCard key={ suggestion.id } suggestion={ suggestion } />
                 )) }
                 
                 { content.length === 0 && (
