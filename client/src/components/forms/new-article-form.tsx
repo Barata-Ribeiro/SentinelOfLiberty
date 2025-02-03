@@ -8,17 +8,23 @@ import ApplicationRequestFormError
 import InputValidationError
                                                                             from "@/components/feedback/input-validation-error"
 import Spinner                                                              from "@/components/helpers/spinner"
-import TextEditor                                                           from "@/components/helpers/text-editor"
+import TextEditorSkeleton
+                                                                            from "@/components/layout/skeletons/text-editor-skeleton"
 import FormButton                                                           from "@/components/shared/form-button"
 import FormInput                                                            from "@/components/shared/form-input"
 import FormTextarea                                                         from "@/components/shared/form-textarea"
 import { getInitialFormState }                                              from "@/utils/functions"
 import { Button, Field, Fieldset, Legend }                                  from "@headlessui/react"
+import dynamic                                                              from "next/dynamic"
 import { ChangeEvent, KeyboardEvent, MouseEvent, useActionState, useState } from "react"
 import { FaCircleExclamation }                                              from "react-icons/fa6"
 import placeholderImage
                                                                             from "../../../public/image-error-placeholder.svg"
 
+const TextEditor = dynamic(() => import("@/components/helpers/text-editor"), {
+    ssr: false,
+    loading: () => <TextEditorSkeleton />,
+})
 
 interface NewArticleFormProps {
     categories: Category[]
