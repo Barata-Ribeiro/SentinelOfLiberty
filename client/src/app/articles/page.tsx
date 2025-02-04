@@ -18,12 +18,13 @@ export const metadata: Metadata = {
 }
 
 export default async function ArticlesPage({ searchParams }: Readonly<ArticlePageProps>) {
-    if (!searchParams) return null
+    const pageParams = await searchParams
+    if (!pageParams) return null
     
-    const page = parseInt((await searchParams).page as string, 10) || 0
-    const perPage = parseInt((await searchParams).perPage as string, 10) || 10
-    const direction = ((await searchParams).direction as string) || "DESC"
-    const orderBy = ((await searchParams).orderBy as string) || "createdAt"
+    const page = parseInt(pageParams.page as string, 10) || 0
+    const perPage = parseInt(pageParams.perPage as string, 10) || 10
+    const direction = (pageParams.direction as string) || "DESC"
+    const orderBy = (pageParams.orderBy as string) || "createdAt"
     
     const sessionPromise = auth()
     const articlesListPromise = getAllPublicArticlesPaginated({ page, perPage, direction, orderBy })
@@ -34,7 +35,7 @@ export default async function ArticlesPage({ searchParams }: Readonly<ArticlePag
     const content = pagination.content ?? []
     
     return (
-        <div className="container">
+        <div className="container" aria-labelledby="page-title" aria-describedby="page-description">
             { session && session.user.role === "ADMIN" && (
                 <section className="mx-auto max-w-7xl py-12 sm:py-24">
                     <NewArticleCta />
@@ -42,10 +43,11 @@ export default async function ArticlesPage({ searchParams }: Readonly<ArticlePag
             ) }
             
             <header className="mt-4 max-w-2xl sm:mt-8">
-                <h1 className="text-shadow-900 text-4xl font-semibold tracking-tight text-pretty sm:text-5xl">
+                <h1 id="page-title"
+                    className="text-shadow-900 text-4xl font-semibold tracking-tight text-pretty sm:text-5xl">
                     Our Articles
                 </h1>
-                <p className="text-shadow-600 mt-2 text-lg/8">
+                <p id="page-description" className="text-shadow-600 mt-2 text-lg/8">
                     There are currently { pagination.totalElements } article(s) available.{ " " }
                     { pagination.totalElements > 0 ? "Enjoy reading them!" : "Wait for our authors to publish some!" }
                 </p>
