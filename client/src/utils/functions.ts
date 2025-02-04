@@ -29,4 +29,17 @@ function getInitialFormState(): State {
     }
 }
 
-export { getBackgroundImage, problemDetailsFactory, getInitialFormState }
+function textScrambler(text: string): string {
+    const alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    const scrambled = text.split("").map(char => {
+        if (alphabet.includes(char)) {
+            const randomIndex = Math.floor(Math.random() * alphabet.length)
+            return alphabet[randomIndex]
+        }
+        return char
+    })
+    
+    return scrambled.join("")
+}
+
+export { getBackgroundImage, problemDetailsFactory, getInitialFormState, textScrambler }
