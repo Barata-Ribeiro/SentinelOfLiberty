@@ -28,7 +28,7 @@ export default function FormInput({
     
     const labelStyle = tw`text-shadow-400 peer-focus:text-shadow-400 absolute left-2.5 origin-left transform cursor-text bg-white px-1 text-sm transition-all peer-focus:-top-2 peer-focus:scale-90 peer-focus:text-xs data-disabled:pointer-events-none data-disabled:opacity-50 data-disabled:select-none`
     
-    const inputStyle = tw`peer text-shadow-700 placeholder:text-shadow-400 w-full rounded-md border border-stone-200 bg-transparent px-3 py-2 text-sm shadow-xs transition duration-300 hover:border-stone-300 focus:border-stone-400 focus:ring-1 focus:shadow-sm focus:ring-stone-400/50 focus:outline-hidden data-disabled:pointer-events-none data-disabled:bg-gray-100`
+    const inputStyle = tw`peer text-shadow-700 placeholder:text-shadow-400 w-full rounded-md border border-stone-200 bg-transparent px-3 py-2 text-sm shadow-xs transition duration-300 hover:border-stone-300 focus:border-stone-400 focus:ring-1 focus:shadow-sm focus:ring-stone-400/50 focus:outline-hidden data-disabled:pointer-events-none data-disabled:bg-stone-100`
     
     return (
         <div className="w-full min-w-[200px]">
