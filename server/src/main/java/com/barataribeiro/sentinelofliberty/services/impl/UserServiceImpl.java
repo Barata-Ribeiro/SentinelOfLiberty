@@ -222,6 +222,7 @@ public class UserServiceImpl implements UserService {
         Optional.ofNullable(body.getFullName()).ifPresent(userToUpdate::setFullName);
         Optional.ofNullable(body.getAvatarUrl()).ifPresent(userToUpdate::setAvatarUrl);
         Optional.ofNullable(body.getBiography()).ifPresent(userToUpdate::setBiography);
+        Optional.ofNullable(body.getBirthDate()).ifPresent(userToUpdate::setBirthDate);
         Optional.ofNullable(body.getLocation()).ifPresent(userToUpdate::setLocation);
         Optional.ofNullable(body.getWebsite()).ifPresent(userToUpdate::setWebsite);
         Optional.ofNullable(body.getSocialMedia()).ifPresent(userToUpdate::setSocialMedia);

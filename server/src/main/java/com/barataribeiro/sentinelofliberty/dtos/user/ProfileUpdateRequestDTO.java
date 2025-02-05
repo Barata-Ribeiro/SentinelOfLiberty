@@ -9,6 +9,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.URL;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -37,6 +38,8 @@ public class ProfileUpdateRequestDTO implements Serializable {
 
     @Size(max = 160, message = "Biography must be less than 160 characters.")
     private String biography;
+
+    private LocalDate birthDate;
 
     private String location;
 
