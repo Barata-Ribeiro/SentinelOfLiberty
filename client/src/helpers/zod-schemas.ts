@@ -101,6 +101,53 @@ const userProfileUpdateSchema = z
         return data
     })
 
+const userAccountDetailsSchema = z
+    .object({
+                birthDate: z
+                    .preprocess(
+                        val => {
+                            if (typeof val === "string" && val.trim() !== "") return new Date(val)
+                            return undefined
+                        },
+                        
+                        z.date({ required_error: "Birth date is required." }).refine(
+                            date => {
+                                const today = new Date()
+                                let age = today.getFullYear() - date.getFullYear()
+                                const monthDiff = today.getMonth() - date.getMonth()
+                                
+                                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < date.getDate())) age--
+                                
+                                return age >= 18
+                            },
+                            { message: "User must be over 18 years old." },
+                        ),
+                    )
+                    .nullish()
+                    .or(z.literal("")),
+                location: z.string().trim().nullish().or(z.literal("")),
+                website: z
+                    .string()
+                    .url("Invalid URL format.")
+                    .regex(/^(https?):\/\/[^\s/$.?#].\S*$/, "Url must be a valid URL.")
+                    .nullish()
+                    .or(z.literal("")),
+                socialMedia: z.string().url().nullish().or(z.literal("")),
+                videoChannel: z.string().trim().nullish().or(z.literal("")),
+                streamingChannel: z.string().trim().nullish().or(z.literal("")),
+                isPrivate: z.string().optional().transform(Boolean),
+                currentPassword: z.string({ message: "Current password is required" }),
+            })
+    .transform(data => {
+        if (data.birthDate === "") delete data.birthDate
+        if (data.location === "") delete data.location
+        if (data.website === "") delete data.website
+        if (data.socialMedia === "") delete data.socialMedia
+        if (data.videoChannel === "") delete data.videoChannel
+        if (data.streamingChannel === "") delete data.streamingChannel
+        return data
+    })
+
 // SUGGESTIONS
 const suggestionRequestSchema = z.object({
                                              title: z
@@ -192,4 +239,11 @@ const articleRequestSchema = z.object({
                                                       "At least one category must be provided."),
                                       })
 
-export { authLoginSchema, authRegisterSchema, userProfileUpdateSchema, suggestionRequestSchema, articleRequestSchema }
+export {
+    authLoginSchema,
+    authRegisterSchema,
+    userProfileUpdateSchema,
+    userAccountDetailsSchema,
+    suggestionRequestSchema,
+    articleRequestSchema,
+}
