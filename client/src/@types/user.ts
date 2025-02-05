@@ -8,7 +8,7 @@ interface User {
     username: string
     email: string
     role: Roles
-    avatarUrl: string
+    avatarUrl: string | null
     isPrivate: boolean
     isVerified: boolean
     createdAt: string
@@ -17,14 +17,14 @@ interface User {
 
 interface Profile extends User {
     displayName: string
-    fullName: string
-    biography: string
-    birthDate: string
-    location: string
-    website: string
-    socialMedia: string
-    videoChannel: string
-    streamingChannel: string
+    fullName: string | null
+    biography: string | null
+    birthDate: string | null
+    location: string | null
+    website: string | null
+    socialMedia: string | null
+    videoChannel: string | null
+    streamingChannel: string | null
 }
 
 interface Account extends User, Profile {
@@ -37,9 +37,9 @@ interface Account extends User, Profile {
 type Author = Omit<User, "createdAt" | "updatedAt">
 
 interface Dashboard {
-    latestWrittenArticle: ArticleSummary;
-    latestThreeSuggestions: Set<Suggestion>;
-    latestThreeComments: Set<object>;
+    latestWrittenArticle: ArticleSummary | null;
+    latestThreeSuggestions: Set<Suggestion> | [];
+    latestThreeComments: Set<object> | [];
     totalWrittenArticles: number;
     totalWrittenSuggestions: number;
     totalWrittenComments: number;
