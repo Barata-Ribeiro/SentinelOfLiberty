@@ -1,9 +1,14 @@
-import { Profile }                           from "@/@types/user"
-import getProfileByUsername                  from "@/actions/users/get-profile-by-username"
-import { getBackgroundImage, textScrambler } from "@/utils/functions"
-import Image, { getImageProps }              from "next/image"
-import { notFound }                          from "next/navigation"
-import coverImage                            from "../../../../public/profile-cover-photo.jpg"
+import { Profile }                            from "@/@types/user"
+import getProfileByUsername                   from "@/actions/users/get-profile-by-username"
+import { getBackgroundImage, textScrambler }  from "@/utils/functions"
+import tw                                     from "@/utils/tw"
+import Image, { getImageProps }               from "next/image"
+import Link                                   from "next/link"
+import { notFound }                           from "next/navigation"
+import { FaCircleCheck }                      from "react-icons/fa6"
+import { LuCalendarRange, LuLink2, LuMapPin } from "react-icons/lu"
+import { twMerge }                            from "tailwind-merge"
+import coverImage                             from "../../../../public/profile-cover-photo.jpg"
 
 interface ProfilePageProps {
     params: Promise<{ username: string }>
@@ -15,6 +20,24 @@ export async function generateMetadata({ params }: Readonly<ProfilePageProps>) {
         title: `Profile of ${ username }`,
         description: `This is the public profile page of ${ username }.`,
     }
+}
+
+const FIELDS_TO_SCRAMBLE: (keyof Profile)[] = [
+    "email",
+    "displayName",
+    "fullName",
+    "biography",
+    "birthDate",
+    "location",
+    "website",
+    "socialMedia",
+    "videoChannel",
+    "streamingChannel",
+] as const
+
+function scrambleField<T, K extends keyof T>(obj: T, key: K, scrambler: (value: string) => string): void {
+    const field = obj[key]
+    if (typeof field === "string") obj[key] = scrambler(field) as T[K]
 }
 
 export default async function ProfilePage({ params }: ProfilePageProps) {
@@ -37,6 +60,9 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     if (!accountState) return notFound()
     
     const account = accountState.response?.data as Profile
+    if (account.isPrivate) FIELDS_TO_SCRAMBLE.forEach(key => scrambleField(account, key, textScrambler))
+    
+    const privateStyle = tw`data-[private=true]:rounded-lg data-[private=true]:bg-black data-[private=true]:text-transparent data-[private=true]:select-none`
     
     return (
         <div className="container">
@@ -51,7 +77,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                     backgroundRepeat: "no-repeat",
                     backgroundPosition: "center",
                 } }>
-                { account.avatarUrl ? (
+                { account.avatarUrl && !account.isPrivate ? (
                     <Image
                         src={ account.avatarUrl }
                         alt={ `Avatar of ${ account.username }` }
@@ -74,22 +100,75 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                   ) }
             </header>
 
-            <main className="mt-24 grid gap-y-4">
-                <div className="mx-auto grid gap-y-2">
-                    <h1 id="profile-title" className="text-shadow-900 text-4xl font-semibold">
-                        @{ account.username }
-                    </h1>
+            <main className="mt-24 grid gap-y-8">
+                <div className="mx-auto grid w-full max-w-7xl gap-y-4">
+                    <div className="grid gap-y-2">
+                        <h1
+                            data-private={ account.isPrivate }
+                            aria-label={ account.isPrivate ? "Redacted display name" : "" }
+                            title={ account.isPrivate ? "Redacted display name" : "" }
+                            className={ twMerge(
+                                "text-shadow-900 mx-auto flex items-center gap-x-1.5 text-center text-4xl font-bold",
+                                privateStyle,
+                            ) }>
+                            { account.displayName }{ " " }
+                            { account.isVerified && (
+                                <span
+                                    className="text-marigold-500"
+                                    aria-label="Verified account"
+                                    title="Verified account">
+                                    <FaCircleCheck aria-hidden="true" className="size-5" />
+                                </span>
+                            ) }
+                        </h1>
 
-                    <h2 className="mx-auto text-2xl font-bold">
-                        <span className="inline-block rounded-sm bg-black text-transparent select-none">
-                            { textScrambler(account.displayName) }
-                        </span>
+                        <div
+                            aria-label={ account.isPrivate ? "Redacted location" : "" }
+                            title={ account.isPrivate ? "Redacted location" : "" }
+                            className="text-shadow-300 flex items-center justify-center gap-x-2">
+                            <LuMapPin aria-hidden="true" className="size-5" />
+                            <span data-private={ account.isPrivate } className={ privateStyle }>
+                                { account.location ?? "Not informed" }
+                            </span>
+                        </div>
+                    </div>
+
+                    <h2 id="profile-title" className="text-shadow-700 text-center text-2xl font-semibold">
+                        @{ account.username }
                     </h2>
 
-                    <div className="mx-auto whitespace-pre-wrap text-gray-600">
-                        { " " }
-                        <div className="inline-block max-w-full rounded-sm bg-black text-balance whitespace-pre-wrap text-transparent select-none">
-                            { textScrambler(account.biography) }
+                    <div
+                        data-private={ account.isPrivate }
+                        aria-label={ account.isPrivate ? "Redacted biography" : "" }
+                        title={ account.isPrivate ? "Redacted biography" : "" }
+                        className={ twMerge(
+                            "text-shadow-900 text-center text-balance whitespace-pre-wrap",
+                            privateStyle,
+                        ) }>
+                        { account.biography }
+                    </div>
+
+                    <div className="border-t-2 border-stone-200 pt-4">
+                        <div className="text-shadow-300 mx-auto flex w-full max-w-2xl flex-wrap items-center justify-between">
+                            <span className="flex items-center gap-x-1.5">
+                                <LuLink2 aria-hidden="true" className="size-5 text-inherit" />
+                                <Link
+                                    href={ account.website ?? "#" }
+                                    className="text-marigold-500 hover:text-marigold-600 active:text-marigold-700 hover:underline">
+                                    { account.website ?? "https://example.com/" }
+                                </Link>
+                            </span>
+
+                            <time dateTime={ String(account.createdAt) } className="flex items-center gap-x-1.5">
+                                <LuCalendarRange aria-hidden="true" className="size-5 text-inherit" />
+                                Joined{ " " }
+                                <span>
+                                    { new Date(account.createdAt).toLocaleDateString("en-US", {
+                                        month: "long",
+                                        year: "numeric",
+                                    }) }
+                                </span>
+                            </time>
                         </div>
                     </div>
                 </div>
