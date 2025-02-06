@@ -1,7 +1,7 @@
-import { Profile }      from "@/@types/user"
-import EditAccountModal from "@/components/modals/edit-account-modal"
-import Avatar           from "@/components/shared/avatar"
-import RegularButton    from "@/components/shared/regular-button"
+import { Profile }             from "@/@types/user"
+import EditAccountDetailsModal from "@/components/modals/edit-account-details-modal"
+import EditAccountModal        from "@/components/modals/edit-account-modal"
+import Avatar                  from "@/components/shared/avatar"
 
 interface DashboardUserProfileProps {
     name: string
@@ -44,11 +44,7 @@ export default function DashboardUserProfile({ name, profile }: Readonly<Dashboa
             <div className="my-4 flex flex-col items-center justify-center gap-4 lg:mt-6 lg:flex-row">
                 <EditAccountModal />
 
-                <RegularButton
-                    className="text-shadow-900 border border-stone-300 bg-white hover:bg-stone-100 active:bg-stone-200"
-                    aria-label="Check account details">
-                    Account Details
-                </RegularButton>
+                <EditAccountDetailsModal />
             </div>
 
             <div className="border-t-2 border-stone-100 pt-3">
