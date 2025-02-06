@@ -103,6 +103,8 @@ const userProfileUpdateSchema = z
 
 const userAccountDetailsSchema = z
     .object({
+                firstName: z.string().trim().nullish().or(z.literal("")),
+                lastName: z.string().trim().nullish().or(z.literal("")),
                 birthDate: z
                     .preprocess(
                         val => {
@@ -110,18 +112,18 @@ const userAccountDetailsSchema = z
                             return undefined
                         },
                         
-                        z.date({ required_error: "Birth date is required." }).refine(
-                            date => {
-                                const today = new Date()
-                                let age = today.getFullYear() - date.getFullYear()
-                                const monthDiff = today.getMonth() - date.getMonth()
-                                
-                                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < date.getDate())) age--
-                                
-                                return age >= 18
-                            },
-                            { message: "User must be over 18 years old." },
-                        ),
+                        z.date({ required_error: "Birth date is required." })
+                            .refine(date => {
+                                        const today = new Date()
+                                        let age = today.getFullYear() - date.getFullYear()
+                                        const monthDiff = today.getMonth() - date.getMonth()
+                                        
+                                        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < date.getDate())) age--
+                                        
+                                        return age >= 18
+                                    },
+                                    { message: "User must be over 18 years old." },
+                            ),
                     )
                     .nullish()
                     .or(z.literal("")),
@@ -137,8 +139,27 @@ const userAccountDetailsSchema = z
                 streamingChannel: z.string().trim().nullish().or(z.literal("")),
                 isPrivate: z.string().optional().transform(Boolean),
                 currentPassword: z.string({ message: "Current password is required" }),
+                fullName: z.string().optional(),
             })
-    .transform(data => {
+    .transform((data, ctx) => {
+        if (data.firstName || data.lastName) {
+            const fullName = [ data.firstName, data.lastName ].filter(Boolean).join(" ").trim()
+            
+            if (!/^[a-zA-Z ]*$/.test(fullName)) {
+                ctx.addIssue({
+                                 code: "custom",
+                                 message: "Invalid name format.",
+                             })
+                
+                return z.NEVER
+            }
+            
+            data.fullName = fullName
+        }
+        
+        delete data.firstName
+        delete data.lastName
+        
         if (data.birthDate === "") delete data.birthDate
         if (data.location === "") delete data.location
         if (data.website === "") delete data.website
