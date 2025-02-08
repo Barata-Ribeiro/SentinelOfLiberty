@@ -14,6 +14,7 @@ import HomeSuggestionItem         from "@/components/home/home-suggestion-item"
 import CategoriesSliderSkeleton   from "@/components/layout/skeletons/categories-slider-skeleton"
 import { auth }                   from "auth"
 import { Metadata }               from "next"
+import { Session }                from "next-auth"
 import Link                       from "next/link"
 import { Suspense }               from "react"
 
@@ -21,6 +22,26 @@ export const metadata: Metadata = {
     title: "Home | Sentinel of Liberty",
     description:
         "Welcome to the Sentinel of Liberty, the place where you can engage with your favorite creator and help them create the content you love.",
+}
+
+function NoMoreWrittenArticleMessage(props: { session: Session | null }) {
+    return (
+        <li className="text-shadow-600 col-span-2 my-20 text-center lg:my-52">
+            No more articles to show.{ " " }
+            { props.session ? (
+                <>
+                    Write one now{ " " }
+                    <Link
+                        href="/articles/write"
+                        className="text-marigold-500 hover:text-marigold-600 active:text-marigold-700 hover:underline">
+                        here!
+                    </Link>
+                </>
+            ) : (
+                  "Wait for one of our creators to write one."
+              ) }
+        </li>
+    )
 }
 
 export default async function HomePage() {
@@ -43,6 +64,8 @@ export default async function HomePage() {
     
     const latestArticle = Array.from(latestArticles)[0]
     const latestArticlesList = Array.from(latestArticles).slice(1)
+    const latestSuggestionsList = Array.from(latestSuggestions)
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     
     return (
         <div className="container">
@@ -64,23 +87,7 @@ export default async function HomePage() {
                             <HomeArticleItem key={ article.id } article={ article } />
                         )) }
                         
-                        { latestArticlesList.length < 2 && (
-                            <li className="text-shadow-600 col-span-2 my-20 text-center lg:my-52">
-                                No more articles to show.{ " " }
-                                { session ? (
-                                    <>
-                                        Write one now{ " " }
-                                        <Link
-                                            href="/articles/write"
-                                            className="text-marigold-500 hover:text-marigold-600 active:text-marigold-700 hover:underline">
-                                            here!
-                                        </Link>
-                                    </>
-                                ) : (
-                                      "Wait for one of our creators to write one."
-                                  ) }
-                            </li>
-                        ) }
+                        { latestArticlesList.length < 2 && <NoMoreWrittenArticleMessage session={ session } /> }
                     </ul>
                 </main>
 
@@ -90,7 +97,7 @@ export default async function HomePage() {
                     <div>
                         <h2 className="text-shadow-900 font-medium">Latest News</h2>
                         <ul className="grid gap-y-4 border-t-2 pt-4">
-                            { Array.from(latestSuggestions).map(suggestion => (
+                            { latestSuggestionsList.map(suggestion => (
                                 <HomeSuggestionItem key={ suggestion.id } suggestion={ suggestion } />
                             )) }
                         </ul>
