@@ -20,7 +20,12 @@ export default auth((request: NextRequest) => {
     const headers = new Headers(request.headers)
     headers.set("x-current-path",
                 `${ request.nextUrl.protocol }//${ request.nextUrl.host }${ request.nextUrl.pathname }`)
-    return NextResponse.next({ headers })
+    
+    return NextResponse.next({
+                                 request: {
+                                     headers,
+                                 },
+                             })
 })
 
 export const config = {
