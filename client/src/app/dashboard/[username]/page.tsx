@@ -1,6 +1,7 @@
 import { Dashboard, Profile }        from "@/@types/user"
 import getOwnDashboard               from "@/actions/users/get-own-dashboard"
 import getOwnProfile                 from "@/actions/users/get-own-profile"
+import DashboardLatestSuggestionMade from "@/components/dashboard/dashboard-latest-suggestion-made"
 import DashboardLatestWrittenArticle from "@/components/dashboard/dashboard-latest-written-article"
 import DashboardSiteInteractions     from "@/components/dashboard/dashboard-site-interactions"
 import DashboardUserProfile          from "@/components/dashboard/dashboard-user-profile"
@@ -39,6 +40,19 @@ function NoWrittenArticleMessage(props: { profile: Profile }) {
     )
 }
 
+function NoSuggestionsMadeMessage() {
+    return (
+        <p className="text-shadow-600 text-center">
+            You have not made any suggestions yet. Make one{ " " }
+            <Link
+                href="/suggestions/write"
+                className="text-marigold-500 hover:text-marigold-600 active:text-marigold-700 hover:underline">
+                here!
+            </Link>
+        </p>
+    )
+}
+
 export default async function DashboardHomePage({ params }: Readonly<DashboardHomePageProps>) {
     const username = (await params).username
     if (!username) return notFound()
@@ -59,6 +73,7 @@ export default async function DashboardHomePage({ params }: Readonly<DashboardHo
     console.groupEnd()
     
     const latestWrittenArticle = dashboard.latestWrittenArticle
+    const latestThreeSuggestionsList = Array.from(dashboard.latestThreeSuggestions)
     
     return (
         <div className="my-8 grid grid-cols-1 gap-2 sm:gap-4 md:grid-cols-[33%_66%] lg:gap-8">
@@ -68,12 +83,24 @@ export default async function DashboardHomePage({ params }: Readonly<DashboardHo
                 <DashboardSiteInteractions dashboard={ dashboard } />
             </aside>
 
-            <main className="rounded-md border-2 border-stone-200 p-4">
-                <div className="grid gap-y-4">
-                    <h2 className="text-shadow-900 border-b-2 font-medium">Latest Written Article</h2>
+            <main className="flex flex-col gap-y-4 rounded-md border-2 border-stone-200 p-4 sm:gap-y-8">
+                <section className="grid gap-y-4">
+                    <h2 className="text-shadow-900 border-b-2 font-medium">Latest Published Article</h2>
                     { !latestWrittenArticle && <NoWrittenArticleMessage profile={ profile } /> }
                     { latestWrittenArticle && <DashboardLatestWrittenArticle article={ latestWrittenArticle } /> }
-                </div>
+                </section>
+
+                <section className="grid gap-y-2">
+                    <h2 className="text-shadow-900 border-b-2 font-medium">Latest Suggestions Made</h2>
+                    { latestThreeSuggestionsList.length <= 0 && <NoSuggestionsMadeMessage /> }
+                    { latestThreeSuggestionsList.length > 0 && (
+                        <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                            { latestThreeSuggestionsList.map(suggestion => (
+                                <DashboardLatestSuggestionMade key={ suggestion.id } suggestion={ suggestion } />
+                            )) }
+                        </ul>
+                    ) }
+                </section>
             </main>
         </div>
     )
