@@ -18,7 +18,7 @@ const navigation = [
 
 export default function Footer() {
     return (
-        <footer className="bg-stone-50">
+        <footer className="mt-auto bg-stone-50">
             <div className="container px-6 py-12 md:flex md:items-center md:justify-between lg:px-8">
                 <div className="flex justify-center space-x-6 md:order-2">
                     { navigation.map(item => (
@@ -38,7 +38,7 @@ export default function Footer() {
                     <Image src={ miniLogo } alt="" className="size-8" />
                     <span aria-hidden="true" className="h-6 w-px bg-stone-200"></span>
                     <p className="text-shadow-500 text-center text-xs leading-5">
-                        &copy; { new Date().getFullYear() } Sentinel of Liberty. All rights reserved.
+                        &copy; 2023 ~ { new Date().getFullYear() } Sentinel of Liberty. All rights reserved.
                     </p>
                 </div>
             </div>
