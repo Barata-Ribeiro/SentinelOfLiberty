@@ -1,10 +1,11 @@
 // apiRoutes.ts
+import env from "@/helpers/env"
 
 // =================================================================
 // =======================  Global Constant  =======================
 // =================================================================
-const ORIGIN_URL = process.env.BACKEND_ORIGIN ?? "http://localhost:8080"
-const API_URL = ORIGIN_URL + "/api/v1"
+const BACKEND_URL = env.BACKEND_ORIGIN ?? "http://localhost:8080"
+const API_URL = BACKEND_URL + "/api/v1"
 
 // ================================================================
 // ====================  Query Params Builder  ====================

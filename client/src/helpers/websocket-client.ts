@@ -1,7 +1,8 @@
+import env                                     from "@/helpers/env"
 import { Client, IMessage, StompSubscription } from "@stomp/stompjs"
 import SockJS                                  from "sockjs-client"
 
-const BACKEND_URL = process.env.BACKEND_ORIGIN ?? "http://localhost:8080"
+const BACKEND_URL = env.BACKEND_ORIGIN ?? "http://localhost:8080"
 
 class WebSocketClient {
     private readonly client: Client
@@ -24,6 +25,7 @@ class WebSocketClient {
         }
         
         this.client.onStompError = frame => {
+            console.error("Frame: " + frame)
             console.error("Broker reported error: " + frame.headers["message"])
             console.error("Additional details: " + frame.body)
         }

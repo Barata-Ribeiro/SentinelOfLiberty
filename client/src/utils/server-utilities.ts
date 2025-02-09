@@ -1,9 +1,10 @@
+import env         from "@/helpers/env"
 import { cookies } from "next/headers"
 
 async function getTokenAndExpiration() {
     const cookieStore = await cookies()
     
-    const tokenName = process.env.AUTH_TOKEN_NAME
+    const tokenName = env.AUTH_TOKEN_NAME
     if (!tokenName) throw new Error("Token name not found in environment variables.")
     
     const token = cookieStore.get(tokenName)?.value
