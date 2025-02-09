@@ -57,20 +57,11 @@ export default async function DashboardHomePage({ params }: Readonly<DashboardHo
     const username = (await params).username
     if (!username) return notFound()
     
-    const profilePromise = getOwnProfile()
-    const dashboardPromise = getOwnDashboard()
-    
-    const [ profileState, dashboardState ] = await Promise.all([ profilePromise, dashboardPromise ])
+    const [ profileState, dashboardState ] = await Promise.all([ getOwnProfile(), getOwnDashboard() ])
     if (!profileState.ok || !dashboardState.ok) return notFound()
     
     const profile = profileState.response?.data as Profile
     const dashboard = dashboardState.response?.data as Dashboard
-    
-    console.group("DashboardHomePage")
-    console.log("username: ", username)
-    console.log("profile: ", profile)
-    console.log("dashboard: ", dashboard)
-    console.groupEnd()
     
     const latestWrittenArticle = dashboard.latestWrittenArticle
     const latestThreeSuggestionsList = Array.from(dashboard.latestThreeSuggestions)

@@ -45,17 +45,12 @@ function NoMoreWrittenArticleMessage(props: { session: Session | null }) {
 }
 
 export default async function HomePage() {
-    const sessionPromise = auth()
-    const latestArticlesPromise = getLatestPublicArticles()
-    const latestSuggestionsPromise = getLatestPublicSuggestions()
-    const latestNoticesPromise = getLatestNotices()
     const availableCategoriesPromise = getAllAvailableCategories()
-    
     const [ session, latestArticlesState, latestSuggestionsState, latestNoticesState ] = await Promise.all([
-                                                                                                               sessionPromise,
-                                                                                                               latestArticlesPromise,
-                                                                                                               latestSuggestionsPromise,
-                                                                                                               latestNoticesPromise,
+                                                                                                               auth(),
+                                                                                                               getLatestPublicArticles(),
+                                                                                                               getLatestPublicSuggestions(),
+                                                                                                               getLatestNotices(),
                                                                                                            ])
     
     const latestArticles = latestArticlesState.response?.data as Set<ArticleSummary>

@@ -26,10 +26,8 @@ export default async function ArticlesPage({ searchParams }: Readonly<ArticlePag
     const direction = (pageParams.direction as string) || "DESC"
     const orderBy = (pageParams.orderBy as string) || "createdAt"
     
-    const sessionPromise = auth()
-    const articlesListPromise = getAllPublicArticlesPaginated({ page, perPage, direction, orderBy })
-    
-    const [ session, state ] = await Promise.all([ sessionPromise, articlesListPromise ])
+    const [ session, state ] = await Promise
+        .all([ auth(), getAllPublicArticlesPaginated({ page, perPage, direction, orderBy }) ])
     
     const pagination = state.response?.data as Paginated<ArticleSummary>
     const content = pagination.content ?? []
