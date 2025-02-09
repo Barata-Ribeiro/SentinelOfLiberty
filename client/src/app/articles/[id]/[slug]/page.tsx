@@ -1,16 +1,20 @@
-import { Article }                                                from "@/@types/articles"
-import getArticleById                                             from "@/actions/articles/get-article-by-id"
-import getLatestPublicArticles                                    from "@/actions/articles/get-latest-public-articles"
-import LatestArticlesListing                                      from "@/components/articles/latest-articles-listing"
-import MemoizedContent                                            from "@/components/helpers/memoized-content"
-import { auth }                                                   from "auth"
-import { Metadata, ResolvingMetadata }                            from "next"
-import { headers }                                                from "next/headers"
-import Image                                                      from "next/image"
-import Link                                                       from "next/link"
-import { notFound }                                               from "next/navigation"
-import { Suspense }                                               from "react"
-import { FaLink, FaLinkedin, FaSquareFacebook, FaSquareXTwitter } from "react-icons/fa6"
+import { Article }                                                                       from "@/@types/articles"
+import getArticleById
+                                                                                         from "@/actions/articles/get-article-by-id"
+import getLatestPublicArticles
+                                                                                         from "@/actions/articles/get-latest-public-articles"
+import LatestArticlesListing
+                                                                                         from "@/components/articles/latest-articles-listing"
+import MemoizedContent
+                                                                                         from "@/components/helpers/memoized-content"
+import { auth }                                                                          from "auth"
+import { Metadata, ResolvingMetadata }                                                   from "next"
+import { headers }                                                                       from "next/headers"
+import Image                                                                             from "next/image"
+import Link                                                                              from "next/link"
+import { notFound }                                                                      from "next/navigation"
+import { Suspense }                                                                      from "react"
+import { FaCircleCheck, FaLink, FaLinkedin, FaSquareFacebook, FaSquareXTwitter, FaUser } from "react-icons/fa6"
 
 interface ArticlePageProps {
     params: Promise<{
@@ -45,13 +49,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     const { id, slug } = await params
     if (!id || !slug) return notFound()
     
-    const headerPromise = headers()
-    const sessionPromise = auth()
-    const articlePromise = getArticleById({ id: parseInt(id) })
     const latestAriclesPromise = getLatestPublicArticles()
     
-    // TODO: Use session to verify if the user is the author of the article
-    const [ headersList, session, articleState ] = await Promise.all([ headerPromise, sessionPromise, articlePromise ])
+    const [ headersList, session, articleState ] = await Promise.all([
+                                                                         headers(),
+                                                                         auth(),
+                                                                         getArticleById({ id: parseInt(id) }),
+                                                                     ])
     if (!articleState) return notFound()
     
     const pathname = headersList.get("x-current-path")
@@ -87,26 +91,56 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 </header>
 
                 <main className="grid grid-cols-1 gap-4 md:grid-cols-[auto_1fr] md:gap-8">
-                    <aside className="border-marigold-500 w-max divide-y divide-stone-100 border-t-4 pt-4">
-                        <h3 className="text-shadow-900 pb-2 text-xl">References</h3>
-                        { article.references.map((reference, index) => (
-                            <div
-                                key={ `reference-${ index + Math.random() }` }
-                                className="flex w-max items-center justify-between p-4">
+                    <aside className="border-marigold-500 w-max border-t-4 pt-4">
+                        <div className="grid grid-cols-1 gap-y-2 divide-y divide-stone-100">
+                            <h3 className="text-shadow-900 text-xl">Author</h3>
+                            <div className="flex w-max items-center justify-between p-4">
                                 <Link
-                                    href={ reference }
-                                    aria-label={ `Reference to ${ reference }` }
-                                    title={ `Reference to ${ reference }` }
-                                    target="_blank"
-                                    rel="noopener noreferrer nofollow"
-                                    className="text-shadow-400 hover:text-shadow-500 flex min-w-0 items-center gap-x-2 text-sm hover:underline max-sm:max-w-[2rem]">
-                                    <span className="shrink-0 rounded-full bg-yellow-100 p-2">
-                                        <FaLink aria-hidden="true" className="size-4" />
+                                    href={
+                                        session
+                                        ? `/dashboard/${ article.author.id }`
+                                        : `/profile/${ article.author.username }`
+                                    }
+                                    aria-label={ session ? "You're the author" : `Author ${ article.author.username }` }
+                                    title={ session ? "You're the author" : `Author ${ article.author.username }` }
+                                    className="text-shadow-400 hover:text-shadow-500 inline-flex min-w-0 items-center gap-x-2 text-sm hover:underline max-sm:max-w-[2rem]">
+                                    <span className="bg-marigold-100 shrink-0 rounded-full p-2">
+                                        <FaUser aria-hidden="true" className="size-4" />
                                     </span>
-                                    { reference.length > 30 ? `${ reference.substring(0, 30) }...` : reference }
+                                    { article.author.username }
+                                    { article.author.isVerified && (
+                                        <span
+                                            className="text-marigold-500"
+                                            aria-label="Verified author"
+                                            title="Verified author">
+                                            <FaCircleCheck aria-hidden="true" className="size-4" />
+                                        </span>
+                                    ) }
                                 </Link>
                             </div>
-                        )) }
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-y-2 divide-y divide-stone-100">
+                            <h3 className="text-shadow-900 mt-0 text-xl md:mt-4">References</h3>
+                            { article.references.map((reference, index) => (
+                                <div
+                                    key={ `reference-${ index + Math.random() }` }
+                                    className="flex w-max items-center justify-between p-4">
+                                    <Link
+                                        href={ reference }
+                                        aria-label={ `Reference to ${ reference }` }
+                                        title={ `Reference to ${ reference }` }
+                                        target="_blank"
+                                        rel="noopener noreferrer nofollow"
+                                        className="text-shadow-400 hover:text-shadow-500 flex min-w-0 items-center gap-x-2 text-sm hover:underline max-sm:max-w-[2rem]">
+                                        <span className="shrink-0 rounded-full bg-yellow-100 p-2">
+                                            <FaLink aria-hidden="true" className="size-4" />
+                                        </span>
+                                        { reference.length > 30 ? `${ reference.substring(0, 30) }...` : reference }
+                                    </Link>
+                                </div>
+                            )) }
+                        </div>
                     </aside>
 
                     <div className="w-full !max-w-4xl">
