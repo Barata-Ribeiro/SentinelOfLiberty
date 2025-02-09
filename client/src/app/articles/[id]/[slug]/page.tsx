@@ -1,20 +1,18 @@
-import { Article }                                                                       from "@/@types/articles"
-import getArticleById
-                                                                                         from "@/actions/articles/get-article-by-id"
-import getLatestPublicArticles
-                                                                                         from "@/actions/articles/get-latest-public-articles"
-import LatestArticlesListing
-                                                                                         from "@/components/articles/latest-articles-listing"
-import MemoizedContent
-                                                                                         from "@/components/helpers/memoized-content"
-import { auth }                                                                          from "auth"
-import { Metadata, ResolvingMetadata }                                                   from "next"
-import { headers }                                                                       from "next/headers"
-import Image                                                                             from "next/image"
-import Link                                                                              from "next/link"
-import { notFound }                                                                      from "next/navigation"
-import { Suspense }                                                                      from "react"
-import { FaCircleCheck, FaLink, FaLinkedin, FaSquareFacebook, FaSquareXTwitter, FaUser } from "react-icons/fa6"
+import { Article }                     from "@/@types/articles"
+import getArticleById                  from "@/actions/articles/get-article-by-id"
+import getLatestPublicArticles         from "@/actions/articles/get-latest-public-articles"
+import LatestArticlesListing           from "@/components/articles/latest-articles-listing"
+import MainArticleAuthor               from "@/components/articles/main-article-author"
+import MainArticleFooter               from "@/components/articles/main-article-footer"
+import MainArticleHeader               from "@/components/articles/main-article-header"
+import MainArticleReferences           from "@/components/articles/main-article-references"
+import MemoizedContent                 from "@/components/helpers/memoized-content"
+import { auth }                        from "auth"
+import { Metadata, ResolvingMetadata } from "next"
+import { headers }                     from "next/headers"
+import Link                            from "next/link"
+import { notFound }                    from "next/navigation"
+import { Suspense }                    from "react"
 
 interface ArticlePageProps {
     params: Promise<{
@@ -51,11 +49,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     
     const latestAriclesPromise = getLatestPublicArticles()
     
-    const [ headersList, session, articleState ] = await Promise.all([
-                                                                         headers(),
-                                                                         auth(),
-                                                                         getArticleById({ id: parseInt(id) }),
-                                                                     ])
+    const [ headersList, session, articleState ] = await Promise
+        .all([ headers(), auth(), getArticleById({ id: parseInt(id) }) ])
     if (!articleState) return notFound()
     
     const pathname = headersList.get("x-current-path")
@@ -64,133 +59,17 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     return (
         <div className="grid grid-cols-1 gap-4">
             <article className="container space-y-6">
-                <header className="grid grid-cols-1 items-center justify-between gap-4 md:grid-cols-2">
-                    <div className="mt-4 space-y-2 text-center md:mt-0 md:text-left">
-                        <time dateTime={ String(article.createdAt) } className="text-shadow-300 text-sm">
-                            { new Date(article.createdAt)
-                                .toLocaleDateString("en-US", {
-                                    day: "2-digit",
-                                    month: "2-digit",
-                                    year: "numeric",
-                                })
-                                .replace(/\//g, " \u00B7 ") }
-                        </time>
-                        <h1 className="text-shadow-900 text-4xl font-medium text-balance">{ article.title }</h1>
-                        <h2 className="text-shadow-700 text-xl text-balance">{ article.subTitle }</h2>
-                    </div>
-
-                    <div className="relative min-h-[20rem] md:min-h-[30rem]">
-                        <Image
-                            src={ article.mediaUrl }
-                            alt={ article.title }
-                            className="h-auto w-full object-cover"
-                            sizes="(min-width: 808px) 50vw, 100vw"
-                            fill
-                        />
-                    </div>
-                </header>
+                <MainArticleHeader article={ article } />
 
                 <main className="grid grid-cols-1 gap-4 md:grid-cols-[auto_1fr] md:gap-8">
                     <aside className="border-marigold-500 w-max border-t-4 pt-4">
-                        <div className="grid grid-cols-1 gap-y-2 divide-y divide-stone-100">
-                            <h3 className="text-shadow-900 text-xl">Author</h3>
-                            <div className="flex w-max items-center justify-between p-4">
-                                <Link
-                                    href={
-                                        session
-                                        ? `/dashboard/${ article.author.id }`
-                                        : `/profile/${ article.author.username }`
-                                    }
-                                    aria-label={ session ? "You're the author" : `Author ${ article.author.username }` }
-                                    title={ session ? "You're the author" : `Author ${ article.author.username }` }
-                                    className="text-shadow-400 hover:text-shadow-500 inline-flex min-w-0 items-center gap-x-2 text-sm hover:underline max-sm:max-w-[2rem]">
-                                    <span className="bg-marigold-100 shrink-0 rounded-full p-2">
-                                        <FaUser aria-hidden="true" className="size-4" />
-                                    </span>
-                                    { article.author.username }
-                                    { article.author.isVerified && (
-                                        <span
-                                            className="text-marigold-500"
-                                            aria-label="Verified author"
-                                            title="Verified author">
-                                            <FaCircleCheck aria-hidden="true" className="size-4" />
-                                        </span>
-                                    ) }
-                                </Link>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 gap-y-2 divide-y divide-stone-100">
-                            <h3 className="text-shadow-900 mt-0 text-xl md:mt-4">References</h3>
-                            { article.references.map((reference, index) => (
-                                <div
-                                    key={ `reference-${ index + Math.random() }` }
-                                    className="flex w-max items-center justify-between p-4">
-                                    <Link
-                                        href={ reference }
-                                        aria-label={ `Reference to ${ reference }` }
-                                        title={ `Reference to ${ reference }` }
-                                        target="_blank"
-                                        rel="noopener noreferrer nofollow"
-                                        className="text-shadow-400 hover:text-shadow-500 flex min-w-0 items-center gap-x-2 text-sm hover:underline max-sm:max-w-[2rem]">
-                                        <span className="shrink-0 rounded-full bg-yellow-100 p-2">
-                                            <FaLink aria-hidden="true" className="size-4" />
-                                        </span>
-                                        { reference.length > 30 ? `${ reference.substring(0, 30) }...` : reference }
-                                    </Link>
-                                </div>
-                            )) }
-                        </div>
+                        <MainArticleAuthor session={ session } article={ article } />
+                        <MainArticleReferences article={ article } />
                     </aside>
 
                     <div className="w-full !max-w-4xl">
                         <MemoizedContent html={ article.content } />
-
-                        <footer className="mt-8 space-y-4 divide-y divide-stone-100">
-                            <div className="flex flex-wrap items-center gap-4 pb-4">
-                                { Array.from(article.categories).map(category => (
-                                    <Link
-                                        key={ `category-${ category.id }-${ category.name }` }
-                                        href={ `/articles/category/${ category.name }` }
-                                        aria-label={ `Category ${ category.name }` }
-                                        title={ `Category ${ category.name }` }
-                                        className="text-shadow-700 focus-visible:outline-marigold-600 hover:text-shadow-900 active:text-shadow-800 rounded bg-stone-100 px-2 py-1 capitalize transition duration-200 select-none hover:bg-stone-300 focus-visible:outline-2 focus-visible:outline-offset-2 active:bg-stone-200">
-                                        { category.name }
-                                    </Link>
-                                )) }
-                            </div>
-
-                            <div className="flex items-center gap-x-2">
-                                <span className="text-shadow-500 text-sm">Share:</span>
-                                <Link
-                                    href={ `https://x.com/intent/tweet/?url=${ article.title }&url=${ pathname }` }
-                                    aria-label="Share on X"
-                                    title="Share on X"
-                                    target="_blank"
-                                    rel="noopener noreferrer nofollow"
-                                    className="text-shadow-600 hover:text-shadow-700 active:text-shadow-800">
-                                    <FaSquareXTwitter aria-hidden="true" className="size-8" />
-                                </Link>
-                                <Link
-                                    href={ `https://www.facebook.com/sharer/sharer.php?u=${ pathname }` }
-                                    aria-label="Share on Facebook"
-                                    title="Share on Facebook"
-                                    target="_blank"
-                                    rel="noopener noreferrer nofollow"
-                                    className="text-shadow-600 hover:text-shadow-700 active:text-shadow-800">
-                                    <FaSquareFacebook aria-hidden="true" className="size-8" />
-                                </Link>
-                                <Link
-                                    href={ `https://www.linkedin.com/shareArticle?url=${ pathname }` }
-                                    aria-label="Share on LinkedIn"
-                                    title="Share on LinkedIn"
-                                    target="_blank"
-                                    rel="noopener noreferrer nofollow"
-                                    className="text-shadow-600 hover:text-shadow-700 active:text-shadow-800">
-                                    <FaLinkedin aria-hidden="true" className="size-8" />
-                                </Link>
-                            </div>
-                        </footer>
+                        <MainArticleFooter article={ article } pathname={ pathname } />
                     </div>
                 </main>
             </article>
@@ -201,7 +80,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                         <h3 className="text-shadow-900 text-4xl font-semibold text-balance">Latest Articles</h3>
                         <Link
                             href="/articles"
-                            className="text-marigold-600 hover:text-marigold-700 active:text-marigold-800 text-sm underline">
+                            className="text-marigold-600 hover:text-marigold-700 active:text-marigold-800 tracking-wide text-sm underline">
                             View all articles
                         </Link>
                     </div>
