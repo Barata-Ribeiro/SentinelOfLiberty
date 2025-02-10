@@ -7,9 +7,10 @@ interface AvatarProps {
     name: string
     size: 32 | 36 | 48 | 64 | 72 | 96
     src: string | null
+    animate?: boolean
 }
 
-export default function Avatar({ name, size, src }: Readonly<AvatarProps>) {
+export default function Avatar({ name, size, src, animate = true }: Readonly<AvatarProps>) {
     let styleSize, textSize
     
     switch (size) {
@@ -47,8 +48,9 @@ export default function Avatar({ name, size, src }: Readonly<AvatarProps>) {
     return (
         <Link
             href={ `/profile/${ name }` }
+            data-animated={ animate }
             aria-label="Go to your public profile page"
-            className="block w-max shrink-0 transition-transform hover:-translate-y-2.5 hover:transform">
+            className="block w-max shrink-0 data-[animate=true]:transition-transform data-[animate=true]:hover:-translate-y-2.5 data-[animate=true]:hover:transform">
             { src ? (
                 <Image
                     src={ src }
