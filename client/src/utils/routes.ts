@@ -126,7 +126,7 @@ export function deleteArticleUrl(articleId: number): string {
 // ===================  Comment Module Functions  ===================
 // ==================================================================
 export function getArticleCommentsTreeUrl(articleId: number): string {
-    return `${ API_URL }/comments/${ articleId }`
+    return `${ API_URL }/comments/public/${ articleId }`
 }
 
 export function createCommentUrl(articleId: number): string {

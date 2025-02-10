@@ -25,7 +25,7 @@ public class CommentController {
 
     @Operation(summary = "Get article's comments tree",
                description = "This endpoint allows a user to get all comments from an article in a tree structure.")
-    @GetMapping("/{articleId}")
+    @GetMapping("/public/{articleId}")
     public ResponseEntity<ApplicationResponseDTO<List<CommentDTO>>> getArticleCommentsTree(@PathVariable
                                                                                            Long articleId) {
         List<CommentDTO> response = commentService.getArticleCommentsTree(articleId);
