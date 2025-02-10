@@ -1,4 +1,5 @@
 import { ArticleSummary } from "@/@types/articles"
+import { Comment }        from "@/@types/comments"
 import { Suggestion }     from "@/@types/suggestions"
 
 type Roles = "NONE" | "USER" | "ADMIN" | "BANNED"
@@ -39,7 +40,7 @@ type Author = Omit<User, "createdAt" | "updatedAt">
 interface Dashboard {
     latestWrittenArticle: ArticleSummary | null;
     latestThreeSuggestions: Set<Suggestion> | [];
-    latestThreeComments: Set<object> | [];
+    latestThreeComments: Set<Comment> | [];
     totalWrittenArticles: number;
     totalWrittenSuggestions: number;
     totalWrittenComments: number;
