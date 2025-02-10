@@ -22,7 +22,7 @@ export default function FeaturedArticle({ latestArticle }: FeaturedArticleProps)
                 <h2 className="text-shadow-900 mb-2 text-xl font-medium lg:text-2xl">{ latestArticle.title }</h2>
                 <p className="prose text-shadow-800 mx-auto leading-relaxed">{ latestArticle.summary }</p>
                 <Link
-                    href={ `/articles/${ latestArticle.id }/${ latestArticle.title }` }
+                    href={ `/articles/${ latestArticle.id }/${ latestArticle.slug }` }
                     className="text-marigold-500 hover:text-marigold-600 active:text-marigold-700 mt-3 inline-flex cursor-pointer items-center gap-x-1 font-medium decoration-2 underline-offset-2 select-none hover:underline">
                     Read More <span aria-hidden="true">&rarr;</span>
                 </Link>
