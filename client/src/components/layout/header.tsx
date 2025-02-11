@@ -102,7 +102,7 @@ export default function Header() {
                             <Button
                                 type="button"
                                 onClick={ () => setMobileMenuOpen(true) }
-                                className="text-shadow-700 hover:bg-marigold-400 -m-2.5 inline-flex items-center justify-center rounded-md p-2.5">
+                                className="text-shadow-700 hover:bg-marigold-400 -m-2.5 inline-flex cursor-pointer items-center justify-center rounded-md p-2.5 select-none">
                                 <span className="sr-only">Open main menu</span>
                                 <HiOutlineBars3CenterLeft aria-hidden="true" className="size-6" />
                             </Button>
@@ -125,7 +125,7 @@ export default function Header() {
                                 <Button
                                     type="button"
                                     onClick={ () => setMobileMenuOpen(false) }
-                                    className="text-shadow-700 -m-2.5 rounded-md p-2.5 hover:bg-stone-300">
+                                    className="text-shadow-700 -m-2.5 cursor-pointer rounded-md p-2.5 select-none hover:bg-stone-300">
                                     <span className="sr-only">Close menu</span>
                                     <HiMiniXMark aria-hidden="true" className="size-6" />
                                 </Button>
@@ -146,7 +146,8 @@ export default function Header() {
                                     href={ item.href }
                                     data-current={ pathname === item.href ? "page" : undefined }
                                     aria-current={ pathname === item.href ? "page" : undefined }
-                                    className="text-shadow-900 data-[current=page]:text-shadow-800 -mx-3 block rounded-lg px-3 py-2 text-base leading-7 font-semibold hover:bg-stone-300 data-[current=page]:bg-stone-400">
+                                    onClick={ () => setMobileMenuOpen(false) }
+                                    className="text-shadow-900 data-[current=page]:text-shadow-800 -mx-3 block rounded-lg px-3 py-2 text-base leading-7 font-semibold select-none hover:bg-stone-300 data-[current=page]:bg-stone-400">
                                     { item.name }
                                 </Link>
                             )) }
