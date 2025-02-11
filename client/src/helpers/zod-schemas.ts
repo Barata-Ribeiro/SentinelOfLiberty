@@ -112,18 +112,18 @@ const userAccountDetailsSchema = z
                             return undefined
                         },
                         
-                        z.date({ required_error: "Birth date is required." })
-                            .refine(date => {
-                                        const today = new Date()
-                                        let age = today.getFullYear() - date.getFullYear()
-                                        const monthDiff = today.getMonth() - date.getMonth()
-                                        
-                                        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < date.getDate())) age--
-                                        
-                                        return age >= 18
-                                    },
-                                    { message: "User must be over 18 years old." },
-                            ),
+                        z.date({ required_error: "Birth date is required." }).refine(
+                            date => {
+                                const today = new Date()
+                                let age = today.getFullYear() - date.getFullYear()
+                                const monthDiff = today.getMonth() - date.getMonth()
+                                
+                                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < date.getDate())) age--
+                                
+                                return age >= 18
+                            },
+                            { message: "User must be over 18 years old." },
+                        ),
                     )
                     .nullish()
                     .or(z.literal("")),
@@ -260,6 +260,16 @@ const articleRequestSchema = z.object({
                                                       "At least one category must be provided."),
                                       })
 
+// Comments
+const commentSchema = z.object({
+                                   articleId: z.coerce.number().int(),
+                                   parentId: z.number().optional(),
+                                   body: z
+                                       .string()
+                                       .min(5, "Comment must be at least 5 characters.")
+                                       .max(400, "Comment must be at most 400 characters."),
+                               })
+
 export {
     authLoginSchema,
     authRegisterSchema,
@@ -267,4 +277,5 @@ export {
     userAccountDetailsSchema,
     suggestionRequestSchema,
     articleRequestSchema,
+    commentSchema,
 }
