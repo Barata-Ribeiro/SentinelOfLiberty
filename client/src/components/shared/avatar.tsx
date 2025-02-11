@@ -39,7 +39,7 @@ export default function Avatar({ name, size, src, animate = true }: Readonly<Ava
             textSize = "text-6xl"
     }
     
-    const baseStyles = tw`shring-0 rounded-full bg-stone-200 ring-2 shadow-xl ring-white select-none`
+    const baseStyles = tw`shrink-0 rounded-full bg-stone-200 ring-2 shadow-xl ring-white select-none`
     const placeHolderBaseStyles = twMerge(baseStyles, "flex items-center justify-center")
     
     const placeHolderMergedStyles = twMerge(placeHolderBaseStyles, styleSize)
@@ -50,7 +50,7 @@ export default function Avatar({ name, size, src, animate = true }: Readonly<Ava
             href={ `/profile/${ name }` }
             data-animated={ animate }
             aria-label="Go to your public profile page"
-            className="block w-max shrink-0 data-[animate=true]:transition-transform data-[animate=true]:hover:-translate-y-2.5 data-[animate=true]:hover:transform">
+            className="block w-max shrink-0 data-[animated=true]:transition-transform data-[animated=true]:hover:-translate-y-2.5 data-[animated=true]:hover:transform">
             { src ? (
                 <Image
                     src={ src }
