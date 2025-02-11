@@ -1,5 +1,6 @@
 "use client"
 
+import { ProblemDetails }          from "@/@types/application"
 import postAuthLogin               from "@/actions/auth/post-auth-login"
 import ApplicationRequestFormError from "@/components/feedback/application-request-form-error"
 import InputValidationError        from "@/components/feedback/input-validation-error"
@@ -9,6 +10,7 @@ import FormButton                  from "@/components/shared/form-button"
 import FormTextarea                from "@/components/shared/form-textarea"
 import { getInitialFormState }     from "@/utils/functions"
 import { useSession }              from "next-auth/react"
+import { useParams }               from "next/navigation"
 import { useActionState }          from "react"
 import { FaLock }                  from "react-icons/fa6"
 
@@ -21,8 +23,9 @@ function UnauthenticatedState() {
     )
 }
 
-export default function NewCommentForm() {
+export default function NewCommentForm({ parentId }: Readonly<{ parentId?: number }>) {
     const [ formState, formAction, pending ] = useActionState(postAuthLogin, getInitialFormState())
+    const params = useParams<{ id: string; slug: string }>()
     
     const { data: session, status } = useSession()
     if (!session || status !== "authenticated") return <UnauthenticatedState />
@@ -33,10 +36,12 @@ export default function NewCommentForm() {
 
             <div className="min-w-0 flex-1">
                 <form action={ formAction } className="space-y-4">
-                    <FormTextarea label="Leave a comment" name="comment" />
+                    <FormTextarea label="Leave a comment" name="body" />
+                    <input type="hidden" name="articleId" value={ params.id } />
+                    <input type="hidden" name="parentId" value={ parentId } />
                     
                     { formState.error && !Array.isArray(formState.error) && (
-                        <ApplicationRequestFormError error={ JSON.parse(String(formState.error).split(". R")[0]) } />
+                        <ApplicationRequestFormError error={ formState.error as ProblemDetails } />
                     ) }
                     
                     { formState.error && Array.isArray(formState.error) && (
