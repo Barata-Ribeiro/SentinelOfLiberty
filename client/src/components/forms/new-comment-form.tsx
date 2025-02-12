@@ -1,18 +1,17 @@
 "use client"
 
-import { ProblemDetails }          from "@/@types/application"
-import postAuthLogin               from "@/actions/auth/post-auth-login"
-import ApplicationRequestFormError from "@/components/feedback/application-request-form-error"
-import InputValidationError        from "@/components/feedback/input-validation-error"
-import Spinner                     from "@/components/helpers/spinner"
-import Avatar                      from "@/components/shared/avatar"
-import FormButton                  from "@/components/shared/form-button"
-import FormTextarea                from "@/components/shared/form-textarea"
-import { getInitialFormState }     from "@/utils/functions"
-import { useSession }              from "next-auth/react"
-import { useParams }               from "next/navigation"
-import { useActionState }          from "react"
-import { FaLock }                  from "react-icons/fa6"
+import { ProblemDetails }                         from "@/@types/application"
+import postNewComment                             from "@/actions/comments/post-new-comment"
+import ApplicationRequestFormError                from "@/components/feedback/application-request-form-error"
+import InputValidationError                       from "@/components/feedback/input-validation-error"
+import Avatar                                     from "@/components/shared/avatar"
+import FormButton                                 from "@/components/shared/form-button"
+import FormTextarea                               from "@/components/shared/form-textarea"
+import { formatCommentDate, getInitialFormState } from "@/utils/functions"
+import { useSession }                             from "next-auth/react"
+import { useParams, useRouter }                   from "next/navigation"
+import { useActionState, useEffect, useState }    from "react"
+import { FaLock }                                 from "react-icons/fa6"
 
 function UnauthenticatedState() {
     return (
@@ -23,9 +22,35 @@ function UnauthenticatedState() {
     )
 }
 
+function OptimisticNewComment(props: { newComment: string }) {
+    return (
+        <div className="rounded-md border border-stone-200 p-4">
+            <div className="inline-flex gap-x-2 divide-x divide-stone-200">
+                <time dateTime={ new Date().toISOString() } className="text-shadow-500 block pr-2 text-xs">
+                    { new Date().toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                    }) }
+                </time>
+
+                <p className="text-shadow-300 block text-xs">{ formatCommentDate(new Date().toISOString()) }</p>
+            </div>
+
+            <p className="text-shadow-900 prose mt-2">{ props.newComment }</p>
+        </div>
+    )
+}
+
 export default function NewCommentForm({ parentId }: Readonly<{ parentId?: number }>) {
-    const [ formState, formAction, pending ] = useActionState(postAuthLogin, getInitialFormState())
+    const [ formState, formAction, pending ] = useActionState(postNewComment, getInitialFormState())
+    const [ newComment, setNewComment ] = useState("")
     const params = useParams<{ id: string; slug: string }>()
+    const router = useRouter()
+    
+    useEffect(() => {
+        if (formState.ok) router.refresh()
+    }, [ formState.ok, router ])
     
     const { data: session, status } = useSession()
     if (!session || status !== "authenticated") return <UnauthenticatedState />
@@ -35,29 +60,33 @@ export default function NewCommentForm({ parentId }: Readonly<{ parentId?: numbe
             <Avatar name={ session?.user.username } size={ 48 } src={ session.user.avatarUrl } animate={ false } />
 
             <div className="min-w-0 flex-1">
-                <form action={ formAction } className="space-y-4">
-                    <FormTextarea label="Leave a comment" name="body" />
-                    <input type="hidden" name="articleId" value={ params.id } />
-                    <input type="hidden" name="parentId" value={ parentId } />
-                    
-                    { formState.error && !Array.isArray(formState.error) && (
-                        <ApplicationRequestFormError error={ formState.error as ProblemDetails } />
-                    ) }
-                    
-                    { formState.error && Array.isArray(formState.error) && (
-                        <InputValidationError errors={ formState.error } />
-                    ) }
-                    
-                    <FormButton className="w-full" disabled={ pending || !session }>
-                        { pending ? (
-                            <>
-                                <Spinner /> Loading...
-                            </>
-                        ) : (
-                              "Post Comment"
+                { pending && newComment ? (
+                    <OptimisticNewComment newComment={ newComment } />
+                ) : (
+                      <form action={ formAction } className="space-y-4">
+                        <FormTextarea
+                            label="Leave a comment"
+                            name="body"
+                            minLength={ 5 }
+                            maxLength={ 400 }
+                            onChange={ event => setNewComment(event.target.value) }
+                        />
+                        <input type="hidden" name="articleId" value={ params.id } />
+                        <input type="hidden" name="parentId" value={ parentId } />
+                          
+                          { formState.error && !Array.isArray(formState.error) && (
+                              <ApplicationRequestFormError error={ formState.error as ProblemDetails } />
                           ) }
-                    </FormButton>
-                </form>
+                          
+                          { formState.error && Array.isArray(formState.error) && (
+                              <InputValidationError errors={ formState.error } />
+                          ) }
+                          
+                          <FormButton className="w-full" disabled={ pending || !session }>
+                            Post Comment
+                        </FormButton>
+                    </form>
+                  ) }
             </div>
         </div>
     )
