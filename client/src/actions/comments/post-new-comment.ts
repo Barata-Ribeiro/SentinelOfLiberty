@@ -1,11 +1,12 @@
 "use server"
 
-import { ProblemDetails, State } from "@/@types/application"
-import ResponseError             from "@/actions/application/response-error"
-import { commentSchema }         from "@/helpers/zod-schemas"
-import { problemDetailsFactory } from "@/utils/functions"
-import { createCommentUrl }      from "@/utils/routes"
-import { auth }                  from "auth"
+import { ProblemDetails, RestResponse, State } from "@/@types/application"
+import ResponseError                           from "@/actions/application/response-error"
+import { commentSchema }                       from "@/helpers/zod-schemas"
+import { problemDetailsFactory }               from "@/utils/functions"
+import { createCommentUrl }                    from "@/utils/routes"
+import { auth }                                from "auth"
+import { revalidateTag }                       from "next/cache"
 
 export default async function postNewComment(state: State, formData: unknown) {
     if (!(formData instanceof FormData)) {
@@ -47,6 +48,15 @@ export default async function postNewComment(state: State, formData: unknown) {
         if (!response.ok) {
             const problemDetails = json as ProblemDetails
             return ResponseError(problemDetails)
+        }
+        
+        revalidateTag("articles")
+        revalidateTag("comments")
+        
+        return {
+            ok: true,
+            error: null,
+            response: json as RestResponse,
         }
     } catch (error) {
         return ResponseError(error)
