@@ -44,7 +44,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @QueryHints({
             @QueryHint(name = "org.hibernate.readOnly", value = "true"),
             @QueryHint(name = "org.hibernate.fetchSize", value = "50"),
-            @QueryHint(name = "org.hibarnate.cacheable", value = "true"),
+            @QueryHint(name = "org.hibernate.cacheable", value = "true"),
             @QueryHint(name = "jakarta.persistence.cache.retrieveMode", value = "USE"),
             @QueryHint(name = "jakarta.persistence.cache.storeMode", value = "USE")
     })
