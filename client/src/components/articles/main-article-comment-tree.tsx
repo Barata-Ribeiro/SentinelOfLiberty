@@ -32,12 +32,13 @@ export default function MainArticleCommentTree({ commentTreePromise }: MainArtic
     if (shouldLoad) {
         const state = use(commentTreePromise)
         if (state && state.ok && state.response?.data) {
-            comments = state.response.data as Comment[]
+            comments = (state.response.data as Comment[])
+                .toSorted((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         }
     }
     
     return (
-        <div id="comments" className="space-y-4">
+        <div id="comments" className="space-y-4 align-middle mb-8">
             { comments.map(comment => (
                 <MainArticleComment key={ comment.id } comment={ comment } depth={ 0 } />
             )) }
