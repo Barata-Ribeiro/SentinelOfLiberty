@@ -261,14 +261,19 @@ const articleRequestSchema = z.object({
                                       })
 
 // Comments
-const commentSchema = z.object({
-                                   articleId: z.coerce.number().int(),
-                                   parentId: z.number().optional(),
-                                   body: z
-                                       .string()
-                                       .min(5, "Comment must be at least 5 characters.")
-                                       .max(400, "Comment must be at most 400 characters."),
-                               })
+const commentSchema = z
+    .object({
+                articleId: z.coerce.number().int(),
+                parentId: z.coerce.number().nullish().or(z.literal(0)),
+                body: z
+                    .string()
+                    .min(5, "Comment must be at least 5 characters.")
+                    .max(400, "Comment must be at most 400 characters."),
+            })
+    .transform(data => {
+        if (data.parentId === 0) delete data.parentId
+        return data
+    })
 
 export {
     authLoginSchema,
