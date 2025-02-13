@@ -1,9 +1,10 @@
 "use client"
 
-import { Comment }             from "@/@types/comments"
-import { formatCommentDate }   from "@/utils/functions"
-import { Button }              from "@headlessui/react"
-import { useEffect, useState } from "react"
+import { Comment }                                               from "@/@types/comments"
+import { formatCommentDate }                                     from "@/utils/functions"
+import { Button, Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react"
+import { useEffect, useState }                                   from "react"
+import { FaChevronDown }                                         from "react-icons/fa6"
 
 interface MainArticleCommentProps {
     comment: Comment
@@ -22,10 +23,18 @@ export default function MainArticleComment({ comment, depth = 0 }: Readonly<Main
         <div
             data-hasdepth={ depth > 0 }
             className="group data-[hasdepth=true]:ml-6 data-[hasdepth=true]:border-l-2 data-[hasdepth=true]:pl-4">
-            <div className="flex items-start max-w-3xl gap-2 rounded-md border border-stone-200 p-4">
-                <div className="flex-1">
-                    <div className="flex flex-col gap-2 text-sm sm:flex-row">
-                        <span className="font-medium">{ comment.user.username }</span>
+            <div className="flex max-w-3xl items-start gap-2 rounded-md border border-stone-200 p-4">
+                <Disclosure as="details" className="flex-1" open defaultOpen>
+                    <DisclosureButton
+                        as="summary"
+                        className="group flex flex-col gap-2 text-sm sm:flex-row sm:items-center">
+                        <div className="inline-flex gap-x-2">
+                            <FaChevronDown
+                                aria-label="Open/Colapse the comment"
+                                className="w-5 cursor-pointer text-stone-400 transition duration-200 ease-out group-data-[open]:rotate-180"
+                            />
+                            <span className="font-medium">{ comment.user.username }</span>
+                        </div>
                         <div className="flex flex-col gap-2 divide-stone-200 max-sm:divide-y sm:flex-row sm:divide-x">
                             <time
                                 dateTime={ String(comment.createdAt) }
@@ -41,10 +50,15 @@ export default function MainArticleComment({ comment, depth = 0 }: Readonly<Main
                                 { formatCommentDate(new Date(comment.createdAt).toISOString()) }
                             </p>
                         </div>
-                    </div>
+                    </DisclosureButton>
 
-                    <p className="text-shadow-900 prose prose-sm mt-2">{ comment.content }</p>
-                </div>
+                    <DisclosurePanel
+                        as="p"
+                        transition
+                        className="text-shadow-900 prose prose-sm mt-2 origin-top transition duration-200 ease-out data-[closed]:-translate-y-6 data-[closed]:opacity-0">
+                        { comment.content }
+                    </DisclosurePanel>
+                </Disclosure>
                 
                 { hasChildren && depth > 0 && (
                     <Button
