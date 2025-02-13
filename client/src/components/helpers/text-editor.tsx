@@ -10,6 +10,7 @@ import { Youtube }                              from "@tiptap/extension-youtube"
 import { EditorContent, Extensions, useEditor } from "@tiptap/react"
 import { StarterKit }                           from "@tiptap/starter-kit"
 import { Dispatch, SetStateAction }             from "react"
+import ImageResize                              from "tiptap-extension-resize-image"
 
 export interface TextEditorProps {
     onUpdate: Dispatch<SetStateAction<string>>
@@ -46,9 +47,11 @@ export const configuredExtensions: Extensions = [
                           }),
     TextAlign.configure({
                             types: [ "heading", "paragraph" ],
+                            defaultAlignment: "left",
                         }),
     Underline,
     Image,
+    ImageResize,
     Youtube.configure({
                           inline: true,
                           controls: false,
@@ -67,8 +70,7 @@ export default function TextEditor({ onUpdate }: Readonly<TextEditorProps>) {
                                          class: tw`prose prose-sm sm:prose-base block max-h-96 min-h-96 !max-w-none overflow-auto focus:outline-none`,
                                      },
                                  },
-                                 onUpdate: ({ editor }) =>
-                                     onUpdate(editor.getHTML()),
+                                 onUpdate: ({ editor }) => onUpdate(editor.getHTML()),
                                  enableContentCheck: true,
                                  onContentError({ error }) {
                                      console.error(error)
