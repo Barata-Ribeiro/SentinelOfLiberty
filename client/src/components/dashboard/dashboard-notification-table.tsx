@@ -1,9 +1,12 @@
 "use client"
 
+import { ProblemDetails }                    from "@/@types/application"
 import { Notification }                      from "@/@types/user"
+import patchChangeNotifStatusById            from "@/actions/notifications/patch-change-notif-status-by-id"
 import RegularButton                         from "@/components/shared/regular-button"
-import Link                                  from "next/link"
+import { Button, Input, Transition }         from "@headlessui/react"
 import { useLayoutEffect, useRef, useState } from "react"
+import { FaCircleExclamation, FaX }          from "react-icons/fa6"
 import { LuMail, LuMailOpen }                from "react-icons/lu"
 
 interface DashboardNotificationTableProps {
@@ -11,10 +14,13 @@ interface DashboardNotificationTableProps {
 }
 
 export default function DashboardNotificationTable({ notifications }: Readonly<DashboardNotificationTableProps>) {
+    const [ originalNotifications, setOriginalNotifications ] = useState<Notification[]>(notifications)
     const checkbox = useRef<HTMLInputElement>(null)
     const [ checked, setChecked ] = useState(false)
     const [ indeterminate, setIndeterminate ] = useState(false)
     const [ selectedNotifications, setSelectedNotifications ] = useState<Notification[]>([])
+    const [ show, setShow ] = useState(false)
+    const [ error, setError ] = useState<string | null>(null)
     
     useLayoutEffect(() => {
         const isIndeterminate = selectedNotifications.length > 0 && selectedNotifications.length < notifications.length
@@ -33,11 +39,20 @@ export default function DashboardNotificationTable({ notifications }: Readonly<D
     
     // TODO: IMPLEMENT BULK STATUS FUNCTIONALITY
     
-    // TODO: IMPLEMENT READ/UNREAD FUNCTIONALITY FOR SINGLE NOTIFICATION
-    
+    async function toggleRead(notification: Notification) {
+        const state = await patchChangeNotifStatusById({ id: notification.id, status: !notification.isRead })
+        if (!state.ok) {
+            setError((state.error as ProblemDetails).detail)
+            setShow(true)
+        }
+        const updatedNotification = state.response?.data as Notification
+        setOriginalNotifications(
+            originalNotifications.map(n => (n.id === updatedNotification.id ? updatedNotification : n)),
+        )
+    }
     
     return (
-        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div className="-mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                 <div className="relative">
                     { selectedNotifications.length > 0 && (
@@ -54,7 +69,7 @@ export default function DashboardNotificationTable({ notifications }: Readonly<D
                         <thead>
                             <tr>
                                 <th scope="col" className="relative px-7 sm:w-12 sm:px-6">
-                                    <input
+                                    <Input
                                         type="checkbox"
                                         className="text-marigold-600 focus:ring-marigold-600 absolute top-1/2 left-4 -mt-2 h-4 w-4 rounded border-stone-300"
                                         ref={ checkbox }
@@ -83,16 +98,17 @@ export default function DashboardNotificationTable({ notifications }: Readonly<D
                         </thead>
 
                         <tbody className="divide-y divide-stone-200 bg-white">
-                            { notifications.map(notification => (
+                            { originalNotifications.map(notification => (
                                 <tr
                                     key={ notification.id }
                                     data-selected={ selectedNotifications.includes(notification) }
-                                    className="data-[selected=true]:bg-stone-100">
+                                    data-read={ notification.isRead }
+                                    className="data-[read=true]:bg-stone-100 data-[selected=true]:bg-stone-200">
                                     <td className="relative px-7 sm:w-12 sm:px-6">
                                         { selectedNotifications.includes(notification) && (
                                             <div className="bg-marigold-600 absolute inset-y-0 left-0 w-0.5" />
                                         ) }
-                                        <input
+                                        <Input
                                             type="checkbox"
                                             className="text-marigold-600 focus:ring-marigold-600 absolute top-1/2 left-4 -mt-2 h-4 w-4 rounded border-stone-300"
                                             value={ notification.id }
@@ -119,7 +135,11 @@ export default function DashboardNotificationTable({ notifications }: Readonly<D
                                             { notification.title }
                                         </div>
                                     </td>
-                                    <td className="text-shadow-500 px-3 py-4 text-sm whitespace-nowrap">
+                                    <td
+                                        style={ {
+                                            scrollbarWidth: "thin",
+                                        } }
+                                        className="text-shadow-500 max-w-2xl overflow-x-auto px-3 py-4 text-sm whitespace-nowrap">
                                         { notification.message }
                                     </td>
                                     <td className="text-shadow-500 px-3 py-4 text-sm whitespace-nowrap capitalize">
@@ -133,10 +153,13 @@ export default function DashboardNotificationTable({ notifications }: Readonly<D
                                         }) }
                                     </td>
                                     <td className="py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-3">
-                                        <Link href="#" className="text-marigold-600 hover:text-marigold-900">
+                                        <Button
+                                            type="button"
+                                            className="text-marigold-600 hover:text-marigold-700 active:text-marigold-800 focus:ring-marigold-500 cursor-pointer focus:ring-offset-2 focus:outline-none"
+                                            onClick={ () => toggleRead(notification) }>
                                             { notification.isRead ? "Unread" : "Read" }
                                             <span className="sr-only">, { notification.title }</span>
-                                        </Link>
+                                        </Button>
                                     </td>
                                 </tr>
                             )) }
@@ -144,6 +167,39 @@ export default function DashboardNotificationTable({ notifications }: Readonly<D
                     </table>
                 </div>
             </div>
+            
+            { error && (
+                <div
+                    aria-live="assertive"
+                    className="pointer-events-none fixed right-0 bottom-4 z-50 flex w-full items-end px-4 py-6 sm:items-start sm:p-6">
+                    <div className="flex w-full flex-col items-center space-y-4 sm:items-end">
+                        <Transition show={ show }>
+                            <div className="ring-opacity-5 pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-red-50 ring-1 shadow-lg ring-red-200 transition data-[closed]:opacity-0 data-[enter]:transform data-[enter]:duration-300 data-[enter]:ease-out data-[closed]:data-[enter]:translate-y-2 data-[leave]:duration-100 data-[leave]:ease-in data-[closed]:data-[enter]:sm:translate-x-2 data-[closed]:data-[enter]:sm:translate-y-0">
+                                <div className="p-4">
+                                    <div className="flex items-start">
+                                        <div className="flex-shrink-0">
+                                            <FaCircleExclamation aria-hidden="true" className="size-6 text-red-400" />
+                                        </div>
+                                        <div className="ml-3 w-0 flex-1 pt-0.5">
+                                            <p className="text-sm font-medium text-red-600">An Error Occurred!</p>
+                                            <p className="mt-1 text-sm text-red-950">{ error }</p>
+                                        </div>
+                                        <div className="ml-4 flex flex-shrink-0">
+                                            <Button
+                                                type="button"
+                                                onClick={ () => setShow(false) }
+                                                className="text-shadow-900 hover:text-shadow-700 focus:ring-marigold-500 inline-flex cursor-pointer rounded-md focus:ring-2 focus:ring-offset-2 focus:outline-none">
+                                                <span className="sr-only">Close</span>
+                                                <FaX aria-hidden="true" className="size-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </Transition>
+                    </div>
+                </div>
+            ) }
         </div>
     )
 }
