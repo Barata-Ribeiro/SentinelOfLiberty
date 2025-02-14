@@ -33,6 +33,8 @@ public class CommentMapper {
                 }).map(source.getChildren(), destination.getChildrenCount());
 
                 map(source.getArticle().getId(), destination.getArticleId());
+                map(source.getArticle().getTitle(), destination.getArticleTitle());
+                map(source.getArticle().getSlug(), destination.getArticleSlug());
                 map(source.getParent().getId(), destination.getParentId());
             }
         });

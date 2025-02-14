@@ -5,6 +5,8 @@ interface Comment {
     content: string;
     user: Author;
     articleId: number;
+    articleTitle: string;
+    articleSlug: string;
     parentId?: number;
     childrenCount: number;
     children: Comment[];

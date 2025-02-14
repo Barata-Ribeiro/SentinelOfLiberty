@@ -23,6 +23,8 @@ public class CommentDTO implements Serializable {
     private String content;
     private AuthorDTO user;
     private Long articleId;
+    private String articleTitle;
+    private String articleSlug;
     private Long parentId;
     private Long childrenCount;
     private List<CommentDTO> children = new ArrayList<>();
