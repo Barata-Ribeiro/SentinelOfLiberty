@@ -11,8 +11,8 @@ export default function FeaturedArticle({ latestArticle }: FeaturedArticleProps)
         <article className="relative flex h-[30rem] w-full flex-wrap rounded-lg bg-stone-50 max-md:p-5 md:px-10 md:py-32">
             <Image
                 src={ latestArticle.mediaUrl }
-                alt={ `Image of article: latestArticle.title` }
-                title={ `Image of article: latestArticle.title` }
+                alt={ `Image of article: ${ latestArticle.title }` }
+                title={ `Image of article: ${ latestArticle.title }` }
                 className="rounded-md object-cover object-center italic opacity-15"
                 sizes="(min-width: 808px) 50vw, 100vw"
                 priority
