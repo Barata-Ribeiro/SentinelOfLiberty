@@ -36,7 +36,6 @@ export default async function postAuthLogin(state: State, formData: unknown) {
             redirect: false,
         })
     } catch (error) {
-        console.log("CALLBACK ERROR: ", error)
         return ResponseError(error)
     }
     
