@@ -23,18 +23,19 @@ import {
 
 export default function ToolbarEditor({ editor }: Readonly<{ editor: Editor | null }>) {
     const addImage = useCallback(() => {
-        const url = window.prompt("Enter the URL of the image")
+        const url = window.prompt("Enter the URL of the image:")
+        if (!url) return
         
-        if (url) {
-            editor?.chain().focus().setImage({ src: url }).run()
-        }
+        const altTitle = window.prompt("Enter the description of the image:") ?? ""
+        
+        editor?.chain().focus().setImage({ src: url, alt: altTitle, title: altTitle }).run()
     }, [ editor ])
     
     const toggleLink = useCallback(() => {
         if (editor?.isActive("link")) {
             editor.commands.unsetLink()
         } else {
-            const url = window.prompt("Enter the URL of the link")
+            const url = window.prompt("Enter the URL of the link:")
             const rel = "noopener noreferrer nofollow"
             
             if (url) {

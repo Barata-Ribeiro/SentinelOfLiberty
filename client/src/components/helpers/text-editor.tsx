@@ -1,6 +1,5 @@
 import ToolbarEditor                            from "@/components/helpers/toolbar-editor"
 import tw                                       from "@/utils/tw"
-import Image                                    from "@tiptap/extension-image"
 import { Link }                                 from "@tiptap/extension-link"
 import { Placeholder }                          from "@tiptap/extension-placeholder"
 import { TextAlign }                            from "@tiptap/extension-text-align"
@@ -50,8 +49,12 @@ export const configuredExtensions: Extensions = [
                             defaultAlignment: "left",
                         }),
     Underline,
-    Image,
-    ImageResize,
+    ImageResize.configure({
+                              allowBase64: true,
+                              HTMLAttributes: {
+                                  class: "object-cover w-full h-auto",
+                              },
+                          }),
     Youtube.configure({
                           inline: true,
                           controls: false,
