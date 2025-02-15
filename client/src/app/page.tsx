@@ -79,7 +79,7 @@ export default async function HomePage() {
 
                     <ul className="grid w-full grid-cols-1 items-start justify-center gap-4 lg:grid-cols-2">
                         { latestArticlesList.map(article => (
-                            <HomeArticleItem key={ article.id } article={ article } />
+                            <HomeArticleItem key={ article.id } article={ article } session={ session } />
                         )) }
                         
                         { latestArticlesList.length < 2 && <NoMoreWrittenArticleMessage session={ session } /> }
