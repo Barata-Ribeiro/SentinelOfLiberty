@@ -83,7 +83,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
             <section id="latest-articles-section" className="bg-stone-200">
                 <div className="container grid grid-cols-1 gap-4 md:grid-cols-[auto_1fr] md:gap-8">
-                    <div className="mt-8 min-w-0 space-y-2 sm:min-w-[19rem]">
+                    <div className="mt-8 min-w-0 space-y-2 sm:min-w-[17.5rem]">
                         <h3 className="text-shadow-900 text-4xl font-semibold text-balance">Latest Articles</h3>
                         <Link
                             href="/articles"
@@ -92,11 +92,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                         </Link>
                     </div>
 
-                    <div className="grid max-w-4xl grid-cols-1 justify-items-center gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    <ul className="grid max-w-4xl grid-cols-1 justify-items-center gap-4 md:grid-cols-2 lg:grid-cols-3">
                         <Suspense fallback={ <p>Loading...</p> }>
                             <LatestArticlesListing articlesState={ latestArticlesPromise } />
                         </Suspense>
-                    </div>
+                    </ul>
                 </div>
             </section>
             
