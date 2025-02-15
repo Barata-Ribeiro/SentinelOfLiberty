@@ -8,7 +8,7 @@ interface HomeArticleItemProps {
     session: Session | null
 }
 
-export default function HomeArticleItem({ article, session }: HomeArticleItemProps) {
+export default function HomeArticleItem({ article, session }: Readonly<HomeArticleItemProps>) {
     return (
         <li className="flex items-center gap-2 rounded-lg border-2 border-stone-200 p-2">
             <Image
@@ -30,7 +30,7 @@ export default function HomeArticleItem({ article, session }: HomeArticleItemPro
                     }) }
                 </time>
                 <Link
-                    href={ `/articles/${ article.id }/${ article.title }` }
+                    href={ `/articles/${ article.id }/${ article.slug }` }
                     aria-label={ `Read more about ${ article.title }` }
                     title={ `Read more about ${ article.title }` }
                     className="text-marigold-500 hover:text-marigold-600 active:text-marigold-700">
