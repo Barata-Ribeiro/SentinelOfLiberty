@@ -4,7 +4,7 @@ import { Comment }                                               from "@/@types/
 import { formatCommentDate }                                     from "@/utils/functions"
 import { Button, Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react"
 import { useEffect, useState }                                   from "react"
-import { FaChevronDown }                                         from "react-icons/fa6"
+import { FaChevronDown, FaCircleCheck }                          from "react-icons/fa6"
 
 interface MainArticleCommentProps {
     comment: Comment
@@ -33,7 +33,14 @@ export default function MainArticleComment({ comment, depth = 0 }: Readonly<Main
                                 aria-label="Open/Colapse the comment"
                                 className="w-5 cursor-pointer text-stone-400 transition duration-200 ease-out group-data-[open]:rotate-180"
                             />
-                            <span className="font-medium">{ comment.user.username }</span>
+                            <div className="inline-flex items-center gap-x-1">
+                                <span className="font-medium">{ comment.user.username }</span>
+                                { comment.user.isVerified && (
+                                    <span className="text-marigold-500" title="Verified author">
+                                        <FaCircleCheck aria-hidden="true" className="size-4" />
+                                    </span>
+                                ) }
+                            </div>
                         </div>
                         <div className="flex flex-col gap-2 divide-stone-200 max-sm:divide-y sm:flex-row sm:divide-x">
                             <time
