@@ -6,6 +6,7 @@ import DashboardLatestSuggestionMade from "@/components/dashboard/dashboard-late
 import DashboardLatestWrittenArticle from "@/components/dashboard/dashboard-latest-written-article"
 import DashboardSiteInteractions     from "@/components/dashboard/dashboard-site-interactions"
 import DashboardUserProfile          from "@/components/dashboard/dashboard-user-profile"
+import LogoutButton                  from "@/components/dashboard/logout-button"
 import Link                          from "next/link"
 import { notFound, redirect }        from "next/navigation"
 
@@ -70,9 +71,13 @@ export default async function DashboardHomePage({ params }: Readonly<DashboardHo
     
     return (
         <>
-            <nav className="my-6 px-6 py-2.5 sm:px-3.5 bg-stone-200 rounded-md">
-                <div role="list">
-                    TODO: Implement the navigation bar that includes admin-only links, logout, and other buttons
+            <nav className="my-6 rounded-md bg-stone-200 px-6 py-2.5 sm:px-3.5">
+                <div role="list" className="flex flex-col items-center justify-between sm:flex-row">
+                    TODO: Implement the navigation bar that includes admin-only links, and other buttons
+                    
+                    <div className="inline-flex gap-x-2 items-center">
+                        <LogoutButton />
+                    </div>
                 </div>
             </nav>
 
