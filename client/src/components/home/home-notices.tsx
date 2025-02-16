@@ -10,8 +10,25 @@ interface HomeNoticesProps {
     notices: Set<Notice>
 }
 
+function NoNoticeFoundMessage() {
+    return (
+        <div className="relative my-6 rounded-md border-2 border-yellow-400 bg-yellow-50 px-6 py-2.5 opacity-50 select-none sm:px-3.5">
+            <div className="mx-auto flex max-w-max">
+                <div className="flex-shrink-0">
+                    <FaExclamationTriangle aria-hidden="true" className="size-5 text-yellow-400" />
+                </div>
+                <div className="ml-3">
+                    <p className="text-sm text-yellow-700">There are no notices to display</p>
+                </div>
+            </div>
+        </div>
+    )
+}
+
 export default function HomeNotices({ notices }: Readonly<HomeNoticesProps>) {
-    const noticesArray = Array.from(notices)
+    const noticesArray = Array.from(notices).sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    )
     const [ currentNoticeIndex, setCurrentNoticeIndex ] = useState(0)
     const totalNotices = noticesArray.length
     
@@ -34,20 +51,8 @@ export default function HomeNotices({ notices }: Readonly<HomeNoticesProps>) {
     
     const currentNotice = noticesArray[currentNoticeIndex]
     
-    // Se não houver notices
     if (!noticesArray || noticesArray.length === 0) {
-        return (
-            <div className="relative my-6 rounded-md border-2 border-yellow-400 bg-yellow-50 px-6 py-2.5 opacity-50 select-none sm:px-3.5">
-                <div className="mx-auto flex max-w-max">
-                    <div className="flex-shrink-0">
-                        <FaExclamationTriangle aria-hidden="true" className="size-5 text-yellow-400" />
-                    </div>
-                    <div className="ml-3">
-                        <p className="text-sm text-yellow-700">There are no notices to display</p>
-                    </div>
-                </div>
-            </div>
-        )
+        return <NoNoticeFoundMessage />
     }
     
     return (
@@ -71,7 +76,6 @@ export default function HomeNotices({ notices }: Readonly<HomeNoticesProps>) {
                     aria-roledescription="slide"
                     aria-label={ `Notice ${ currentNoticeIndex + 1 } of ${ totalNotices }` }
                     className="flex flex-shrink-0">
-                    {/* Ícone de aviso */ }
                     <FaExclamationTriangle aria-hidden="true" className="size-5 text-yellow-400" />
                     <div className="ml-3">
                         <p id="notice-description" className="text-sm text-yellow-700">

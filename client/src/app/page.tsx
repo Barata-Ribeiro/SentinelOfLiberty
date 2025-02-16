@@ -46,19 +46,18 @@ function NoMoreWrittenArticleMessage(props: { session: Session | null }) {
 
 export default async function HomePage() {
     const availableCategoriesPromise = getAllAvailableCategories()
-    const [ session, latestArticlesState, latestSuggestionsState, latestNoticesState ] = await Promise.all([
-                                                                                                               auth(),
-                                                                                                               getLatestPublicArticles(),
-                                                                                                               getLatestPublicSuggestions(),
-                                                                                                               getLatestNotices(),
-                                                                                                           ])
+    const [ session, latestArticlesState, latestSuggestionsState, latestNoticesState ] = await Promise
+        .all([ auth(), getLatestPublicArticles(), getLatestPublicSuggestions(), getLatestNotices() ])
     
     const latestArticles = latestArticlesState.response?.data as Set<ArticleSummary>
     const latestSuggestions = latestSuggestionsState.response?.data as Set<Suggestion>
     const latestNotices = latestNoticesState.response?.data as Set<Notice>
     
-    const latestArticle = Array.from(latestArticles)[0]
-    const latestArticlesList = Array.from(latestArticles).slice(1)
+    const sortedArticles = Array.from(latestArticles)
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    
+    const latestArticle = sortedArticles[0]
+    const latestArticlesList = sortedArticles.slice(1)
     const latestSuggestionsList = Array.from(latestSuggestions)
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     
