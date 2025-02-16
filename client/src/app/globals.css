@@ -22,7 +22,7 @@
     ::before,
     ::backdrop,
     ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
+        border-color: var(--color-stone-200, currentColor);
     }
 
     *,
@@ -72,5 +72,11 @@
         * {
             scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
         }
+    }
+}
+
+@layer components {
+    input[type="checkbox"] {
+        @apply text-marigold-500 form-checkbox focus:ring-marigold-500 dark:focus:ring-marigold-600 size-4 rounded-sm border-stone-300 bg-stone-100 focus:ring-2 dark:border-stone-600 dark:bg-stone-700 dark:ring-offset-stone-800;
     }
 }
