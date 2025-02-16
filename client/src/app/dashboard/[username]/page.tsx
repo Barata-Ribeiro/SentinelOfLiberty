@@ -7,6 +7,7 @@ import DashboardLatestWrittenArticle from "@/components/dashboard/dashboard-late
 import DashboardSiteInteractions     from "@/components/dashboard/dashboard-site-interactions"
 import DashboardUserProfile          from "@/components/dashboard/dashboard-user-profile"
 import LogoutButton                  from "@/components/dashboard/logout-button"
+import LinkButton                    from "@/components/shared/link-button"
 import Link                          from "next/link"
 import { notFound, redirect }        from "next/navigation"
 
@@ -69,13 +70,34 @@ export default async function DashboardHomePage({ params }: Readonly<DashboardHo
     const latestThreeSuggestionsList = Array.from(dashboard.latestThreeSuggestions)
     const latestThreeCommentsList = Array.from(dashboard.latestThreeComments)
     
+    const isAdmin = profile.role === "ADMIN"
+    
     return (
         <>
             <nav className="my-6 rounded-md bg-stone-200 px-6 py-2.5 sm:px-3.5">
                 <div role="list" className="flex flex-col items-center justify-between sm:flex-row">
-                    TODO: Implement the navigation bar that includes admin-only links, and other buttons
-                    
-                    <div className="inline-flex gap-x-2 items-center">
+                    <div className="flex items-center gap-2">
+                        { isAdmin && (
+                            <LinkButton
+                                href={ `/dashboard/${ username }/articles` }
+                                aria-label="List all my articles"
+                                title="List all my articles"
+                                className="rounded-md px-3.5 py-2.5 font-semibold hover:bg-stone-50 active:bg-stone-100">
+                                Articles
+                            </LinkButton>
+                        ) }
+                        { isAdmin && (
+                            <LinkButton
+                                href={ `/dashboard/${ username }/notices` }
+                                aria-label="List all notices issued by me"
+                                title="List all notices issued by me"
+                                className="rounded-md px-3.5 py-2.5 font-semibold hover:bg-stone-50 active:bg-stone-100">
+                                Notices
+                            </LinkButton>
+                        ) }
+                    </div>
+
+                    <div className="inline-flex items-center gap-x-2">
                         <LogoutButton />
                     </div>
                 </div>
