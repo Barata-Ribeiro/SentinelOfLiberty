@@ -9,11 +9,20 @@ import FormInput                         from "@/components/shared/form-input"
 import { getInitialFormState }           from "@/utils/functions"
 import { Field, Fieldset, Input, Label } from "@headlessui/react"
 import Link                              from "next/link"
-import { useActionState }                from "react"
+import { useRouter }                     from "next/navigation"
+import { useActionState, useEffect }     from "react"
 import { FaArrowRightToBracket }         from "react-icons/fa6"
 
 export default function LoginForm() {
     const [ formState, formAction, pending ] = useActionState(postAuthLogin, getInitialFormState())
+    const router = useRouter()
+    
+    useEffect(() => {
+        if (formState.ok) {
+            router.replace(`/dashboard/${ formState.response?.data }`)
+            router.refresh()
+        }
+    }, [ formState.ok, formState.response?.data, router ])
     
     return (
         <form action={ formAction } className="space-y-6">

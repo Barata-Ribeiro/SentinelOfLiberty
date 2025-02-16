@@ -1,12 +1,11 @@
 "use server"
 
 import "server-only"
-import { State }                 from "@/@types/application"
+import { RestResponse, State }   from "@/@types/application"
 import ResponseError             from "@/actions/application/response-error"
 import { signIn }                from "@/auth"
 import { authLoginSchema }       from "@/helpers/zod-schemas"
 import { problemDetailsFactory } from "@/utils/functions"
-import { permanentRedirect }     from "next/navigation"
 
 export default async function postAuthLogin(state: State, formData: unknown) {
     if (!(formData instanceof FormData)) {
@@ -35,9 +34,18 @@ export default async function postAuthLogin(state: State, formData: unknown) {
             rememberMe: parsedFormData.data.rememberMe,
             redirect: false,
         })
+        
+        return {
+            ok: true,
+            error: null,
+            response: {
+                status: "Ok",
+                code: 200,
+                message: "You have successfully logged in",
+                data: formData.get("username")?.toString(),
+            } satisfies RestResponse,
+        }
     } catch (error) {
         return ResponseError(error)
     }
-    
-    permanentRedirect(`/dashboard/${ formData.get("username")?.toString() }`)
 }
