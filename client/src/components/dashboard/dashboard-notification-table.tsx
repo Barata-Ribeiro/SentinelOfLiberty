@@ -1,17 +1,51 @@
 "use client"
 
-import { ProblemDetails }                    from "@/@types/application"
-import { Notification }                      from "@/@types/user"
-import patchChangeNotifStatusById            from "@/actions/notifications/patch-change-notif-status-by-id"
-import patchChangeNotifStatusInBulk          from "@/actions/notifications/patch-change-notif-status-in-bulk"
-import RegularButton                         from "@/components/shared/regular-button"
-import { Button, Input, Transition }         from "@headlessui/react"
-import { useLayoutEffect, useRef, useState } from "react"
-import { FaCircleExclamation, FaX }          from "react-icons/fa6"
-import { LuMail, LuMailOpen }                from "react-icons/lu"
+import { ProblemDetails }                               from "@/@types/application"
+import { Notification }                                 from "@/@types/user"
+import deleteNotificationsInBulk                        from "@/actions/notifications/delete-notifications-in-bulk"
+import patchChangeNotifStatusById                       from "@/actions/notifications/patch-change-notif-status-by-id"
+import patchChangeNotifStatusInBulk                     from "@/actions/notifications/patch-change-notif-status-in-bulk"
+import RegularButton                                    from "@/components/shared/regular-button"
+import { Button, Input, Transition }                    from "@headlessui/react"
+import { RefObject, useLayoutEffect, useRef, useState } from "react"
+import { FaCircleExclamation, FaX }                     from "react-icons/fa6"
+import { LuMail, LuMailOpen }                           from "react-icons/lu"
 
 interface DashboardNotificationTableProps {
     notifications: Notification[]
+}
+
+function TableHeader(props: { ref: RefObject<HTMLInputElement | null>; checked: boolean; onChange: () => void }) {
+    return (
+        <thead>
+            <tr>
+                <th scope="col" className="relative px-7 sm:w-12 sm:px-6">
+                    <Input
+                        type="checkbox"
+                        className="text-marigold-600 focus:ring-marigold-600 absolute top-1/2 left-4 -mt-2 h-4 w-4 rounded border-stone-300"
+                        ref={ props.ref }
+                        checked={ props.checked }
+                        onChange={ props.onChange }
+                    />
+                </th>
+                <th scope="col" className="text-shadow-900 min-w-[12rem] py-3.5 pr-3 text-left text-sm font-semibold">
+                    Title
+                </th>
+                <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
+                    Message
+                </th>
+                <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
+                    Type
+                </th>
+                <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
+                    Sent Date
+                </th>
+                <th scope="col" className="relative py-3.5 pr-4 pl-3 sm:pr-3">
+                    <span className="sr-only">Status</span>
+                </th>
+            </tr>
+        </thead>
+    )
 }
 
 export default function DashboardNotificationTable({ notifications }: Readonly<DashboardNotificationTableProps>) {
@@ -36,7 +70,16 @@ export default function DashboardNotificationTable({ notifications }: Readonly<D
         setIndeterminate(false)
     }
     
-    // TODO: IMPLEMENT DELETE FUNCTIONALITY
+    async function deleteSelected() {
+        if (selectedNotifications.length <= 0) return
+        const state = await deleteNotificationsInBulk({ idList: selectedNotifications.map(n => n.id) })
+        if (!state.ok) {
+            setError((state.error as ProblemDetails).detail)
+            setShow(true)
+        }
+        
+        setOriginalNotifications(originalNotifications.filter(n => !selectedNotifications.includes(n)))
+    }
     
     async function toggleBulkRead() {
         if (selectedNotifications.length <= 0) return
@@ -78,42 +121,18 @@ export default function DashboardNotificationTable({ notifications }: Readonly<D
                                 className="text-shadow-900 border border-stone-300 bg-white px-2 py-1 text-sm hover:bg-stone-100 active:bg-stone-200 disabled:pointer-events-none disabled:opacity-50 disabled:hover:bg-white">
                                 Bulk status
                             </RegularButton>
-                            <RegularButton className="text-shadow-900 border border-stone-300 bg-white px-2 py-1 text-sm hover:bg-stone-100 active:bg-stone-200 disabled:pointer-events-none disabled:opacity-50 disabled:hover:bg-white">
+                            <RegularButton
+                                aria-label="Delete selected"
+                                title="Delete selected"
+                                className="text-shadow-900 border border-stone-300 bg-white px-2 py-1 text-sm hover:bg-stone-100 active:bg-stone-200 disabled:pointer-events-none disabled:opacity-50 disabled:hover:bg-white"
+                                onClick={ deleteSelected }>
                                 Delete selected
                             </RegularButton>
                         </div>
                     ) }
+                    
                     <table className="min-w-full table-fixed divide-y divide-stone-300">
-                        <thead>
-                            <tr>
-                                <th scope="col" className="relative px-7 sm:w-12 sm:px-6">
-                                    <Input
-                                        type="checkbox"
-                                        className="text-marigold-600 focus:ring-marigold-600 absolute top-1/2 left-4 -mt-2 h-4 w-4 rounded border-stone-300"
-                                        ref={ checkbox }
-                                        checked={ checked }
-                                        onChange={ toggleAll }
-                                    />
-                                </th>
-                                <th
-                                    scope="col"
-                                    className="text-shadow-900 min-w-[12rem] py-3.5 pr-3 text-left text-sm font-semibold">
-                                    Title
-                                </th>
-                                <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
-                                    Message
-                                </th>
-                                <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
-                                    Type
-                                </th>
-                                <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
-                                    Sent Date
-                                </th>
-                                <th scope="col" className="relative py-3.5 pr-4 pl-3 sm:pr-3">
-                                    <span className="sr-only">Status</span>
-                                </th>
-                            </tr>
-                        </thead>
+                        <TableHeader ref={ checkbox } checked={ checked } onChange={ toggleAll } />
 
                         <tbody className="divide-y divide-stone-200 bg-white">
                             { originalNotifications.map(notification => (
