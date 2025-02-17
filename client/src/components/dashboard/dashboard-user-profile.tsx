@@ -2,6 +2,7 @@ import { Profile }                  from "@/@types/user"
 import EditAccountDetailsModal      from "@/components/modals/edit-account-details-modal"
 import EditAccountModal             from "@/components/modals/edit-account-modal"
 import Avatar                       from "@/components/shared/avatar"
+import RoleBadge                    from "@/components/shared/role-badge"
 import { FaCircleCheck }            from "react-icons/fa6"
 import { LuCalendarClock, LuMails } from "react-icons/lu"
 
@@ -51,19 +52,7 @@ export default function DashboardUserProfile({ name, profile }: Readonly<Dashboa
                 </time>
             </div>
             
-            { profile.role === "ADMIN" ? (
-                <span
-                    className="mt-2 rounded-full border border-red-400 bg-red-100 px-2.5 py-1 text-xs leading-none font-medium text-red-800 select-none dark:bg-red-900 dark:text-red-300"
-                    aria-label="You are an admin">
-                    Admin
-                </span>
-            ) : (
-                  <span
-                      className="mt-2 rounded-full border border-stone-500 bg-stone-100 px-2.5 py-1 text-xs leading-none font-medium text-stone-800 select-none"
-                      aria-label="You are a reader">
-                    Reader
-                </span>
-              ) }
+            <RoleBadge role={ profile.role } />
             
             <div className="my-4 flex flex-col items-center justify-center gap-4 lg:mt-6 lg:flex-row">
                 <EditAccountModal />

@@ -1,5 +1,6 @@
 import { ArticleSummary }            from "@/@types/articles"
 import Avatar                        from "@/components/shared/avatar"
+import RoleBadge                     from "@/components/shared/role-badge"
 import Image                         from "next/image"
 import Link                          from "next/link"
 import { FaCircleCheck, FaComments } from "react-icons/fa6"
@@ -62,13 +63,7 @@ export default function ArticleSummaryCard({ article }: Readonly<ArticleSummaryC
                                 </span>
                             ) }
                         </p>
-                        { article.author.role === "ADMIN" && (
-                            <span
-                                className="mt-2 rounded-full border border-red-400 bg-red-100 px-2 py-0.5 text-xs leading-none font-medium text-red-800 select-none dark:bg-red-900 dark:text-red-300"
-                                aria-label="User is an admin">
-                                Admin
-                            </span>
-                        ) }
+                        <RoleBadge role={ article.author.role } />
                     </Link>
                 </div>
             </div>
