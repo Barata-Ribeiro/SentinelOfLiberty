@@ -72,8 +72,10 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional
-    public List<NotificationDTO> changeNotificationStatusInBulk(List<Long> ids, Boolean isRead,
+    public List<NotificationDTO> changeNotificationStatusInBulk(@NotNull List<Long> ids, Boolean isRead,
                                                                 @NotNull Authentication authentication) {
+        if (ids.isEmpty()) throw new IllegalRequestException("No notification IDs were provided");
+
         List<Notification> notificationsList = notificationRepository
                 .findAllByRecipient_UsernameAndIdIn(authentication.getName(), ids);
 
@@ -90,5 +92,18 @@ public class NotificationServiceImpl implements NotificationService {
         long wasDeleted = notificationRepository
                 .deleteByIdAndRecipient_UsernameAllIgnoreCase(notifId, authentication.getName());
         if (wasDeleted == 0) throw new IllegalRequestException("Notification not found or you are not the recipient");
+    }
+
+    @Override
+    @Transactional
+    public void deleteNotificationInBulk(@NotNull List<Long> ids, @NotNull Authentication authentication) {
+        if (ids.isEmpty()) throw new IllegalRequestException("No notification IDs were provided");
+
+        long wasDeleted = notificationRepository
+                .deleteByIdInAndRecipient_UsernameAllIgnoreCase(ids, authentication.getName());
+
+        if (wasDeleted != ids.size()) {
+            throw new IllegalRequestException("Some notifications were not found or you are not the recipient");
+        }
     }
 }

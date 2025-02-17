@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,4 +24,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     List<Notification> findAllByRecipient_UsernameAndIdIn(String username, List<Long> ids);
 
     long deleteByIdAndRecipient_UsernameAllIgnoreCase(Long id, String username);
+
+    long deleteByIdInAndRecipient_UsernameAllIgnoreCase(Collection<Long> ids, String username);
 }

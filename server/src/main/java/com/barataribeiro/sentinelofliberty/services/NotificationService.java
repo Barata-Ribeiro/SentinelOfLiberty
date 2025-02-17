@@ -19,4 +19,6 @@ public interface NotificationService {
     List<NotificationDTO> changeNotificationStatusInBulk(List<Long> ids, Boolean isRead, Authentication authentication);
 
     void deleteNotification(Long notifId, Authentication authentication);
+
+    void deleteNotificationInBulk(List<Long> ids, Authentication authentication);
 }

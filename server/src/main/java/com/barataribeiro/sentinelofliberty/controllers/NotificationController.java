@@ -90,4 +90,16 @@ public class NotificationController {
                                                                 "You have successfully deleted the notification",
                                                                 null));
     }
+
+    @Operation(summary = "Delete a notification in bulk",
+               description = "This endpoint allows an authenticated user to delete multiple notifications.")
+    @DeleteMapping
+    public ResponseEntity<ApplicationResponseDTO<Void>> deleteNotificationInBulk(@RequestParam List<Long> ids,
+                                                                                 Authentication authentication) {
+        notificationService.deleteNotificationInBulk(ids, authentication);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                             .body(new ApplicationResponseDTO<>(HttpStatus.NO_CONTENT, HttpStatus.NO_CONTENT.value(),
+                                                                "You have successfully deleted the notifications",
+                                                                null));
+    }
 }
