@@ -232,6 +232,11 @@ export function deleteNotificationUrl(notifId: number): string {
     return `${ API_URL }/notifications/${ notifId }`
 }
 
+export function deleteNotificationsInBulkUrl(ids: number[]): string {
+    const queryString = buildQueryParams({ ids: ids.join(",") })
+    return `${ API_URL }/notifications${ queryString }`
+}
+
 // ==================================================================
 // ====================  Admin Module Functions  ====================
 // ==================================================================
