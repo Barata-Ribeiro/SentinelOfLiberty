@@ -1,6 +1,7 @@
 package com.barataribeiro.sentinelofliberty.services;
 
 import com.barataribeiro.sentinelofliberty.dtos.notification.NotificationDTO;
+import com.barataribeiro.sentinelofliberty.dtos.notification.NotificationUpdateRequestDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 
@@ -16,7 +17,8 @@ public interface NotificationService {
 
     NotificationDTO changeNotificationStatus(Long notifId, Boolean isRead, Authentication authentication);
 
-    List<NotificationDTO> changeNotificationStatusInBulk(List<Long> ids, Boolean isRead, Authentication authentication);
+    List<NotificationDTO> changeNotificationStatusInBulk(NotificationUpdateRequestDTO body, Boolean isRead,
+                                                         Authentication authentication);
 
     void deleteNotification(Long notifId, Authentication authentication);
 

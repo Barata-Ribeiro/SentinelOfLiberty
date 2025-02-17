@@ -2,10 +2,12 @@ package com.barataribeiro.sentinelofliberty.controllers;
 
 import com.barataribeiro.sentinelofliberty.dtos.ApplicationResponseDTO;
 import com.barataribeiro.sentinelofliberty.dtos.notification.NotificationDTO;
+import com.barataribeiro.sentinelofliberty.dtos.notification.NotificationUpdateRequestDTO;
 import com.barataribeiro.sentinelofliberty.services.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/notifications")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -68,11 +71,13 @@ public class NotificationController {
                        "notifications.")
     @PatchMapping("/status")
     public ResponseEntity<ApplicationResponseDTO<List<NotificationDTO>>> changeNotificationStatusInBulk(
-            @RequestBody List<Long> notificationsId,
+            @RequestBody NotificationUpdateRequestDTO body,
             @RequestParam Boolean isRead,
             Authentication authentication) {
+        log.atInfo().log("Changing the status of multiple notifications");
+        log.atInfo().log("Request body: {}", body);
         List<NotificationDTO> response = notificationService
-                .changeNotificationStatusInBulk(notificationsId, isRead, authentication);
+                .changeNotificationStatusInBulk(body, isRead, authentication);
         return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
                                                               "You have successfully changed the notification status",
                                                               response));

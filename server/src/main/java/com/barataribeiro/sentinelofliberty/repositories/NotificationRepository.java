@@ -21,7 +21,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     Optional<Notification> findByIdAndRecipient_Username(Long id, String username);
 
     @EntityGraph(attributePaths = {"recipient"})
-    List<Notification> findAllByRecipient_UsernameAndIdIn(String username, List<Long> ids);
+    List<Notification> findAllByRecipient_UsernameAndIdIn(String username, Collection<Long> ids);
 
     long deleteByIdAndRecipient_UsernameAllIgnoreCase(Long id, String username);
 

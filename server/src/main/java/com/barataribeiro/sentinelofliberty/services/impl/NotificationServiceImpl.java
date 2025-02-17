@@ -2,6 +2,7 @@ package com.barataribeiro.sentinelofliberty.services.impl;
 
 import com.barataribeiro.sentinelofliberty.builders.NotificationMapper;
 import com.barataribeiro.sentinelofliberty.dtos.notification.NotificationDTO;
+import com.barataribeiro.sentinelofliberty.dtos.notification.NotificationUpdateRequestDTO;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.IllegalRequestException;
 import com.barataribeiro.sentinelofliberty.models.entities.Notification;
@@ -72,13 +73,13 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional
-    public List<NotificationDTO> changeNotificationStatusInBulk(@NotNull List<Long> ids, Boolean isRead,
+    public List<NotificationDTO> changeNotificationStatusInBulk(@NotNull NotificationUpdateRequestDTO body,
+                                                                Boolean isRead,
                                                                 @NotNull Authentication authentication) {
-        if (ids.isEmpty()) throw new IllegalRequestException("No notification IDs were provided");
+        if (body.getNotificationIds().isEmpty()) throw new IllegalRequestException("No notification IDs were provided");
 
         List<Notification> notificationsList = notificationRepository
-                .findAllByRecipient_UsernameAndIdIn(authentication.getName(), ids);
-
+                .findAllByRecipient_UsernameAndIdIn(authentication.getName(), body.getNotificationIds());
         if (notificationsList.isEmpty()) throw new EntityNotFoundException(Notification.class.getSimpleName());
 
         notificationsList.parallelStream().forEach(notification -> notification.setRead(isRead));
