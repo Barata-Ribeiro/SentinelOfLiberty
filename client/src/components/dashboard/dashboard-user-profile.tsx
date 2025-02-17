@@ -1,7 +1,9 @@
-import { Profile }             from "@/@types/user"
-import EditAccountDetailsModal from "@/components/modals/edit-account-details-modal"
-import EditAccountModal        from "@/components/modals/edit-account-modal"
-import Avatar                  from "@/components/shared/avatar"
+import { Profile }                  from "@/@types/user"
+import EditAccountDetailsModal      from "@/components/modals/edit-account-details-modal"
+import EditAccountModal             from "@/components/modals/edit-account-modal"
+import Avatar                       from "@/components/shared/avatar"
+import { FaCircleCheck }            from "react-icons/fa6"
+import { LuCalendarClock, LuMails } from "react-icons/lu"
 
 interface DashboardUserProfileProps {
     name: string
@@ -10,22 +12,44 @@ interface DashboardUserProfileProps {
 
 export default function DashboardUserProfile({ name, profile }: Readonly<DashboardUserProfileProps>) {
     return (
-        <div className="grid place-items-center gap-y-4">
+        <div className="flex flex-col place-items-center gap-y-4">
             <Avatar name={ name } size={ 96 } src={ profile.avatarUrl } />
 
             <div className="text-center text-balance">
-                <h1 className="text-shadow-900 text-2xl font-bold">{ profile.displayName }</h1>
-                <h2 className="text-shadow-300 text-sm font-medium">{ profile.email }</h2>
+                <h1 className="text-shadow-900 inline-flex items-center gap-x-2 text-2xl font-bold">
+                    { profile.displayName }
+                    { profile.isVerified && (
+                        <span className="text-marigold-500" title="Verified">
+                            <FaCircleCheck aria-hidden="true" className="size-4" />
+                        </span>
+                    ) }
+                </h1>
+                <h2 className="text-shadow-300 text-sm font-medium">@{ profile.username }</h2>
             </div>
 
-            <time dateTime={ profile.createdAt } className="text-shadow-500 text-sm">
-                Member since{ " " }
-                { new Date(profile.createdAt).toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                }) }
-            </time>
+            <div className="grid gap-y-2 divide-y divide-stone-200 *:first:pb-2">
+                <p
+                    className="text-shadow-500 inline-flex items-center gap-x-2 text-sm"
+                    aria-label="Account email"
+                    title="Account email">
+                    <LuMails aria-hidden="true" className="size-4 text-inherit" />
+                    { profile.email }
+                </p>
+
+                <time
+                    dateTime={ profile.createdAt }
+                    aria-label="Account creation date"
+                    title="Account creation date"
+                    className="text-shadow-500 inline-flex items-center gap-x-2 text-sm">
+                    <LuCalendarClock aria-hidden="true" className="size-4 text-inherit" />
+                    Since{ " " }
+                    { new Date(profile.createdAt).toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                    }) }
+                </time>
+            </div>
             
             { profile.role === "ADMIN" ? (
                 <span
