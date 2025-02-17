@@ -3,6 +3,7 @@
 import { ProblemDetails }                    from "@/@types/application"
 import { Notification }                      from "@/@types/user"
 import patchChangeNotifStatusById            from "@/actions/notifications/patch-change-notif-status-by-id"
+import patchChangeNotifStatusInBulk          from "@/actions/notifications/patch-change-notif-status-in-bulk"
 import RegularButton                         from "@/components/shared/regular-button"
 import { Button, Input, Transition }         from "@headlessui/react"
 import { useLayoutEffect, useRef, useState } from "react"
@@ -37,7 +38,19 @@ export default function DashboardNotificationTable({ notifications }: Readonly<D
     
     // TODO: IMPLEMENT DELETE FUNCTIONALITY
     
-    // TODO: IMPLEMENT BULK STATUS FUNCTIONALITY
+    async function toggleBulkRead() {
+        if (selectedNotifications.length <= 0) return
+        const state = await patchChangeNotifStatusInBulk({ idList: selectedNotifications.map(n => n.id), status: true })
+        if (!state.ok) {
+            setError((state.error as ProblemDetails).detail)
+            setShow(true)
+        }
+        
+        const updatedNotifications = state.response?.data as Notification[]
+        updatedNotifications.forEach(n => {
+            setOriginalNotifications(originalNotifications.map(o => (o.id === n.id ? n : o)))
+        })
+    }
     
     async function toggleRead(notification: Notification) {
         const state = await patchChangeNotifStatusById({ id: notification.id, status: !notification.isRead })
@@ -45,6 +58,7 @@ export default function DashboardNotificationTable({ notifications }: Readonly<D
             setError((state.error as ProblemDetails).detail)
             setShow(true)
         }
+        
         const updatedNotification = state.response?.data as Notification
         setOriginalNotifications(
             originalNotifications.map(n => (n.id === updatedNotification.id ? updatedNotification : n)),
@@ -57,7 +71,11 @@ export default function DashboardNotificationTable({ notifications }: Readonly<D
                 <div className="relative">
                     { selectedNotifications.length > 0 && (
                         <div className="absolute top-0 left-14 flex h-12 items-center space-x-3 bg-white sm:left-12">
-                            <RegularButton className="text-shadow-900 border border-stone-300 bg-white px-2 py-1 text-sm hover:bg-stone-100 active:bg-stone-200 disabled:pointer-events-none disabled:opacity-50 disabled:hover:bg-white">
+                            <RegularButton
+                                aria-label="Set notifications as read"
+                                title="Set notifications as read"
+                                onClick={ toggleBulkRead }
+                                className="text-shadow-900 border border-stone-300 bg-white px-2 py-1 text-sm hover:bg-stone-100 active:bg-stone-200 disabled:pointer-events-none disabled:opacity-50 disabled:hover:bg-white">
                                 Bulk status
                             </RegularButton>
                             <RegularButton className="text-shadow-900 border border-stone-300 bg-white px-2 py-1 text-sm hover:bg-stone-100 active:bg-stone-200 disabled:pointer-events-none disabled:opacity-50 disabled:hover:bg-white">
