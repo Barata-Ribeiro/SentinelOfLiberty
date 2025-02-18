@@ -102,7 +102,8 @@ export default function DashboardNotificationTable({ notifications }: Readonly<D
         
         const updatedNotification = state.response?.data as Notification
         setOriginalNotifications(
-            originalNotifications.map(n => (n.id === updatedNotification.id ? updatedNotification : n)))
+            originalNotifications.map(n => (n.id === updatedNotification.id ? updatedNotification : n)),
+        )
     }
     
     return (
@@ -128,77 +129,85 @@ export default function DashboardNotificationTable({ notifications }: Readonly<D
                         </div>
                     ) }
                     
-                    <table className="min-w-full table-fixed divide-y divide-stone-300">
-                        <TableHeader ref={ checkbox } checked={ checked } onChange={ toggleAll } />
+                    { notifications.length > 0 && (
+                        <table className="min-w-full table-fixed divide-y divide-stone-300">
+                            <TableHeader ref={ checkbox } checked={ checked } onChange={ toggleAll } />
 
-                        <tbody className="divide-y divide-stone-200 bg-white">
-                            { originalNotifications.map(notification => (
-                                <tr
-                                    key={ notification.id }
-                                    data-selected={ selectedNotifications.includes(notification) }
-                                    data-read={ notification.isRead }
-                                    className="data-[read=true]:bg-stone-100 data-[selected=true]:bg-stone-200">
-                                    <td className="relative px-7 sm:w-12 sm:px-6">
-                                        { selectedNotifications.includes(notification) && (
-                                            <div className="bg-marigold-600 absolute inset-y-0 left-0 w-0.5" />
-                                        ) }
-                                        <Input
-                                            type="checkbox"
-                                            className="text-marigold-600 focus:ring-marigold-600 absolute top-1/2 left-4 -mt-2 h-4 w-4 rounded border-stone-300"
-                                            value={ notification.id }
-                                            checked={ selectedNotifications.includes(notification) }
-                                            onChange={ e =>
-                                                setSelectedNotifications(
-                                                    e.target.checked
-                                                    ? [ ...selectedNotifications, notification ]
-                                                    : selectedNotifications.filter(p => p !== notification),
-                                                )
-                                            }
-                                        />
-                                    </td>
-                                    <td
+                            <tbody className="divide-y divide-stone-200 bg-white">
+                                { originalNotifications.map(notification => (
+                                    <tr
+                                        key={ notification.id }
                                         data-selected={ selectedNotifications.includes(notification) }
                                         data-read={ notification.isRead }
-                                        className="data-[selected=true]:text-marigold-600 text-shadow-900 py-4 pr-3 text-sm whitespace-nowrap data-[read=false]:font-medium">
-                                        <div className="inline-flex items-center gap-x-2">
-                                            { notification.isRead ? (
-                                                <LuMailOpen aria-hidden="true" className="size-4" />
-                                            ) : (
-                                                  <LuMail aria-hidden="true" className="size-4" />
-                                              ) }{ " " }
-                                            { notification.title }
-                                        </div>
-                                    </td>
-                                    <td
-                                        style={ {
-                                            scrollbarWidth: "thin",
-                                        } }
-                                        className="text-shadow-500 max-w-2xl overflow-x-auto px-3 py-4 text-sm whitespace-nowrap">
-                                        { notification.message }
-                                    </td>
-                                    <td className="text-shadow-500 px-3 py-4 text-sm whitespace-nowrap capitalize">
-                                        { notification.type.toLowerCase() }
-                                    </td>
-                                    <td className="text-shadow-500 px-3 py-4 text-sm whitespace-nowrap">
-                                        { new Date(notification.createdAt).toLocaleDateString("en-US", {
-                                            month: "long",
-                                            day: "numeric",
-                                            year: "numeric",
-                                        }) }
-                                    </td>
-                                    <td className="py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-3">
-                                        <Button
-                                            type="button"
-                                            className="text-marigold-600 hover:text-marigold-700 active:text-marigold-800 focus:ring-marigold-500 cursor-pointer focus:ring-offset-2 focus:outline-none"
-                                            onClick={ () => toggleRead(notification) }>
-                                            { notification.isRead ? "Unread" : "Read" }
-                                            <span className="sr-only">, { notification.title }</span>
-                                        </Button>
-                                    </td>
-                                </tr>
-                            )) }
-                        </tbody>
-                    </table>
+                                        className="data-[read=true]:bg-stone-100 data-[selected=true]:bg-stone-200">
+                                        <td className="relative px-7 sm:w-12 sm:px-6">
+                                            { selectedNotifications.includes(notification) && (
+                                                <div className="bg-marigold-600 absolute inset-y-0 left-0 w-0.5" />
+                                            ) }
+                                            <Input
+                                                type="checkbox"
+                                                className="text-marigold-600 focus:ring-marigold-600 absolute top-1/2 left-4 -mt-2 h-4 w-4 rounded border-stone-300"
+                                                value={ notification.id }
+                                                checked={ selectedNotifications.includes(notification) }
+                                                onChange={ e =>
+                                                    setSelectedNotifications(
+                                                        e.target.checked
+                                                        ? [ ...selectedNotifications, notification ]
+                                                        : selectedNotifications.filter(p => p !== notification),
+                                                    )
+                                                }
+                                            />
+                                        </td>
+                                        <td
+                                            data-selected={ selectedNotifications.includes(notification) }
+                                            data-read={ notification.isRead }
+                                            className="data-[selected=true]:text-marigold-600 text-shadow-900 py-4 pr-3 text-sm whitespace-nowrap data-[read=false]:font-medium">
+                                            <div className="inline-flex items-center gap-x-2">
+                                                { notification.isRead ? (
+                                                    <LuMailOpen aria-hidden="true" className="size-4" />
+                                                ) : (
+                                                      <LuMail aria-hidden="true" className="size-4" />
+                                                  ) }{ " " }
+                                                { notification.title }
+                                            </div>
+                                        </td>
+                                        <td
+                                            style={ {
+                                                scrollbarWidth: "thin",
+                                            } }
+                                            className="text-shadow-500 max-w-2xl overflow-x-auto px-3 py-4 text-sm whitespace-nowrap">
+                                            { notification.message }
+                                        </td>
+                                        <td className="text-shadow-500 px-3 py-4 text-sm whitespace-nowrap capitalize">
+                                            { notification.type.toLowerCase() }
+                                        </td>
+                                        <td className="text-shadow-500 px-3 py-4 text-sm whitespace-nowrap">
+                                            { new Date(notification.createdAt).toLocaleDateString("en-US", {
+                                                month: "long",
+                                                day: "numeric",
+                                                year: "numeric",
+                                            }) }
+                                        </td>
+                                        <td className="py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-3">
+                                            <Button
+                                                type="button"
+                                                className="text-marigold-600 hover:text-marigold-700 active:text-marigold-800 focus:ring-marigold-500 cursor-pointer focus:ring-offset-2 focus:outline-none"
+                                                onClick={ () => toggleRead(notification) }>
+                                                { notification.isRead ? "Unread" : "Read" }
+                                                <span className="sr-only">, { notification.title }</span>
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                )) }
+                            </tbody>
+                        </table>
+                    ) }
+                    
+                    { notifications.length <= 0 && (
+                        <div className="flex h-96 items-center justify-center">
+                            <p className="text-shadow-500 text-lg">No notifications available.</p>
+                        </div>
+                    ) }
                 </div>
             </div>
             
