@@ -28,7 +28,7 @@ export default function NavigationPagination({ pageInfo }: NavigationPaginationP
     }
     
     return (
-        <nav className="flex items-center justify-between border-t border-stone-200 px-4 sm:px-0 mb-2 mt-4">
+        <nav className="mt-4 mb-2 flex items-center justify-between border-t border-stone-200 px-4 sm:px-0">
             <div className="-mt-px flex w-0 flex-1">
                 <Button
                     onClick={ () => handlePageChange(page - 1) }
@@ -51,8 +51,9 @@ export default function NavigationPagination({ pageInfo }: NavigationPaginationP
                                 <Button
                                     key={ "Button-" + (index + 1) }
                                     type="button"
+                                    data-current={ index === page }
                                     onClick={ () => handlePageChange(index) }
-                                    className="text-shadow-500 hover:text-shadow-700 inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-medium hover:border-stone-300">
+                                    className="text-shadow-500 data-[current=true]:border-marigold-500 data-[current=true]:text-marigold-500 hover:text-shadow-700 inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-medium hover:border-stone-300">
                                     { index + 1 }
                                 </Button>
                             )
