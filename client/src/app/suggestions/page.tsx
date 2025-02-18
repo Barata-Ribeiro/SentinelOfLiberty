@@ -54,8 +54,8 @@ export default async function SuggestionsPage({ searchParams }: Readonly<Suggest
                 </div>
 
                 <p className="text-shadow-600 mt-6 max-w-2xl text-lg/8 lg:mt-2">
-                    There are currently { pagination.totalElements } suggestions available.{ " " }
-                    { pagination.totalElements > 0
+                    There are currently { pagination.page.totalElements } suggestions available.{ " " }
+                    { pagination.page.totalElements > 0
                       ? "Check them or write an article about them!"
                       : "Be the first to suggest something!" }
                 </p>
@@ -71,7 +71,7 @@ export default async function SuggestionsPage({ searchParams }: Readonly<Suggest
                 ) }
             </main>
 
-            <NavigationPagination pageInfo={ pagination } />
+            <NavigationPagination pageInfo={ pagination.page } />
         </div>
     )
 }

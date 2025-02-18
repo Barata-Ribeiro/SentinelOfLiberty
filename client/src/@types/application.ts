@@ -31,31 +31,12 @@ interface State {
 
 interface Paginated<T> {
     content: T[]
-    pageable: {
-        pageNumber: number
-        pageSize: number
-        sort: {
-            empty: boolean
-            unsorted: boolean
-            sorted: boolean
-        }
-        offset: number
-        unpaged: boolean
-        paged: boolean
+    page: {
+        size: number
+        number: number
+        totalElements: number
+        totalPages: number
     }
-    last: boolean
-    totalPages: number
-    totalElements: number
-    size: number
-    number: number
-    sort: {
-        empty: boolean
-        unsorted: boolean
-        sorted: boolean
-    }
-    first: boolean
-    numberOfElements: number
-    empty: boolean
 }
 
 export type { ValidationError, RestResponse, InvalidParam, ProblemDetails, State, Paginated }

@@ -32,7 +32,7 @@ export default async function NotificationsPage({ params, searchParams }: Readon
     const content = pagination.content ?? []
     
     return (
-        <div className="container" aria-labelledby="page-title" aria-describedby="page-description">
+        <div aria-labelledby="page-title" aria-describedby="page-description">
             <header className="mt-4 max-w-2xl sm:mt-8">
                 <h1
                     id="page-title"
@@ -40,7 +40,7 @@ export default async function NotificationsPage({ params, searchParams }: Readon
                     Notifications
                 </h1>
                 <p id="page-description" className="text-shadow-600 mt-2 text-lg/8">
-                    There are currently { pagination.totalElements } notification(s) available. Manage them here.
+                    There are currently { pagination.page.totalElements } notification(s) available. Manage them here.
                 </p>
             </header>
 
@@ -48,7 +48,7 @@ export default async function NotificationsPage({ params, searchParams }: Readon
                 <DashboardNotificationTable notifications={ content } />
             </main>
 
-            <NavigationPagination pageInfo={ pagination } />
+            <NavigationPagination pageInfo={ pagination.page } />
         </div>
     )
 }

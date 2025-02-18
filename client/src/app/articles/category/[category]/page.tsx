@@ -34,8 +34,9 @@ export default async function ArticlesCategoryPageProps({ params, searchParams }
                     Articles for { category }
                 </h1>
                 <p id="page-description" className="text-shadow-600 mt-2 text-lg/8">
-                    There are currently { pagination.totalElements } article(s) available under the { category } category.{ " " }
-                    { pagination.totalElements > 0 ? "Enjoy reading them!" : "Wait for our authors to publish some!" }
+                    There are currently { pagination.page.totalElements } article(s) available under the { category } category.{ " " }
+                    { pagination.page.totalElements > 0 ? "Enjoy reading them!" : "Wait for our authors to publish" +
+                        " some!" }
                 </p>
             </header>
 
@@ -51,7 +52,7 @@ export default async function ArticlesCategoryPageProps({ params, searchParams }
                 ) }
             </main>
 
-            <NavigationPagination pageInfo={ pagination } />
+            <NavigationPagination pageInfo={ pagination.page } />
         </div>
     )
 }
