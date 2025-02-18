@@ -75,7 +75,7 @@ export default async function DashboardHomePage({ params }: Readonly<DashboardHo
     return (
         <>
             <nav className="my-6 rounded-md bg-stone-200 px-6 py-2.5 sm:px-3.5">
-                <div role="list" className="flex flex-col items-center justify-between sm:flex-row">
+                <div role="list" className="flex flex-col items-center justify-between sm:flex-row gap-4">
                     <div className="flex items-center gap-2">
                         { isAdmin && (
                             <LinkButton

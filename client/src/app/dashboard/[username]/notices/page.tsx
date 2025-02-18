@@ -2,6 +2,7 @@ import { Paginated }                   from "@/@types/application"
 import { Notice }                      from "@/@types/notices"
 import getAllOwnIssuedNoticesPaginated from "@/actions/notices/get-all-own-issued-notices-paginated"
 import NavigationPagination            from "@/components/shared/navigation-pagination"
+import RegularButton                   from "@/components/shared/regular-button"
 import { auth }                        from "auth"
 import { Metadata }                    from "next"
 import { permanentRedirect }           from "next/navigation"
@@ -33,11 +34,35 @@ export default async function NoticesPage({ params, searchParams }: Readonly<Not
     const pagination = noticeState.response?.data as Paginated<Notice>
     const content = pagination.content ?? []
     
-    console.log("STATE: ", noticeState)
-    
     return (
-        <div className="container" aria-labelledby="page-title" aria-describedby="page-description">
-            <NavigationPagination pageInfo={ pagination } />
+        <div className="flex flex-col justify-between h-full"
+             aria-labelledby="page-title"
+             aria-describedby="page-description">
+            <header className="mt-4 sm:mt-8">
+                <div className="flex flex-wrap items-center justify-between">
+                    <h1
+                        id="page-title"
+                        className="text-shadow-900 block text-4xl font-semibold tracking-tight text-pretty sm:text-5xl">
+                        Notices
+                    </h1>
+
+                    <RegularButton type="button">New Notice</RegularButton>
+                </div>
+
+                <p id="page-description" className="text-shadow-600 mt-2 text-lg/8">
+                    There are currently { pagination.page.totalElements } notices(s) issued by you. Manage them here.
+                </p>
+            </header>
+            
+            <main className="mt-8 -mb-4 h-full flow-root border-t border-stone-200 pt-8">
+                { content.length <= 0 && (
+                    <div className="flex h-96 items-center justify-center">
+                            <p className="text-shadow-500 text-lg">No notifications available.</p>
+                        </div>
+                ) }
+            </main>
+
+            <NavigationPagination pageInfo={ pagination.page } />
         </div>
     )
 }
