@@ -90,9 +90,7 @@ export default function DashboardNotificationTable({ notifications }: Readonly<D
         }
         
         const updatedNotifications = state.response?.data as Notification[]
-        updatedNotifications.forEach(n => {
-            setOriginalNotifications(originalNotifications.map(o => (o.id === n.id ? n : o)))
-        })
+        setOriginalNotifications(originalNotifications.map(o => updatedNotifications.find(n => n.id === o.id) ?? o))
     }
     
     async function toggleRead(notification: Notification) {
@@ -104,8 +102,7 @@ export default function DashboardNotificationTable({ notifications }: Readonly<D
         
         const updatedNotification = state.response?.data as Notification
         setOriginalNotifications(
-            originalNotifications.map(n => (n.id === updatedNotification.id ? updatedNotification : n)),
-        )
+            originalNotifications.map(n => (n.id === updatedNotification.id ? updatedNotification : n)))
     }
     
     return (

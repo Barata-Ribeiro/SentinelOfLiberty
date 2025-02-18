@@ -22,7 +22,7 @@ export default async function patchChangeNotifStatusInBulk({ idList, status }: P
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${ session?.accessToken }`,
             },
-            body: JSON.stringify({ notificationsId: idList }),
+            body: JSON.stringify({ notificationIds: idList }),
         })
         
         const json = await response.json()
