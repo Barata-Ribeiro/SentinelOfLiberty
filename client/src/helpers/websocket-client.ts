@@ -29,6 +29,8 @@ class WebSocketClient {
             console.error("Broker reported error: " + frame.headers["message"])
             console.error("Additional details: " + frame.body)
         }
+        
+        this.client.debug = async (str) => console.log(str)
     }
     
     registerOnConnectCallback(callback: () => void) {

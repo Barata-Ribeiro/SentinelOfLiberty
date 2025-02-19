@@ -1,9 +1,9 @@
 "use client"
 
-import websocketClient                                                                from "@/helpers/websocket-client"
-import { IMessage, StompSubscription }                                                from "@stomp/stompjs"
-import { useSession }                                                                 from "next-auth/react"
-import { createContext, ReactNode, useContext, useEffect, useMemo, useRef, useState } from "react"
+import websocketClient                                                                      from "@/helpers/websocket-client"
+import { IMessage, StompSubscription }                                                      from "@stomp/stompjs"
+import { useSession }                                                                       from "next-auth/react"
+import { createContext, ReactNode, useContext, useLayoutEffect, useMemo, useRef, useState } from "react"
 
 interface WebSocketContextProps {
     notifications: Notification[]
@@ -20,22 +20,25 @@ export function WebsocketProvider({ children }: { children: ReactNode }) {
         return (prev: Notification[]) => [ notification, ...prev ]
     }
     
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (!session) return
         
+        websocketClient.connect()
+        
         const handleConnect = () => {
-            if (!subscriptionRef.current) {
-                subscriptionRef.current = websocketClient.subscribe("/user/notifications", (message: IMessage) => {
-                    const notification = JSON.parse(message.body) as Notification
-                    setNotifications(addNewNotification(notification))
-                })
+            if (subscriptionRef && !subscriptionRef.current) {
+                subscriptionRef.current = websocketClient
+                    .subscribe(`/user/${ session.user.username }/notifications`,
+                               (message: IMessage) => {
+                                   const notification = JSON.parse(message.body) as Notification
+                                   setNotifications(addNewNotification(notification))
+                               },
+                    )
             }
         }
         
         websocketClient.registerOnConnectCallback(handleConnect)
-        websocketClient.connect()
         
-        // Cleanup
         return () => {
             if (subscriptionRef.current) {
                 subscriptionRef.current.unsubscribe()
@@ -47,11 +50,7 @@ export function WebsocketProvider({ children }: { children: ReactNode }) {
     
     const value = useMemo(() => ({ notifications }), [ notifications ])
     
-    return (
-        <WebSocketContext.Provider value={ value }>
-      { children }
-    </WebSocketContext.Provider>
-    )
+    return <WebSocketContext.Provider value={ value }>{ children }</WebSocketContext.Provider>
 }
 
 export function useWebsocket() {
