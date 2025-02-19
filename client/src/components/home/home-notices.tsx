@@ -72,17 +72,15 @@ export default function HomeNotices({ notices }: Readonly<HomeNoticesProps>) {
                     </Button>
                 ) }
                 
-                <details
+                <div
                     aria-roledescription="slide"
                     aria-label={ `Notice ${ currentNoticeIndex + 1 } of ${ totalNotices }` }
                     className="flex flex-shrink-0">
                     <FaExclamationTriangle aria-hidden="true" className="size-5 text-yellow-400" />
-                    <div className="ml-3">
-                        <p id="notice-description" className="text-sm text-yellow-700">
-                            { currentNotice.message }
-                        </p>
-                    </div>
-                </details>
+                    <p id="notice-description" className="ml-3 text-sm text-yellow-700">
+                        { currentNotice.message }
+                    </p>
+                </div>
                 
                 { totalNotices > 1 && (
                     <Button
