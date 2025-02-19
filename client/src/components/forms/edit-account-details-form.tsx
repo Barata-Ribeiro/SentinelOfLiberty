@@ -55,6 +55,9 @@ export default function EditAccountDetailsForm() {
                 label="Birth Date"
                 type="date"
                 name="birthDate"
+                defaultValue={
+                    new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split("T")[0]
+                }
                 max={ new Date().toISOString().split("T")[0] }
                 autoComplete="bday"
                 aria-autocomplete="list"

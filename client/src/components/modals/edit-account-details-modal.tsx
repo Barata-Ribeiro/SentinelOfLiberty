@@ -1,12 +1,12 @@
 "use client"
 
-import EditAccountDetailsForm                  from "@/components/forms/edit-account-details-form"
-import RegularButton                           from "@/components/shared/regular-button"
-import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react"
+import EditAccountDetailsForm                               from "@/components/forms/edit-account-details-form"
+import RegularButton                                        from "@/components/shared/regular-button"
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
 import {
     DialogHeader,
-}                                              from "next/dist/client/components/react-dev-overlay/internal/components/Dialog"
-import { useState }                            from "react"
+}                                                           from "next/dist/client/components/react-dev-overlay/internal/components/Dialog"
+import { useState }                                         from "react"
 
 export default function EditAccountDetailsModal() {
     const [ open, setOpen ] = useState(false)
@@ -32,7 +32,9 @@ export default function EditAccountDetailsModal() {
                             transition
                             className="relative max-h-[90dvh] transform overflow-auto rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[enter]:ease-out data-[leave]:duration-200 data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-2xl sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95">
                             <DialogHeader className="text-shadow-50 relative flex h-24 items-center justify-center rounded-md bg-stone-800">
-                                <h3 className="text-2xl">Account Details</h3>
+                                <DialogTitle as="h3" className="text-2xl">
+                                    Account Details
+                                </DialogTitle>
                             </DialogHeader>
 
                             <EditAccountDetailsForm />
