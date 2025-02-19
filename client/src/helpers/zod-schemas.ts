@@ -169,6 +169,15 @@ const userAccountDetailsSchema = z
         return data
     })
 
+// NOTICES
+const noticeRequestSchema = z.object({
+                                         title: z.string().min(3, "Title must be at least 3 characters.")
+                                             .max(100, "Title must be at most 100 characters.")
+                                             .trim().nullish().or(z.literal("")),
+                                         message: z.string().min(10, "Message must be at least 10 characters.")
+                                             .max(100, "Message must be at most 100 characters.").trim(),
+                                     })
+
 // SUGGESTIONS
 const suggestionRequestSchema = z.object({
                                              title: z
@@ -191,7 +200,7 @@ const suggestionRequestSchema = z.object({
 
 // ARTICLES
 const articleRequestSchema = z.object({
-                                          suggestionId: z.number().optional(),
+                                          suggestionId: z.coerce.number().int().optional(),
                                           title: z
                                               .string()
                                               .min(3, "Title must be between 3 and 100 characters.")
@@ -260,7 +269,7 @@ const articleRequestSchema = z.object({
                                                       "At least one category must be provided."),
                                       })
 
-// Comments
+// COMMENTS
 const commentSchema = z
     .object({
                 articleId: z.coerce.number().int(),
@@ -280,6 +289,7 @@ export {
     authRegisterSchema,
     userProfileUpdateSchema,
     userAccountDetailsSchema,
+    noticeRequestSchema,
     suggestionRequestSchema,
     articleRequestSchema,
     commentSchema,
