@@ -51,6 +51,8 @@ export default async function postNewSuggestion(state: State, formData: unknown)
         }
         
         revalidateTag("suggestions")
+        revalidateTag("profile")
+        revalidateTag("dashboard")
     } catch (error) {
         return ResponseError(error)
     }

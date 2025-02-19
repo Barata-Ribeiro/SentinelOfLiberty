@@ -58,6 +58,7 @@ export default async function postNewArticle(state: State, formData: unknown) {
         revalidateTag("articles")
         revalidateTag("categories")
         revalidateTag("dashboard")
+        revalidateTag("profile")
     } catch (error) {
         return ResponseError(error)
     }
