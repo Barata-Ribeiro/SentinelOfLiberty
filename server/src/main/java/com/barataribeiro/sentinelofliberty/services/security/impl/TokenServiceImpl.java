@@ -81,6 +81,13 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
+    public String getUsernameFromToken(String token) {
+        DecodedJWT decodedJWT = validateToken(token);
+        if (decodedJWT == null) throw new ApplicationMainException();
+        return decodedJWT.getSubject();
+    }
+
+    @Override
     public DecodedJWT validateToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretKey);
