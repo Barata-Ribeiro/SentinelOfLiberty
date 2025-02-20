@@ -1,3 +1,4 @@
+import Spinner                             from "@/components/helpers/spinner"
 import tw                                  from "@/utils/tw"
 import { Button }                          from "@headlessui/react"
 import { ButtonHTMLAttributes, ReactNode } from "react"
@@ -6,14 +7,25 @@ import { twMerge }                         from "tailwind-merge"
 interface FormButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     children?: ReactNode
     className?: string
+    width?: "full" | "auto"
+    pending?: boolean
 }
 
-export default function FormButton({ children, className, ...props }: Readonly<FormButtonProps>) {
-    const defaultStyles = tw`bg-marigold-600 text-marigold-50 hover:bg-marigold-500 focus-visible:outline-marigold-600 active:bg-marigold-700 inline-flex cursor-pointer items-center justify-center gap-x-2 rounded-md px-3.5 py-2.5 text-center text-sm font-semibold shadow-xs transition duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50`
+export default function FormButton({ children, className, width, pending, ...props }: Readonly<FormButtonProps>) {
+    const defaultStyles = tw`data-[width=auto:w-auto from-marigold-500 to-marigold-600 border-marigold-500 text-shadow-50 inline-flex cursor-pointer items-center justify-center gap-x-2 rounded-md border bg-gradient-to-tr px-4 py-2 text-center text-sm font-medium shadow-sm transition-all duration-300 ease-in hover:shadow-md hover:brightness-105 focus:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none data-[width=full]:w-full`
     const styles = twMerge(defaultStyles, className)
     return (
-        <Button className={ styles } type="submit" { ...props }>
-            { children }
+        <Button type="submit"
+                data-width={ width }
+                className={ styles }
+                disabled={ props.disabled ?? pending } { ...props }>
+            { pending ? (
+                <>
+                    <Spinner /> Loading...
+                </>
+            ) : (
+                  children
+              ) }
         </Button>
     )
 }
