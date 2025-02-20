@@ -1,14 +1,16 @@
 "use client"
 
-import deleteAuthLogout                                             from "@/actions/auth/delete-auth-logout"
-import Spinner                                                      from "@/components/helpers/spinner"
-import RegularButton                                                from "@/components/shared/regular-button"
-import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
-import { useSession }                                               from "next-auth/react"
-import { redirect }                                                 from "next/navigation"
-import { useState, useTransition }                                  from "react"
-import { FaExclamationTriangle }                                    from "react-icons/fa"
-import { FaArrowRightFromBracket }                                  from "react-icons/fa6"
+import deleteAuthLogout                                     from "@/actions/auth/delete-auth-logout"
+import RegularButton                                        from "@/components/shared/regular-button"
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
+import { useSession }                                       from "next-auth/react"
+import {
+    DialogContent,
+}                                                           from "next/dist/client/components/react-dev-overlay/internal/components/Dialog"
+import { redirect }                                         from "next/navigation"
+import { useState, useTransition }                          from "react"
+import { FaExclamationTriangle }                            from "react-icons/fa"
+import { FaArrowRightFromBracket }                          from "react-icons/fa6"
 
 export default function LogoutButton() {
     const { data: session, status } = useSession()
@@ -32,15 +34,15 @@ export default function LogoutButton() {
     
     return (
         <>
-            <Button
+            <RegularButton
                 type="button"
-                className="text-shadow-900 inline-flex cursor-pointer items-center gap-x-2 rounded-md px-3.5 py-2.5 font-semibold hover:bg-stone-50 active:bg-stone-100 disabled:pointer-events-none disabled:opacity-50 disabled:hover:bg-white"
                 aria-label="Logout"
                 title="Logout"
+                buttonStyle="ghost"
                 onClick={ () => setOpen(true) }
                 disabled={ !session || status !== "authenticated" }>
                 Logout <FaArrowRightFromBracket aria-hidden="true" className="size-4 text-inherit" />
-            </Button>
+            </RegularButton>
 
             <Dialog open={ open } onClose={ setOpen } className="relative z-10">
                 <DialogBackdrop
@@ -62,36 +64,32 @@ export default function LogoutButton() {
                                         <DialogTitle as="h3" className="text-shadow-900 text-base font-semibold">
                                             Logout
                                         </DialogTitle>
-                                        <div className="mt-2">
-                                            <p className="text-shadow-500 text-sm">Are you sure you want to logout?</p>
-                                        </div>
+
+                                        <DialogContent className="text-shadow-500 mt-2 text-sm">
+                                            Are you sure you want to logout?
+                                        </DialogContent>
                                     </div>
                                 </div>
                             </div>
-                            <div className="bg-stone-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                                <Button
+                            <div className="bg-stone-50 px-4 py-3 sm:flex gap-2 sm:flex-row-reverse sm:px-6">
+                                <RegularButton
                                     type="button"
-                                    disabled={ isPending }
+                                    pending={ isPending }
+                                    buttonStyle="danger"
                                     aria-label="Yes, logout"
                                     title="Yes, logout"
-                                    onClick={ handleLogout }
-                                    className="text-shadow-50 inline-flex w-full cursor-pointer items-center justify-center gap-x-2 rounded-md bg-red-600 px-3.5 py-2.5 text-sm font-semibold shadow-xs transition duration-200 select-none hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 active:bg-red-800 disabled:pointer-events-none disabled:opacity-50 sm:ml-3 sm:w-auto">
-                                    { isPending ? (
-                                        <>
-                                            <Spinner /> Loading...
-                                        </>
-                                    ) : (
-                                          "Yes, Logout"
-                                      ) }
-                                </Button>
+                                    onClick={ handleLogout }>
+                                    Yes, logout
+                                </RegularButton>
+
                                 <RegularButton
                                     type="button"
                                     disabled={ isPending }
+                                    buttonStyle="ghost"
                                     data-autofocus
                                     aria-label="Cancel logout"
                                     title="Cancel logout"
-                                    onClick={ () => setOpen(false) }
-                                    className="text-shadow-900 border border-stone-300 bg-white transition duration-200 hover:bg-stone-100 focus-visible:outline-2 focus-visible:outline-offset-2 active:bg-stone-200 disabled:pointer-events-none disabled:opacity-50">
+                                    onClick={ () => setOpen(false) }>
                                     Cancel
                                 </RegularButton>
                             </div>

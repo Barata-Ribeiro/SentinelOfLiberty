@@ -46,7 +46,7 @@ export default function SuggestionCard({ suggestion }: SuggestionCardProps) {
                     <LinkButton
                         href={ `/articles/write?suggestion=${ suggestion.id }&title=${ suggestion.title }` }
                         aria-label="Start writing your suggestions"
-                        className="bg-marigold-600 text-marigold-50 hover:bg-marigold-500 active:bg-marigold-700 px-3.5 py-2.5 shadow-xs">
+                        buttonStyle="colored">
                         Write about it
                     </LinkButton>
 
@@ -56,7 +56,7 @@ export default function SuggestionCard({ suggestion }: SuggestionCardProps) {
                         title={ `Read the source for  '${ suggestion.title }' ` }
                         target="_blank"
                         rel="noopener noreferrer nofollow"
-                        className="text-shadow-900 hover:text-shadow-800 active:text-shadow-700 px-3.5 py-2.5 hover:bg-stone-100 active:bg-stone-200">
+                        buttonStyle="ghost">
                         Read source <span aria-hidden="true">&rarr;</span>
                     </LinkButton>
                 </div>

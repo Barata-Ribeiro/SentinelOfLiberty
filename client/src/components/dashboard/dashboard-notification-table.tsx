@@ -114,16 +114,19 @@ export default function DashboardNotificationTable({ notifications }: Readonly<D
                     { selectedNotifications.length > 0 && (
                         <div className="absolute top-0 left-14 flex h-12 items-center space-x-3 bg-white sm:left-12">
                             <RegularButton
+                                buttonStyle="ghost"
                                 aria-label="Set notifications as read"
                                 title="Set notifications as read"
                                 onClick={ toggleBulkRead }
-                                className="text-shadow-900 border border-stone-300 bg-white px-2 py-1 text-sm hover:bg-stone-100 active:bg-stone-200 disabled:pointer-events-none disabled:opacity-50 disabled:hover:bg-white">
+                                className="px-2 py-1">
                                 Bulk status
                             </RegularButton>
+                            
                             <RegularButton
+                                buttonStyle="ghost"
                                 aria-label="Delete selected"
                                 title="Delete selected"
-                                className="text-shadow-900 border border-stone-300 bg-white px-2 py-1 text-sm hover:bg-stone-100 active:bg-stone-200 disabled:pointer-events-none disabled:opacity-50 disabled:hover:bg-white"
+                                className="px-2 py-1"
                                 onClick={ deleteSelected }>
                                 Delete selected
                             </RegularButton>

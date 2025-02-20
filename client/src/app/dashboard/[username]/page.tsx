@@ -65,6 +65,7 @@ export default async function DashboardHomePage({ params }: Readonly<DashboardHo
     
     const profile = profileState.response?.data as Profile
     const dashboard = dashboardState.response?.data as Dashboard
+    if (profile.username !== username) return notFound()
     
     const latestWrittenArticle = dashboard.latestWrittenArticle
     const latestThreeSuggestionsList = Array.from(dashboard.latestThreeSuggestions)
@@ -82,7 +83,7 @@ export default async function DashboardHomePage({ params }: Readonly<DashboardHo
                                 href={ `/dashboard/${ username }/articles` }
                                 aria-label="List all my articles"
                                 title="List all my articles"
-                                className="rounded-md px-3.5 py-2.5 font-semibold hover:bg-stone-50 active:bg-stone-100">
+                                buttonStyle="ghost">
                                 Articles
                             </LinkButton>
                         ) }
@@ -91,7 +92,7 @@ export default async function DashboardHomePage({ params }: Readonly<DashboardHo
                                 href={ `/dashboard/${ username }/notices` }
                                 aria-label="List all notices issued by me"
                                 title="List all notices issued by me"
-                                className="rounded-md px-3.5 py-2.5 font-semibold hover:bg-stone-50 active:bg-stone-100">
+                                buttonStyle="ghost">
                                 Notices
                             </LinkButton>
                         ) }
