@@ -58,11 +58,12 @@ export default function DashboardNotificationTable({ notifications }: Readonly<D
     const [ error, setError ] = useState<string | null>(null)
     
     useLayoutEffect(() => {
+        setOriginalNotifications(notifications)
         const isIndeterminate = selectedNotifications.length > 0 && selectedNotifications.length < notifications.length
         setChecked(selectedNotifications.length === notifications.length)
         setIndeterminate(isIndeterminate)
         if (checkbox.current) checkbox.current.indeterminate = isIndeterminate
-    }, [ notifications.length, selectedNotifications ])
+    }, [ notifications, selectedNotifications ])
     
     function toggleAll() {
         setSelectedNotifications(checked || indeterminate ? [] : notifications)
