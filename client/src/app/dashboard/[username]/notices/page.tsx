@@ -1,8 +1,8 @@
 import { Paginated }                   from "@/@types/application"
 import { Notice }                      from "@/@types/notices"
 import getAllOwnIssuedNoticesPaginated from "@/actions/notices/get-all-own-issued-notices-paginated"
+import NewNoticeModal                  from "@/components/modals/new-notice-modal"
 import NavigationPagination            from "@/components/shared/navigation-pagination"
-import RegularButton                   from "@/components/shared/regular-button"
 import { auth }                        from "auth"
 import { Metadata }                    from "next"
 import { permanentRedirect }           from "next/navigation"
@@ -46,7 +46,7 @@ export default async function NoticesPage({ params, searchParams }: Readonly<Not
                         Notices
                     </h1>
 
-                    <RegularButton type="button">New Notice</RegularButton>
+                    <NewNoticeModal />
                 </div>
 
                 <p id="page-description" className="text-shadow-600 mt-2 text-lg/8">

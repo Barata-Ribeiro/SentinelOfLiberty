@@ -59,7 +59,7 @@ export default async function HomePage() {
     const latestArticle = sortedArticles[0]
     const latestArticlesList = sortedArticles.slice(1)
     const latestSuggestionsList = Array.from(latestSuggestions)
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 5)
     
     return (
         <div className="container">
@@ -72,8 +72,8 @@ export default async function HomePage() {
                 <CategoriesSlider categoriesPromise={ availableCategoriesPromise } />
             </Suspense>
 
-            <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_25rem] xl:grid-cols-[1fr_30rem]">
-                <main className="grid gap-y-4 max-lg:order-2">
+            <div className="my-8 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_25rem] xl:grid-cols-[1fr_30rem]">
+                <main className="flex flex-col gap-y-4 max-lg:order-2">
                     <FeaturedArticle latestArticle={ latestArticle } />
 
                     <ul className="grid w-full grid-cols-1 items-start justify-center gap-4 lg:grid-cols-2">
