@@ -12,6 +12,7 @@ import Link                              from "next/link"
 import { useRouter }                     from "next/navigation"
 import { useActionState, useEffect }     from "react"
 import { FaArrowRightToBracket }         from "react-icons/fa6"
+import { LuCircleUserRound, LuLock }     from "react-icons/lu"
 
 export default function LoginForm() {
     const [ formState, formAction, pending ] = useActionState(postAuthLogin, getInitialFormState())
@@ -31,13 +32,22 @@ export default function LoginForm() {
                        name="username"
                        autoComplete="username"
                        aria-autocomplete="list"
-                       required />
+                       icon={ LuCircleUserRound }
+                       iconPlacement="start"
+                       required
+                       aria-required
+            />
+            
             <FormInput label="Password"
                        type="password"
                        name="password"
                        autoComplete="current-password"
                        aria-autocomplete="list"
-                       required />
+                       icon={ LuLock }
+                       iconPlacement="start"
+                       required
+                       aria-required
+            />
 
             <Fieldset className="flex flex-col items-center justify-between gap-4 sm:flex-row">
                 <Field className="flex items-center">
