@@ -50,5 +50,5 @@ export default {
         },
     },
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    plugins: [ require("@tailwindcss/forms")({ strategy: "class" }), require("@tailwindcss/typography") ],
+    plugins: [ require("@tailwindcss/forms"), require("@tailwindcss/typography") ],
 } satisfies Config
