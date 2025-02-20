@@ -87,9 +87,9 @@ export default function NewCommentForm({ parentId }: Readonly<{ parentId?: numbe
                               <InputValidationError errors={ formState.error } />
                           ) }
                           
-                          <FormButton className="w-full" disabled={ pending || !session }>
-                            Post Comment
-                        </FormButton>
+                          <FormButton width="full" pending={ pending } disabled={ !session }>
+                                Post Comment
+                          </FormButton>
                     </form>
                   ) }
             </div>

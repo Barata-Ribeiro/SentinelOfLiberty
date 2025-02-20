@@ -4,7 +4,6 @@ import { ProblemDetails }          from "@/@types/application"
 import patchOwnProfile             from "@/actions/users/patch-own-profile"
 import ApplicationRequestFormError from "@/components/feedback/application-request-form-error"
 import InputValidationError        from "@/components/feedback/input-validation-error"
-import Spinner                     from "@/components/helpers/spinner"
 import FormButton                  from "@/components/shared/form-button"
 import FormInput                   from "@/components/shared/form-input"
 import FormTextarea                from "@/components/shared/form-textarea"
@@ -21,7 +20,7 @@ export default function EditProfileForm() {
                 type="password"
                 label="Current Password"
                 name="currentPassword"
-                autoComplete="current-password webauthn"
+                autoComplete="current-password"
                 aria-autocomplete="list"
                 required
                 aria-required
@@ -61,14 +60,8 @@ export default function EditProfileForm() {
             
             { formState.error && Array.isArray(formState.error) && <InputValidationError errors={ formState.error } /> }
             
-            <FormButton className="w-full justify-center" disabled={ pending }>
-                { pending ? (
-                    <>
-                        <Spinner /> Loading...
-                    </>
-                ) : (
-                      "Save Changes"
-                  ) }
+            <FormButton width="full" pending={ pending }>
+                Save Changes
             </FormButton>
         </form>
     )

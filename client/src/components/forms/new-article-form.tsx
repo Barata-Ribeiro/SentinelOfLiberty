@@ -5,7 +5,6 @@ import { Category }                                          from "@/@types/arti
 import postNewArticle                                        from "@/actions/articles/post-new-article"
 import ApplicationRequestFormError                           from "@/components/feedback/application-request-form-error"
 import InputValidationError                                  from "@/components/feedback/input-validation-error"
-import Spinner                                               from "@/components/helpers/spinner"
 import TextEditorSkeleton                                    from "@/components/layout/skeletons/text-editor-skeleton"
 import FormButton                                            from "@/components/shared/form-button"
 import FormInput                                             from "@/components/shared/form-input"
@@ -37,8 +36,8 @@ export default function NewArticleForm({ categories, suggestionId }: Readonly<Ne
         const category = event.currentTarget.textContent as string
         let updatedSelection: string[]
         
-        if (selectedCategories.includes(category)) updatedSelection = selectedCategories
-            .filter(item => item !== category)
+        if (selectedCategories.includes(category))
+            updatedSelection = selectedCategories.filter(item => item !== category)
         else updatedSelection = [ ...selectedCategories, category ]
         
         setSelectedCategories(updatedSelection)
@@ -199,23 +198,18 @@ export default function NewArticleForm({ categories, suggestionId }: Readonly<Ne
             
             { suggestionId && <input type="hidden" name="suggestionId" value={ suggestionId } /> }
             
-            <div className="mx-auto w-full max-w-2xl">
-                { formState.error && !Array.isArray(formState.error) && (
-                    <ApplicationRequestFormError error={ formState.error as ProblemDetails } />
-                ) }
-                
-                { formState.error && Array.isArray(formState.error) &&
-                    <InputValidationError errors={ formState.error } /> }
-            </div>
-
-            <FormButton className="mx-auto w-full max-w-2xl justify-center" disabled={ pending }>
-                { pending ? (
-                    <>
-                        <Spinner /> Loading...
-                    </>
-                ) : (
-                      "Publish Article"
-                  ) }
+            { formState.error && (
+                <div className="mx-auto w-full max-w-2xl">
+                    { !Array.isArray(formState.error) && (
+                        <ApplicationRequestFormError error={ formState.error as ProblemDetails } />
+                    ) }
+                    
+                    { Array.isArray(formState.error) && <InputValidationError errors={ formState.error } /> }
+                </div>
+            ) }
+            
+            <FormButton width="full" className="mx-auto max-w-2xl" pending={ pending }>
+                Save Changes
             </FormButton>
         </form>
     )

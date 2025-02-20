@@ -4,7 +4,6 @@ import { ProblemDetails }          from "@/@types/application"
 import patchAccountDetails         from "@/actions/users/patch-account-details"
 import ApplicationRequestFormError from "@/components/feedback/application-request-form-error"
 import InputValidationError        from "@/components/feedback/input-validation-error"
-import Spinner                     from "@/components/helpers/spinner"
 import FormButton                  from "@/components/shared/form-button"
 import FormInput                   from "@/components/shared/form-input"
 import FormSwitch                  from "@/components/shared/form-switch"
@@ -71,14 +70,8 @@ export default function EditAccountDetailsForm() {
             
             { formState.error && Array.isArray(formState.error) && <InputValidationError errors={ formState.error } /> }
             
-            <FormButton className="w-full justify-center" disabled={ pending }>
-                { pending ? (
-                    <>
-                        <Spinner /> Loading...
-                    </>
-                ) : (
-                      "Save Changes"
-                  ) }
+            <FormButton width="full" pending={ pending }>
+                Save Changes
             </FormButton>
         </form>
     )

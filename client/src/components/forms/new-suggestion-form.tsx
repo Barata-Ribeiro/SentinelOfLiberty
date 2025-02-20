@@ -4,7 +4,6 @@ import { ProblemDetails }           from "@/@types/application"
 import postNewSuggestion            from "@/actions/suggestions/post-new-suggestion"
 import ApplicationRequestFormError  from "@/components/feedback/application-request-form-error"
 import InputValidationError         from "@/components/feedback/input-validation-error"
-import Spinner                      from "@/components/helpers/spinner"
 import FormButton                   from "@/components/shared/form-button"
 import FormInput                    from "@/components/shared/form-input"
 import FormTextarea                 from "@/components/shared/form-textarea"
@@ -87,14 +86,8 @@ export default function NewSuggestionForm() {
             
             { formState.error && Array.isArray(formState.error) && <InputValidationError errors={ formState.error } /> }
             
-            <FormButton className="w-full" disabled={ pending }>
-                { pending ? (
-                    <>
-                        <Spinner /> Loading...
-                    </>
-                ) : (
-                      "Submit Suggestion"
-                  ) }
+            <FormButton width="full" pending={ pending }>
+                Submit Suggestion
             </FormButton>
         </form>
     )

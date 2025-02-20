@@ -4,7 +4,6 @@ import { ProblemDetails }            from "@/@types/application"
 import postNewNotice                 from "@/actions/notices/post-new-notice"
 import ApplicationRequestFormError   from "@/components/feedback/application-request-form-error"
 import InputValidationError          from "@/components/feedback/input-validation-error"
-import Spinner                       from "@/components/helpers/spinner"
 import FormButton                    from "@/components/shared/form-button"
 import FormInput                     from "@/components/shared/form-input"
 import { getInitialFormState }       from "@/utils/functions"
@@ -45,14 +44,8 @@ export default function NewNoticeForm() {
             
             { formState.error && Array.isArray(formState.error) && <InputValidationError errors={ formState.error } /> }
             
-            <FormButton className="w-full justify-center" disabled={ pending }>
-                { pending ? (
-                    <>
-                        <Spinner /> Loading...
-                    </>
-                ) : (
-                      "Create Notice"
-                  ) }
+            <FormButton width="full" pending={ pending }>
+                Create Notice
             </FormButton>
         </form>
     )

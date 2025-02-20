@@ -4,7 +4,6 @@ import { ProblemDetails }          from "@/@types/application"
 import postAuthRegister            from "@/actions/auth/post-auth-register"
 import ApplicationRequestFormError from "@/components/feedback/application-request-form-error"
 import InputValidationError        from "@/components/feedback/input-validation-error"
-import Spinner                     from "@/components/helpers/spinner"
 import FormButton                  from "@/components/shared/form-button"
 import FormInput                   from "@/components/shared/form-input"
 import { getInitialFormState }     from "@/utils/functions"
@@ -65,14 +64,8 @@ export default function RegisterForm() {
             
             { formState.error && Array.isArray(formState.error) && <InputValidationError errors={ formState.error } /> }
             
-            <FormButton className="w-full" disabled={ pending }>
-                { pending ? (
-                    <>
-                        <Spinner /> Loading...
-                    </>
-                ) : (
-                      "Create Account"
-                  ) }
+            <FormButton width="full" pending={ pending }>
+                Create Account
             </FormButton>
         </form>
     )
