@@ -4,7 +4,6 @@ import { ProblemDetails }          from "@/@types/application"
 import postAuthRegister            from "@/actions/auth/post-auth-register"
 import ApplicationRequestFormError from "@/components/feedback/application-request-form-error"
 import InputValidationError        from "@/components/feedback/input-validation-error"
-import Spinner                     from "@/components/helpers/spinner"
 import FormButton                  from "@/components/shared/form-button"
 import FormInput                   from "@/components/shared/form-input"
 import { getInitialFormState }     from "@/utils/functions"
@@ -16,22 +15,47 @@ export default function RegisterForm() {
     
     return (
         <form action={ formAction } className="space-y-6">
-            <FormInput label="Username" type="text" name="username" required />
-            <FormInput label="Email" type="email" name="email" required />
-            <FormInput label="Display Name" type="text" name="displayName" required />
+            <FormInput
+                type="text"
+                label="Username"
+                name="username"
+                placeholder="johndoe/janedoe"
+                required
+                aria-required
+            />
+
+            <FormInput
+                type="email"
+                label="Email"
+                name="email"
+                placeholder="contact@example.com"
+                required
+                aria-required
+            />
+
+            <FormInput
+                type="text"
+                label="Display Name"
+                name="displayName"
+                placeholder="John/Jane Doe"
+                required
+                aria-required
+            />
 
             <Fieldset className="w-full space-y-4">
-                <Legend className="font-heading text-lg font-bold text-shadow-800">Security</Legend>
+                <Legend className="font-heading text-shadow-800 text-lg font-bold">Security</Legend>
                 <FormInput
-                    label="Password"
                     type="password"
+                    label="Password"
                     name="password"
+                    placeholder="********"
                     description="Password must contain at least one digit, one lowercase letter, one uppercase letter, one special character and no whitespace."
                     autoComplete="new-password"
                     aria-autocomplete="list"
                     required
+                    aria-required
                 />
-                <FormInput label="Confirm Password" type="password" name="confirmPassword" required />
+                <FormInput label="Confirm Password" type="password" name="confirmPassword" required aria-required />
             </Fieldset>
             
             { formState.error && !Array.isArray(formState.error) && (
@@ -40,14 +64,8 @@ export default function RegisterForm() {
             
             { formState.error && Array.isArray(formState.error) && <InputValidationError errors={ formState.error } /> }
             
-            <FormButton className="w-full" disabled={ pending }>
-                { pending ? (
-                    <>
-                        <Spinner /> Loading...
-                    </>
-                ) : (
-                      "Create Account"
-                  ) }
+            <FormButton width="full" pending={ pending }>
+                Create Account
             </FormButton>
         </form>
     )

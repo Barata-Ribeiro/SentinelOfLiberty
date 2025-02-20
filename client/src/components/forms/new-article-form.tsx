@@ -1,25 +1,19 @@
 "use client"
 
-import { ProblemDetails }                                                   from "@/@types/application"
-import { Category }                                                         from "@/@types/articles"
-import postNewArticle                                                       from "@/actions/articles/post-new-article"
-import ApplicationRequestFormError
-                                                                            from "@/components/feedback/application-request-form-error"
-import InputValidationError
-                                                                            from "@/components/feedback/input-validation-error"
-import Spinner                                                              from "@/components/helpers/spinner"
-import TextEditorSkeleton
-                                                                            from "@/components/layout/skeletons/text-editor-skeleton"
-import FormButton                                                           from "@/components/shared/form-button"
-import FormInput                                                            from "@/components/shared/form-input"
-import FormTextarea                                                         from "@/components/shared/form-textarea"
-import { getInitialFormState }                                              from "@/utils/functions"
-import { Button, Field, Fieldset, Legend }                                  from "@headlessui/react"
-import dynamic                                                              from "next/dynamic"
-import { ChangeEvent, KeyboardEvent, MouseEvent, useActionState, useState } from "react"
-import { FaCircleExclamation }                                              from "react-icons/fa6"
-import placeholderImage
-                                                                            from "../../../public/image-error-placeholder.svg"
+import { ProblemDetails }                                    from "@/@types/application"
+import { Category }                                          from "@/@types/articles"
+import postNewArticle                                        from "@/actions/articles/post-new-article"
+import ApplicationRequestFormError                           from "@/components/feedback/application-request-form-error"
+import InputValidationError                                  from "@/components/feedback/input-validation-error"
+import TextEditorSkeleton                                    from "@/components/layout/skeletons/text-editor-skeleton"
+import FormButton                                            from "@/components/shared/form-button"
+import FormInput                                             from "@/components/shared/form-input"
+import FormTextarea                                          from "@/components/shared/form-textarea"
+import { getInitialFormState }                               from "@/utils/functions"
+import { Button, Field, Fieldset, Legend }                   from "@headlessui/react"
+import dynamic                                               from "next/dynamic"
+import { ChangeEvent, MouseEvent, useActionState, useState } from "react"
+import placeholderImage                                      from "../../../public/image-error-placeholder.svg"
 
 const TextEditor = dynamic(() => import("@/components/helpers/text-editor"), {
     ssr: false,
@@ -36,30 +30,28 @@ export default function NewArticleForm({ categories, suggestionId }: Readonly<Ne
     const [ formState, formAction, pending ] = useActionState(postNewArticle, getInitialFormState())
     const [ imgUrl, setImgUrl ] = useState("")
     const [ selectedCategories, setSelectedCategories ] = useState<string[]>([])
+    const [ categoriesInput, setCategoriesInput ] = useState("")
     
     function handleCategorySelection(event: MouseEvent<HTMLButtonElement>) {
         const category = event.currentTarget.textContent as string
-        setSelectedCategories(prevState => {
-            if (prevState.includes(category)) return prevState.filter(item => item !== category)
-            return [ ...prevState.filter(item => item), category ]
-        })
+        let updatedSelection: string[]
+        
+        if (selectedCategories.includes(category))
+            updatedSelection = selectedCategories.filter(item => item !== category)
+        else updatedSelection = [ ...selectedCategories, category ]
+        
+        setSelectedCategories(updatedSelection)
+        setCategoriesInput(updatedSelection.join(", "))
     }
     
     function handleCategoryInputChange(event: ChangeEvent<HTMLInputElement>) {
-        const input = event.target.value
-        const inputCategories = input.split(",").map(item => item.trim())
-        
-        setSelectedCategories(prevState => {
-            const newCategories = inputCategories.filter(cat => !prevState.includes(cat))
-            const removedCategories = prevState.filter(cat => !inputCategories.includes(cat))
-            return [ ...prevState.filter(cat => !removedCategories.includes(cat)), ...newCategories ]
-        })
-    }
-    
-    function handleCategoryInputKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-        if (event.key === "Backspace" && !event.currentTarget.value) {
-            setSelectedCategories(prevState => prevState.slice(0, prevState.length - 1))
-        }
+        const newValue = event.target.value
+        setCategoriesInput(newValue)
+        const inputCategories = newValue
+            .split(",")
+            .map(item => item.trim().toLowerCase())
+            .filter(Boolean)
+        setSelectedCategories(inputCategories)
     }
     
     return (
@@ -72,9 +64,35 @@ export default function NewArticleForm({ categories, suggestionId }: Readonly<Ne
                     </p>
                 </Legend>
 
-                <FormInput label="Title" name="title" type="text" required aria-required />
-                <FormInput label="Sub Title" name="subTitle" type="text" required aria-required />
-                <FormTextarea label="Summary" name="summary" maxLength={ 250 } required aria-required />
+                <FormInput
+                    type="text"
+                    label="Title"
+                    name="title"
+                    placeholder="e.g., An opinion on the current state of the world"
+                    required
+                    aria-required
+                />
+
+                <FormInput
+                    label="Sub Title"
+                    name="subTitle"
+                    type="text"
+                    placeholder="e.g., An In-Depth Look at Recent Developments"
+                    required
+                    aria-required
+                />
+
+                <FormTextarea
+                    label="Summary"
+                    name="summary"
+                    rows={ 8 }
+                    minLength={ 50 }
+                    maxLength={ 250 }
+                    placeholder="Write your summary here..."
+                    description="Use at least 50 characters and a maximum of 250 characters."
+                    required
+                    aria-required
+                />
             </Fieldset>
 
             <Fieldset className="mx-auto w-full max-w-2xl space-y-3">
@@ -92,10 +110,12 @@ export default function NewArticleForm({ categories, suggestionId }: Readonly<Ne
 
             <Field className="mx-auto w-full max-w-2xl space-y-3">
                 <FormInput
+                    type="url"
                     label="Image"
                     name="mediaUrl"
-                    type="url"
                     pattern="https://.*"
+                    placeholder="https://example.com/image.jpg"
+                    description="Add the URL of the image you want to use as a cover for your article."
                     required
                     aria-required
                     onChange={ event => setImgUrl(event.target.value) }
@@ -120,29 +140,30 @@ export default function NewArticleForm({ categories, suggestionId }: Readonly<Ne
             </Field>
 
             <Fieldset className="mx-auto w-full max-w-2xl">
-                <FormTextarea label="References" name="references" required aria-required />
-                <Legend className="text-shadow-400 mt-2 flex items-start gap-x-2 text-xs">
-                    <FaCircleExclamation aria-hidden="true" className="size-4" />
-                    Add the references of your article in case you used any external sources. Separate each reference
-                    with a comma.
-                </Legend>
+                <FormTextarea
+                    label="References"
+                    name="references"
+                    rows={ 8 }
+                    placeholder="Write your references here..."
+                    description="Add the references of your article in case you used any external sources. Separate each reference
+                    with a comma."
+                    required
+                    aria-required
+                />
             </Fieldset>
 
             <Fieldset className="mx-auto w-full max-w-2xl">
                 <FormInput
+                    type="text"
                     label="Categories"
                     name="categories"
-                    className="capitalize"
+                    placeholder="e.g., News, Politics, Technology"
+                    description="Add the categories of your article. Separate each category with a comma."
                     onChange={ handleCategoryInputChange }
-                    onKeyDown={ handleCategoryInputKeyDown }
-                    value={ selectedCategories.join(", ") }
+                    value={ categoriesInput }
                     required
                     aria-required
                 />
-                <Legend className="text-shadow-400 mt-2 flex items-start gap-x-2 text-xs">
-                    <FaCircleExclamation aria-hidden="true" className="size-4" />
-                    Add the categories of your article. Separate each category with a comma.
-                </Legend>
 
                 <div>
                     <h3 className="mt-6 flex flex-row flex-nowrap items-center">
@@ -177,23 +198,18 @@ export default function NewArticleForm({ categories, suggestionId }: Readonly<Ne
             
             { suggestionId && <input type="hidden" name="suggestionId" value={ suggestionId } /> }
             
-            <div className="mx-auto w-full max-w-2xl">
-                { formState.error && !Array.isArray(formState.error) && (
-                    <ApplicationRequestFormError error={ formState.error as ProblemDetails } />
-                ) }
-                
-                { formState.error && Array.isArray(formState.error) &&
-                    <InputValidationError errors={ formState.error } /> }
-            </div>
-
-            <FormButton className="mx-auto w-full max-w-2xl justify-center" disabled={ pending }>
-                { pending ? (
-                    <>
-                        <Spinner /> Loading...
-                    </>
-                ) : (
-                      "Publish Article"
-                  ) }
+            { formState.error && (
+                <div className="mx-auto w-full max-w-2xl">
+                    { !Array.isArray(formState.error) && (
+                        <ApplicationRequestFormError error={ formState.error as ProblemDetails } />
+                    ) }
+                    
+                    { Array.isArray(formState.error) && <InputValidationError errors={ formState.error } /> }
+                </div>
+            ) }
+            
+            <FormButton width="full" className="mx-auto max-w-2xl" pending={ pending }>
+                Save Changes
             </FormButton>
         </form>
     )

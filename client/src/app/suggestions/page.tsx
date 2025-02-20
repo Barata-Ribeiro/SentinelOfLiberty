@@ -41,13 +41,14 @@ export default async function SuggestionsPage({ searchParams }: Readonly<Suggest
                         <LinkButton
                             href="/suggestions/write"
                             aria-label="Start writing your suggestions"
-                            className="bg-marigold-600 text-marigold-50 hover:bg-marigold-500 active:bg-marigold-700 px-3.5 py-2.5 shadow-xs">
+                            buttonStyle="colored">
                             Get started
                         </LinkButton>
+                        
                         <LinkButton
                             href="/suggestions/rules"
                             aria-label="Learn more about the rules for writing suggestions"
-                            className="text-shadow-900 hover:text-shadow-800 active:text-shadow-700 px-3.5 py-2.5 hover:bg-stone-100 active:bg-stone-200">
+                            buttonStyle="ghost">
                             Learn more <span aria-hidden="true">&rarr;</span>
                         </LinkButton>
                     </div>

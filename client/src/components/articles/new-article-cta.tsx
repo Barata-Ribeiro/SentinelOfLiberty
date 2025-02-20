@@ -34,14 +34,14 @@ export default function NewArticleCta() {
                     <LinkButton
                         href="/articles/write"
                         aria-label="Start writing your articles"
-                        className="bg-marigold-600 text-marigold-50 hover:bg-marigold-500 active:bg-marigold-700 px-3.5 py-2.5 shadow-xs">
+                        buttonStyle="colored">
                         Get started
                     </LinkButton>
                     <LinkButton
                         href="/articles/rules"
                         aria-label="Learn more about the rules for writing articles"
-                        className="text-shadow-100 hover:text-shadow-200 active:text-shadow-300 active:bg-marigold-700 px-3.5 py-2.5">
-                        Learn more <span aria-hidden="true">&rarr;</span>
+                        buttonStyle="inverted-ghost">
+                        Learn more <span aria-hidden="true" className="text-inherit">&rarr;</span>
                     </LinkButton>
                 </div>
             </div>

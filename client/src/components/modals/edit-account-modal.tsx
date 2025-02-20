@@ -13,7 +13,11 @@ export default function EditAccountModal() {
     
     return (
         <>
-            <RegularButton onClick={ () => setOpen(true) } aria-label="Edit profile">
+            <RegularButton
+                buttonStyle="colored"
+                onClick={ () => setOpen(true) }
+                aria-label="Edit profile"
+                title="Edit profile">
                 Edit Profile
             </RegularButton>
 

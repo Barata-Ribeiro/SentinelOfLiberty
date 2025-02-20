@@ -3,7 +3,6 @@
 import postAuthLogin                     from "@/actions/auth/post-auth-login"
 import ApplicationRequestFormError       from "@/components/feedback/application-request-form-error"
 import InputValidationError              from "@/components/feedback/input-validation-error"
-import Spinner                           from "@/components/helpers/spinner"
 import FormButton                        from "@/components/shared/form-button"
 import FormInput                         from "@/components/shared/form-input"
 import { getInitialFormState }           from "@/utils/functions"
@@ -12,6 +11,7 @@ import Link                              from "next/link"
 import { useRouter }                     from "next/navigation"
 import { useActionState, useEffect }     from "react"
 import { FaArrowRightToBracket }         from "react-icons/fa6"
+import { LuCircleUserRound, LuLock }     from "react-icons/lu"
 
 export default function LoginForm() {
     const [ formState, formAction, pending ] = useActionState(postAuthLogin, getInitialFormState())
@@ -26,18 +26,29 @@ export default function LoginForm() {
     
     return (
         <form action={ formAction } className="space-y-6">
-            <FormInput label="Username"
-                       type="text"
-                       name="username"
-                       autoComplete="username"
-                       aria-autocomplete="list"
-                       required />
-            <FormInput label="Password"
-                       type="password"
-                       name="password"
-                       autoComplete="current-password"
-                       aria-autocomplete="list"
-                       required />
+            <FormInput
+                label="Username"
+                type="text"
+                name="username"
+                autoComplete="username"
+                aria-autocomplete="list"
+                icon={ LuCircleUserRound }
+                iconPlacement="start"
+                required
+                aria-required
+            />
+
+            <FormInput
+                label="Password"
+                type="password"
+                name="password"
+                autoComplete="current-password"
+                aria-autocomplete="list"
+                icon={ LuLock }
+                iconPlacement="start"
+                required
+                aria-required
+            />
 
             <Fieldset className="flex flex-col items-center justify-between gap-4 sm:flex-row">
                 <Field className="flex items-center">
@@ -45,9 +56,9 @@ export default function LoginForm() {
                         id="rememberMe"
                         name="rememberMe"
                         type="checkbox"
-                        className="size-4 rounded-sm border-stone-300 text-marigold-600 focus:ring-marigold-600"
+                        className="text-marigold-600 focus:ring-marigold-600 size-4 rounded-sm border-stone-300"
                     />
-                    <Label htmlFor="rememberMe" className="ml-3 block text-sm leading-6 text-shadow-900">
+                    <Label htmlFor="rememberMe" className="text-shadow-900 ml-3 block text-sm leading-6">
                         Remember me
                     </Label>
                 </Field>
@@ -55,7 +66,7 @@ export default function LoginForm() {
                 <div className="text-sm leading-6">
                     <Link
                         href="/auth/reset-password"
-                        className="font-semibold text-marigold-600 hover:text-marigold-500 active:text-marigold-700">
+                        className="text-marigold-600 hover:text-marigold-500 active:text-marigold-700 font-semibold">
                         Forgot password?
                     </Link>
                 </div>
@@ -67,16 +78,8 @@ export default function LoginForm() {
             
             { formState.error && Array.isArray(formState.error) && <InputValidationError errors={ formState.error } /> }
             
-            <FormButton className="w-full" disabled={ pending }>
-                { pending ? (
-                    <>
-                        <Spinner /> Loading...
-                    </>
-                ) : (
-                      <>
-                        Login <FaArrowRightToBracket aria-hidden="true" className="size-4" />
-                    </>
-                  ) }
+            <FormButton width="full" pending={ pending }>
+                Login <FaArrowRightToBracket aria-hidden="true" className="size-4 stroke-2" />
             </FormButton>
         </form>
     )

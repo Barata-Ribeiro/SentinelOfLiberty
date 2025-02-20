@@ -4,7 +4,6 @@ import { ProblemDetails }          from "@/@types/application"
 import patchOwnProfile             from "@/actions/users/patch-own-profile"
 import ApplicationRequestFormError from "@/components/feedback/application-request-form-error"
 import InputValidationError        from "@/components/feedback/input-validation-error"
-import Spinner                     from "@/components/helpers/spinner"
 import FormButton                  from "@/components/shared/form-button"
 import FormInput                   from "@/components/shared/form-input"
 import FormTextarea                from "@/components/shared/form-textarea"
@@ -18,20 +17,28 @@ export default function EditProfileForm() {
     return (
         <form action={ formAction } className="mt-6 space-y-6">
             <FormInput
-                label="Current Password"
                 type="password"
+                label="Current Password"
                 name="currentPassword"
                 autoComplete="current-password"
                 aria-autocomplete="list"
                 required
+                aria-required
             />
 
             <Fieldset className="w-full space-y-4">
                 <Legend className="font-heading text-shadow-800 text-lg font-bold">Account Information</Legend>
-                <FormInput label="Username" type="text" name="username" />
-                <FormInput label="Email" type="email" name="email" />
-                <FormInput label="Display Name" type="text" name="displayName" />
-                <FormTextarea label="Biography" name="biography" maxLength={ 160 } />
+                <FormInput type="text" label="Username" name="username" />
+                <FormInput type="email" label="Email" name="email" />
+                <FormInput type="text" label="Display Name" name="displayName" />
+                <FormTextarea
+                    label="Biography"
+                    name="biography"
+                    rows={ 2 }
+                    maxLength={ 160 }
+                    placeholder="Describe yourself here..."
+                    description="Use a maximum of 160 characters to describe yourself."
+                />
             </Fieldset>
 
             <Fieldset className="w-full space-y-4">
@@ -53,14 +60,8 @@ export default function EditProfileForm() {
             
             { formState.error && Array.isArray(formState.error) && <InputValidationError errors={ formState.error } /> }
             
-            <FormButton className="w-full justify-center" disabled={ pending }>
-                { pending ? (
-                    <>
-                        <Spinner /> Loading...
-                    </>
-                ) : (
-                      "Save Changes"
-                  ) }
+            <FormButton width="full" pending={ pending }>
+                Save Changes
             </FormButton>
         </form>
     )

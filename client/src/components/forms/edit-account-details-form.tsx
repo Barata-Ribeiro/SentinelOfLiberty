@@ -4,10 +4,8 @@ import { ProblemDetails }          from "@/@types/application"
 import patchAccountDetails         from "@/actions/users/patch-account-details"
 import ApplicationRequestFormError from "@/components/feedback/application-request-form-error"
 import InputValidationError        from "@/components/feedback/input-validation-error"
-import Spinner                     from "@/components/helpers/spinner"
 import FormButton                  from "@/components/shared/form-button"
 import FormInput                   from "@/components/shared/form-input"
-import FormInputWithIcon           from "@/components/shared/form-input-with-icon"
 import FormSwitch                  from "@/components/shared/form-switch"
 import { getInitialFormState }     from "@/utils/functions"
 import { Fieldset, Legend }        from "@headlessui/react"
@@ -25,10 +23,10 @@ export default function EditAccountDetailsForm() {
     return (
         <form action={ formAction } className="mt-6 space-y-6">
             <FormInput
-                label="Current Password"
                 type="password"
+                label="Current Password"
                 name="currentPassword"
-                autoComplete="current-password"
+                autoComplete="current-password webauthn"
                 aria-autocomplete="list"
                 required
                 aria-required
@@ -42,22 +40,18 @@ export default function EditAccountDetailsForm() {
                     <FormInput type="text" label="Last Name" name="lastName" />
                 </div>
             </Fieldset>
-
-            <FormInputWithIcon
-                name="website"
-                type="url"
-                pattern="https://.*"
-                placeholder="Your website"
-                reactIconAction={ LuLink }
-            />
+            
+            <FormInput type="url"
+                       label="Your website"
+                       pattern="https://.*"
+                       placeholder="https://example.com"
+                       icon={ LuLink }
+                       iconPlacement="start" />
 
             <FormInput
-                label="Birth Date"
                 type="date"
+                label="Birth Date"
                 name="birthDate"
-                defaultValue={
-                    new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split("T")[0]
-                }
                 max={ new Date().toISOString().split("T")[0] }
                 autoComplete="bday"
                 aria-autocomplete="list"
@@ -76,14 +70,8 @@ export default function EditAccountDetailsForm() {
             
             { formState.error && Array.isArray(formState.error) && <InputValidationError errors={ formState.error } /> }
             
-            <FormButton className="w-full justify-center" disabled={ pending }>
-                { pending ? (
-                    <>
-                        <Spinner /> Loading...
-                    </>
-                ) : (
-                      "Save Changes"
-                  ) }
+            <FormButton width="full" pending={ pending }>
+                Save Changes
             </FormButton>
         </form>
     )

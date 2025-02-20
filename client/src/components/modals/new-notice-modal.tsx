@@ -13,10 +13,14 @@ export default function NewNoticeModal() {
     
     return (
         <>
-            <RegularButton type="button" aria-label="New Notice" title="New Notice" onClick={ () => setOpen(true) }>
+            <RegularButton
+                buttonStyle="colored"
+                onClick={ () => setOpen(true) }
+                aria-label="New Notice"
+                title="New Notice">
                 New Notice
             </RegularButton>
-            
+
             <Dialog open={ open } onClose={ setOpen } className="relative z-10">
                 <DialogBackdrop
                     transition
@@ -33,7 +37,7 @@ export default function NewNoticeModal() {
                                     New Notice
                                 </DialogTitle>
                             </DialogHeader>
-                            
+
                             <NewNoticeForm />
                         </DialogPanel>
                     </div>

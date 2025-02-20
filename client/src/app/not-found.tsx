@@ -21,14 +21,13 @@ export default async function NotFoundPage() {
                     Sorry, we couldn’t find the page you’re looking for.
                 </p>
                 <div className="mt-10 flex flex-col items-center justify-center gap-6 sm:flex-row">
-                    <LinkButton
-                        href="/"
-                        className="bg-marigold-600 text-marigold-50 hover:bg-marigold-500 active:bg-marigold-700 px-3.5 py-2.5 shadow-xs">
+                    <LinkButton href="/" buttonStyle="colored">
                         Go back home
                     </LinkButton>
+
                     <LinkButton
                         href={ session ? `/dashboard/${ session.user.username }` : "/auth/login" }
-                        className="text-shadow-900 hover:text-shadow-800 active:text-shadow-700 px-3.5 py-2.5 hover:bg-stone-100 active:bg-stone-200">
+                        buttonStyle="ghost">
                         { session ? (
                             <>
                                 Your Dashboard <span aria-hidden="true">&rarr;</span>
