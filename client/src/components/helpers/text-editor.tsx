@@ -42,7 +42,7 @@ export const configuredExtensions: Extensions = [
                    }),
     Placeholder.configure({
                               placeholder: "Start writing your article...",
-                              emptyEditorClass: tw`before:text-shadow-400 relative before:pointer-events-none before:float-left before:h-0 before:content-[attr(data-placeholder)]`,
+                              emptyEditorClass: tw`before:text-shadow-300 relative before:pointer-events-none before:float-left before:h-0 before:content-[attr(data-placeholder)]`,
                           }),
     TextAlign.configure({
                             types: [ "heading", "paragraph" ],
@@ -70,7 +70,7 @@ export default function TextEditor({ onUpdate }: Readonly<TextEditorProps>) {
                                  editorProps: {
                                      attributes: {
                                          spellcheck: "false",
-                                         class: tw`prose prose-sm sm:prose-base block max-h-96 min-h-96 !max-w-none overflow-auto focus:outline-none`,
+                                         class: tw`prose prose-sm sm:prose-base text-shadow-900 dark:text-shadow-50 block max-h-96 min-h-96 !max-w-none overflow-auto focus:outline-none`,
                                      },
                                  },
                                  onUpdate: ({ editor }) => onUpdate(editor.getHTML()),
@@ -82,7 +82,7 @@ export default function TextEditor({ onUpdate }: Readonly<TextEditorProps>) {
                              })
     
     return (
-        <div className="grid w-full gap-4 divide-y divide-stone-200 rounded-md border border-stone-200 p-4 shadow-xs">
+        <div className="grid w-full gap-4 divide-y divide-stone-200 rounded-md border border-stone-200 bg-transparent p-4 ring shadow-sm ring-transparent transition-all duration-300 ease-in outline-none hover:border-stone-800 hover:ring-stone-300 focus:border-stone-800 focus:ring-stone-300 focus:outline-none">
             <ToolbarEditor editor={ editor } />
             <EditorContent style={ { whiteSpace: "pre-line" } } editor={ editor } />
         </div>
