@@ -18,20 +18,28 @@ export default function EditProfileForm() {
     return (
         <form action={ formAction } className="mt-6 space-y-6">
             <FormInput
-                label="Current Password"
                 type="password"
+                label="Current Password"
                 name="currentPassword"
-                autoComplete="current-password"
+                autoComplete="current-password webauthn"
                 aria-autocomplete="list"
                 required
+                aria-required
             />
 
             <Fieldset className="w-full space-y-4">
                 <Legend className="font-heading text-shadow-800 text-lg font-bold">Account Information</Legend>
-                <FormInput label="Username" type="text" name="username" />
-                <FormInput label="Email" type="email" name="email" />
-                <FormInput label="Display Name" type="text" name="displayName" />
-                <FormTextarea label="Biography" name="biography" maxLength={ 160 } />
+                <FormInput type="text" label="Username" name="username" />
+                <FormInput type="email" label="Email" name="email" />
+                <FormInput type="text" label="Display Name" name="displayName" />
+                <FormTextarea
+                    label="Biography"
+                    name="biography"
+                    rows={ 2 }
+                    maxLength={ 160 }
+                    placeholder="Describe yourself here..."
+                    description="Use a maximum of 160 characters to describe yourself."
+                />
             </Fieldset>
 
             <Fieldset className="w-full space-y-4">
