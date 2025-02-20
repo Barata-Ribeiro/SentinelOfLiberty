@@ -14,9 +14,10 @@ export default function EditAccountDetailsModal() {
     return (
         <>
             <RegularButton
+                buttonStyle="ghost"
                 onClick={ () => setOpen(true) }
-                className="text-shadow-900 border border-stone-300 bg-white hover:bg-stone-100 active:bg-stone-200"
-                aria-label="Check account details">
+                aria-label="Check account details"
+                title="Check account details">
                 Account Details
             </RegularButton>
 
