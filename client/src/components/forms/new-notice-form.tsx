@@ -20,9 +20,24 @@ export default function NewNoticeForm() {
     }, [ formState.ok, router ])
     
     return (
-        <form action={ formAction } className="space-y-6 mt-6">
-            <FormInput label="Title" name="title" minLength={ 10 } maxLength={ 100 } />
-            <FormInput label="Message" name="message" maxLength={ 100 } required />
+        <form action={ formAction } className="mt-6 space-y-6">
+            <FormInput
+                label="Title"
+                name="title"
+                minLength={ 10 }
+                maxLength={ 100 }
+                placeholder="Enter a title for the notice"
+                description="Use at least 10 characters and a maximum of 100 characters."
+            />
+            <FormInput
+                label="Message"
+                name="message"
+                maxLength={ 100 }
+                placeholder="Enter a message for the notice"
+                description="Use a maximum of 100 characters."
+                required
+                aria-required
+            />
             
             { formState.error && !Array.isArray(formState.error) && (
                 <ApplicationRequestFormError error={ formState.error as ProblemDetails } />

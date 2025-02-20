@@ -67,8 +67,13 @@ export default function NewCommentForm({ parentId }: Readonly<{ parentId?: numbe
                         <FormTextarea
                             label="Leave a comment"
                             name="body"
+                            rows={ 5 }
                             minLength={ 5 }
                             maxLength={ 400 }
+                            placeholder="Enter your comment here..."
+                            description="Use at least 5 characters and a maximum of 400 characters."
+                            required
+                            aria-required
                             onChange={ event => setNewComment(event.target.value) }
                         />
                         <input type="hidden" name="articleId" value={ params.id } />
