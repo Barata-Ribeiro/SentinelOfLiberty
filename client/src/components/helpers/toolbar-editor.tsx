@@ -155,9 +155,9 @@ export default function ToolbarEditor({ editor }: Readonly<{ editor: Editor | nu
                     data-active={ isActive }
                     title={ `Activate ${ name }` }
                     aria-label={ `Activate ${ name }` }
-                    className="bg-marigold-100 hover:bg-marigold-200 active:bg-marigold-300 text-marigold-900 data-[active=true]:text-marigold-50 data-[active=true]:bg-marigold-900 cursor-pointer rounded-md p-2"
+                    className="from-marigold-500 to-marigold-600 border-marigold-500 text-shadow-50 inline-grid p-2 place-items-center rounded-md border bg-gradient-to-tr text-center align-middle font-sans cursor-pointer text-sm leading-none font-medium transition-all duration-300 ease-in select-none hover:brightness-110 focus:shadow-none"
                     onClick={ action }>
-                    <Icon aria-hidden="true" className="size-4" />
+                    <Icon aria-hidden="true" className="size-4 stroke-2" />
                 </Button>
             )) }
         </div>

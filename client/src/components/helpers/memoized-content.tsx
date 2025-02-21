@@ -18,7 +18,7 @@ export default function MemoizedContent({ html }: MemoizedContentProps) {
                                  extensions: [ ...configuredExtensions ],
                                  editorProps: {
                                      attributes: {
-                                         class: tw`prose prose-sm sm:prose-base block !max-w-none`,
+                                         class: tw`prose prose-sm sm:prose-base prose-stone text-shadow-900 dark:prose-invert block !max-w-none`,
                                      },
                                  },
                                  immediatelyRender: false,
