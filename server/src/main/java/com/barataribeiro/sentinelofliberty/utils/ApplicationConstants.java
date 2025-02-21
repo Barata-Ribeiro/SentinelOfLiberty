@@ -24,6 +24,7 @@ public final class ApplicationConstants {
             // -- Application
             "/",
             "/h2-console/**",
+            "/actuator/**",
             "/ws/**",
             "/api/v1/auth/**",
             "/api/v1/*/public/**",
