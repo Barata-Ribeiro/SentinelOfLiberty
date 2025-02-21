@@ -5,7 +5,9 @@ import NewNoticeModal                  from "@/components/modals/new-notice-moda
 import NavigationPagination            from "@/components/shared/navigation-pagination"
 import { auth }                        from "auth"
 import { Metadata }                    from "next"
+import Link                            from "next/link"
 import { permanentRedirect }           from "next/navigation"
+import { LuChevronDown, LuChevronUp }  from "react-icons/lu"
 
 interface NoticesPageProps {
     params: Promise<{ username: string }>
@@ -15,6 +17,57 @@ interface NoticesPageProps {
 export const metadata: Metadata = {
     title: "My Notices",
     description: "Listing all the notices issued by you on this platform.",
+}
+
+function TableHeader(props: { href: string; direction: string; orderBy: string; href1: string; href2: string }) {
+    return (
+        <thead>
+            <tr>
+                <th scope="col" className="text-shadow-900 py-3.5 pr-3 pl-4 text-left text-sm font-semibold sm:pl-0">
+                    <Link href={ props.href } className="group inline-flex">
+                        Id{ " " }
+                        <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
+                            { props.direction === "ASC" && props.orderBy === "id" ? (
+                                <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
+                            ) : (
+                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                              ) }
+                        </span>
+                    </Link>
+                </th>
+                <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
+                    <Link href={ props.href1 } className="group inline-flex">
+                        Title{ " " }
+                        <span className="text-shadow-900 ml-2 flex-none rounded-sm bg-stone-100 group-hover:bg-stone-200">
+                            { props.direction === "ASC" && props.orderBy === "title" ? (
+                                <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
+                            ) : (
+                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                              ) }
+                        </span>
+                    </Link>
+                </th>
+                <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
+                    Message
+                </th>
+                <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
+                    <Link href={ props.href2 } className="group inline-flex">
+                        Status{ " " }
+                        <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
+                            { props.direction === "ASC" && props.orderBy === "isActive" ? (
+                                <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
+                            ) : (
+                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                              ) }
+                        </span>
+                    </Link>
+                </th>
+                <th scope="col" className="relative py-3.5 pr-0 pl-3">
+                    <span className="sr-only">Edit</span>
+                </th>
+            </tr>
+        </thead>
+    )
 }
 
 export default async function NoticesPage({ params, searchParams }: Readonly<NoticesPageProps>) {
@@ -34,10 +87,21 @@ export default async function NoticesPage({ params, searchParams }: Readonly<Not
     const pagination = noticeState.response?.data as Paginated<Notice>
     const content = pagination.content ?? []
     
+    const baseUrl = `/dashboard/${ username }/notices`
+    
+    function buildUrl(item: string, direction: string) {
+        let orderUrl = `${ baseUrl }?orderBy=${ item }`
+        if (direction === "ASC") orderUrl += "&direction=ASC"
+        return orderUrl
+    }
+    
+    // TODO: Implement the EditNoticeModal component
+    
     return (
-        <div className="flex flex-col justify-between h-full"
-             aria-labelledby="page-title"
-             aria-describedby="page-description">
+        <div
+            className="flex h-full min-h-0 flex-col justify-between"
+            aria-labelledby="page-title"
+            aria-describedby="page-description">
             <header className="mt-4 sm:mt-8">
                 <div className="flex flex-wrap items-center justify-between">
                     <h1
@@ -53,12 +117,56 @@ export default async function NoticesPage({ params, searchParams }: Readonly<Not
                     There are currently { pagination.page.totalElements } notices(s) issued by you. Manage them here.
                 </p>
             </header>
-            
-            <main className="mt-8 -mb-4 h-full flow-root border-t border-stone-200 pt-8">
-                { content.length <= 0 && (
+
+            <main className="mt-8 flow-root h-full border-t border-stone-200 pt-8">
+                <div className="-mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                        <table className="min-w-full divide-y divide-stone-300">
+                            <TableHeader
+                                href={ buildUrl("id", orderBy === "id" && direction === "ASC" ? "DESC" : "ASC") }
+                                direction={ direction }
+                                orderBy={ orderBy }
+                                href1={ buildUrl("title", orderBy === "title" && direction === "ASC" ? "DESC" : "ASC") }
+                                href2={ buildUrl(
+                                    "isActive",
+                                    orderBy === "isActive" && direction === "ASC" ? "DESC" : "ASC",
+                                ) }
+                            />
+
+                            <tbody className="divide-y divide-stone-200 bg-white">
+                                { content.map(notice => (
+                                    <tr key={ notice.id }>
+                                        <td className="text-shadow-900 py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap sm:pl-0">
+                                            { notice.id }
+                                        </td>
+                                        <td className="text-shadow-500 px-3 py-4 text-sm whitespace-nowrap">
+                                            { notice.title ?? "N/A" }
+                                        </td>
+                                        <td className="text-shadow-500 px-3 py-4 text-sm whitespace-nowrap">
+                                            { notice.message }
+                                        </td>
+                                        <td className="text-shadow-500 px-3 py-4 text-sm whitespace-nowrap">
+                                            { notice.isActive ? "Active" : "Inactive" }
+                                        </td>
+                                        <td className="relative py-4 pr-4 pl-3 text-right text-sm whitespace-nowrap sm:pr-0">
+                                            <Link
+                                                href="#"
+                                                className="text-marigold-600 hover:text-marigold-700 active:text-marigold-800">
+                                                Edit{ " " }
+                                                <span className="sr-only">, { notice.title ?? "Current Notice" }</span>
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                )) }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                { pagination.page.totalElements <= 0 && (
                     <div className="flex h-96 items-center justify-center">
-                            <p className="text-shadow-500 text-lg">No notifications available.</p>
-                        </div>
+                        <p className="text-shadow-500 text-lg">No notices issued.</p>
+                    </div>
                 ) }
             </main>
 
