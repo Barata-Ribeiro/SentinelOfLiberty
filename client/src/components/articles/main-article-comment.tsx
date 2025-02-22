@@ -1,10 +1,13 @@
 "use client"
 
 import { Comment }                                               from "@/@types/comments"
+import CommentDeleteButton
+                                                                 from "@/components/articles/comment/comment-delete-button"
 import { formatCommentDate }                                     from "@/utils/functions"
 import { Button, Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react"
+import { useSession }                                            from "next-auth/react"
 import { useEffect, useState }                                   from "react"
-import { FaChevronDown, FaCircleCheck }                          from "react-icons/fa6"
+import { FaChevronDown, FaCircleCheck, FaPenToSquare }           from "react-icons/fa6"
 
 interface MainArticleCommentProps {
     comment: Comment
@@ -16,6 +19,7 @@ const MAX_VISIBLE_DEPTH = 2 as const
 export default function MainArticleComment({ comment, depth = 0 }: Readonly<MainArticleCommentProps>) {
     const [ isExpanded, setIsExpanded ] = useState(true)
     const hasChildren = comment.children?.length > 0
+    const { data: session } = useSession()
     
     useEffect(() => setIsExpanded(depth < MAX_VISIBLE_DEPTH), [ depth ])
     
@@ -60,10 +64,27 @@ export default function MainArticleComment({ comment, depth = 0 }: Readonly<Main
                     </DisclosureButton>
 
                     <DisclosurePanel
-                        as="p"
                         transition
-                        className="text-shadow-900 prose prose-sm mt-2 origin-top transition duration-200 ease-out data-[closed]:-translate-y-6 data-[closed]:opacity-0">
-                        { comment.content }
+                        className="origin-top transition duration-200 ease-out data-[closed]:-translate-y-6 data-[closed]:opacity-0">
+                        <p className="text-shadow-900 prose prose-sm mt-2">{ comment.content }</p>
+                        
+                        { session && (
+                            <div className="mt-2 inline-flex items-center gap-x-2">
+                                <Button
+                                    type="button"
+                                    disabled={
+                                        session.user.id === comment.user.id &&
+                                        session.user.username === comment.user.username
+                                    }
+                                    aria-label="Reply to this comment"
+                                    title="Reply to this comment"
+                                    className="text-shadow-600 hover:text-shadow-700 active:text-shadow-800 inline-flex cursor-pointer items-center gap-x-1 rounded px-2 py-1 text-sm disabled:pointer-events-none disabled:opacity-50">
+                                    <FaPenToSquare aria-hidden="true" className="size-4 text-inherit" /> Reply
+                                </Button>
+                                
+                                <CommentDeleteButton session={ session } user={ comment.user } />
+                            </div>
+                        ) }
                     </DisclosurePanel>
                 </Disclosure>
                 
@@ -76,6 +97,8 @@ export default function MainArticleComment({ comment, depth = 0 }: Readonly<Main
                     </Button>
                 ) }
             </div>
+            
+            {/*TODO: Add form to reply to a comment*/ }
             
             { isExpanded && hasChildren && (
                 <div className="mt-2 space-y-4">
