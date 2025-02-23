@@ -75,7 +75,7 @@ export default function MainArticleComment({ comment, depth = 0 }: Readonly<Main
                             <div className="mt-2 inline-flex items-center gap-x-2">
                                 <CommentReplyButton session={ session } comment={ comment } />
 
-                                <CommentDeleteButton session={ session } user={ comment.user } />
+                                <CommentDeleteButton session={ session } comment={ comment } />
                             </div>
                         ) }
                     </DisclosurePanel>
