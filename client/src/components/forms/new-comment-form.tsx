@@ -1,17 +1,26 @@
 "use client"
 
-import { ProblemDetails }                         from "@/@types/application"
-import postNewComment                             from "@/actions/comments/post-new-comment"
-import ApplicationRequestFormError                from "@/components/feedback/application-request-form-error"
-import InputValidationError                       from "@/components/feedback/input-validation-error"
-import Avatar                                     from "@/components/shared/avatar"
-import FormButton                                 from "@/components/shared/form-button"
-import FormTextarea                               from "@/components/shared/form-textarea"
-import { formatCommentDate, getInitialFormState } from "@/utils/functions"
-import { useSession }                             from "next-auth/react"
-import { useParams, useRouter }                   from "next/navigation"
-import { useActionState, useEffect, useState }    from "react"
-import { FaLock }                                 from "react-icons/fa6"
+import { ProblemDetails }                                                from "@/@types/application"
+import { Comment }                                                       from "@/@types/comments"
+import postNewComment                                                    from "@/actions/comments/post-new-comment"
+import ApplicationRequestFormError
+                                                                         from "@/components/feedback/application-request-form-error"
+import InputValidationError
+                                                                         from "@/components/feedback/input-validation-error"
+import Avatar                                                            from "@/components/shared/avatar"
+import FormButton                                                        from "@/components/shared/form-button"
+import FormTextarea                                                      from "@/components/shared/form-textarea"
+import { formatCommentDate, getInitialFormState }                        from "@/utils/functions"
+import { useSession }                                                    from "next-auth/react"
+import { useParams, useRouter }                                          from "next/navigation"
+import { Dispatch, SetStateAction, useActionState, useEffect, useState } from "react"
+import { FaLock }                                                        from "react-icons/fa6"
+
+interface NewCommentFormProps {
+    parentId?: number
+    displayAvatar?: boolean
+    setOpened?: Dispatch<SetStateAction<boolean>>
+}
 
 function UnauthenticatedState() {
     return (
@@ -42,23 +51,29 @@ function OptimisticNewComment(props: { newComment: string }) {
     )
 }
 
-export default function NewCommentForm({ parentId }: Readonly<{ parentId?: number }>) {
+export default function NewCommentForm({ parentId, displayAvatar = true, setOpened }: Readonly<NewCommentFormProps>) {
     const [ formState, formAction, pending ] = useActionState(postNewComment, getInitialFormState())
     const [ newComment, setNewComment ] = useState("")
     const params = useParams<{ id: string; slug: string }>()
     const router = useRouter()
     
     useEffect(() => {
-        if (formState.ok) router.refresh()
-    }, [ formState.ok, router ])
+        if (formState.ok) {
+            const comment = formState.response?.data as Comment
+            if (setOpened) setOpened(false)
+            router.push(`/articles/${ params.id }/${ params.slug }#comment-${ comment.id }`)
+        }
+    }, [ formState.ok, formState.response?.data, params.id, params.slug, router, setOpened ])
     
     const { data: session, status } = useSession()
     if (!session || status !== "authenticated") return <UnauthenticatedState />
     
     return (
         <div className="flex max-w-3xl items-start space-x-4">
-            <Avatar name={ session?.user.username } size={ 48 } src={ session.user.avatarUrl } animate={ false } />
-
+            { displayAvatar && (
+                <Avatar name={ session?.user.username } size={ 48 } src={ session.user.avatarUrl } animate={ false } />
+            ) }
+            
             <div className="min-w-0 flex-1">
                 { pending && newComment ? (
                     <OptimisticNewComment newComment={ newComment } />
@@ -88,8 +103,8 @@ export default function NewCommentForm({ parentId }: Readonly<{ parentId?: numbe
                           ) }
                           
                           <FormButton width="full" pending={ pending } disabled={ !session }>
-                                Post Comment
-                          </FormButton>
+                            Post Comment
+                        </FormButton>
                     </form>
                   ) }
             </div>
