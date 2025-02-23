@@ -3,11 +3,13 @@
 import { Comment }                                               from "@/@types/comments"
 import CommentDeleteButton
                                                                  from "@/components/articles/comment/comment-delete-button"
+import CommentReplyButton
+                                                                 from "@/components/articles/comment/comment-reply-button"
 import { formatCommentDate }                                     from "@/utils/functions"
 import { Button, Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react"
 import { useSession }                                            from "next-auth/react"
 import { useEffect, useState }                                   from "react"
-import { FaChevronDown, FaCircleCheck, FaPenToSquare }           from "react-icons/fa6"
+import { FaChevronDown, FaCircleCheck }                          from "react-icons/fa6"
 
 interface MainArticleCommentProps {
     comment: Comment
@@ -25,6 +27,7 @@ export default function MainArticleComment({ comment, depth = 0 }: Readonly<Main
     
     return (
         <div
+            id={ `comment-${ comment.id }` }
             data-hasdepth={ depth > 0 }
             className="group data-[hasdepth=true]:ml-6 data-[hasdepth=true]:border-l-2 data-[hasdepth=true]:pl-4">
             <div className="flex max-w-3xl items-start gap-2 rounded-md border border-stone-200 p-4">
@@ -70,18 +73,8 @@ export default function MainArticleComment({ comment, depth = 0 }: Readonly<Main
                         
                         { session && (
                             <div className="mt-2 inline-flex items-center gap-x-2">
-                                <Button
-                                    type="button"
-                                    disabled={
-                                        session.user.id === comment.user.id &&
-                                        session.user.username === comment.user.username
-                                    }
-                                    aria-label="Reply to this comment"
-                                    title="Reply to this comment"
-                                    className="text-shadow-600 hover:text-shadow-700 active:text-shadow-800 inline-flex cursor-pointer items-center gap-x-1 rounded px-2 py-1 text-sm disabled:pointer-events-none disabled:opacity-50">
-                                    <FaPenToSquare aria-hidden="true" className="size-4 text-inherit" /> Reply
-                                </Button>
-                                
+                                <CommentReplyButton session={ session } comment={ comment } />
+
                                 <CommentDeleteButton session={ session } user={ comment.user } />
                             </div>
                         ) }
@@ -97,8 +90,6 @@ export default function MainArticleComment({ comment, depth = 0 }: Readonly<Main
                     </Button>
                 ) }
             </div>
-            
-            {/*TODO: Add form to reply to a comment*/ }
             
             { isExpanded && hasChildren && (
                 <div className="mt-2 space-y-4">
