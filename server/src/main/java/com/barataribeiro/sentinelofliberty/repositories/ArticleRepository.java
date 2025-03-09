@@ -46,6 +46,18 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     @EntityGraph(attributePaths = {"author", "categories", "references"})
     Set<Article> findTop10ByOrderByCreatedAtDesc();
 
+    @EntityGraph(attributePaths = {"author", "categories", "references"})
+    @Query("""
+           SELECT a FROM Article a
+           ORDER BY SIZE(a.comments) DESC
+           LIMIT 5
+           """)
+    @QueryHints({
+            @QueryHint(name = "org.hibernate.readOnly", value = "true"),
+            @QueryHint(name = "org.hibernate.cacheable", value = "true")
+    })
+    Set<Article> getPopularArticles();
+
     long countByTitle(String title);
 
     long countDistinctByAuthor_Username(String username);

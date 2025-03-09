@@ -11,6 +11,8 @@ public interface ArticleService {
 
     Set<ArticleSummaryDTO> getLatestArticles();
 
+    Set<ArticleSummaryDTO> getPopularArticles();
+
     Page<ArticleSummaryDTO> getAllArticles(int page, int perPage, String direction, String orderBy);
 
     Page<ArticleSummaryDTO> getAllArticlesByCategory(String category, int page, int perPage, String direction,

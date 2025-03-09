@@ -58,6 +58,12 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     @Transactional(readOnly = true)
+    public Set<ArticleSummaryDTO> getPopularArticles() {
+        return articleMapper.toArticleSummaryDTOs(articleRepository.getPopularArticles());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<ArticleSummaryDTO> getAllArticles(int page, int perPage, String direction, String orderBy) {
         final PageRequest pageable = getPageRequest(page, perPage, direction, orderBy);
         return articleRepository.findAll(pageable).map(articleMapper::toArticleSummaryDTO);

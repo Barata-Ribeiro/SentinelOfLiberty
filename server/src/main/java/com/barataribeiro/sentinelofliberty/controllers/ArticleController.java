@@ -35,6 +35,17 @@ public class ArticleController {
                                                               response));
     }
 
+    @GetMapping("/public/popular")
+    @Operation(summary = "Get the popular articles",
+               description = "This endpoint allows a user to get the popular articles, summarised. These articles are" +
+                       " usually suggested to be displayed on a section within another article.")
+    public ResponseEntity<ApplicationResponseDTO<Set<ArticleSummaryDTO>>> getPopularArticles() {
+        Set<ArticleSummaryDTO> response = articleService.getPopularArticles();
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully retrieved the popular articles",
+                                                              response));
+    }
+
     @GetMapping("/public/article/{articleId}")
     @Operation(summary = "Get an article",
                description = "This endpoint allows a user to get an article by providing the article ID.")
