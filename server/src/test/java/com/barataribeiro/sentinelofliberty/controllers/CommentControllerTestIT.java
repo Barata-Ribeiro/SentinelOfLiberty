@@ -92,7 +92,7 @@ class CommentControllerTestIT extends ApplicationBaseIntegrationTest {
     @Order(3)
     @DisplayName("Get article comments tree with valid article ID")
     void getArticleCommentsTreeWithValidArticleId() {
-        mockMvcTester.get().uri(BASE_URL + "/{articleId}", 1).contentType(MediaType.APPLICATION_JSON)
+        mockMvcTester.get().uri(BASE_URL + "/public/{articleId}", 1).contentType(MediaType.APPLICATION_JSON)
                      .headers(userAuthHeader()).assertThat().hasStatusOk().bodyJson().satisfies(jsonContent -> {
                          assertEquals("You have successfully retrieved the comments tree",
                                       JsonPath.read(jsonContent.getJson(), "$.message"));
