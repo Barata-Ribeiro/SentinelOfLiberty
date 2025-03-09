@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
@@ -48,6 +49,34 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
                                       JsonPath.read(jsonContent.getJson(), "$.message"));
                          assertInstanceOf(List.class, JsonPath.read(jsonContent.getJson(), "$.data"),
                                           "Data should be a list");
+                     });
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("Test get public popular articles where a user attempts to get the popular articles")
+    void testGetPopularArticles() {
+        mockMvcTester.post().uri("/api/v1/comments/{articleId}", createdArticleId)
+                     .contentType(MediaType.APPLICATION_JSON)
+                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + userAccessToken)
+                     .content("""
+                              {
+                                  "body": "This is a test comment. It is a very good test comment. This additional text ensures the content is at least 100 characters."
+                              }
+                              """)
+                     .assertThat().hasStatus(HttpStatus.CREATED).hasStatus2xxSuccessful();
+
+        mockMvcTester.get().uri(BASE_URL + "/public/popular").assertThat().hasStatusOk().bodyJson()
+                     .satisfies(jsonContent -> {
+                         assertEquals("You have successfully retrieved the popular articles",
+                                      JsonPath.read(jsonContent.getJson(), "$.message"));
+                         assertInstanceOf(List.class, JsonPath.read(jsonContent.getJson(), "$.data"),
+                                          "Data should be a list");
+
+                         List<Integer> articleIds = JsonPath.read(jsonContent.getJson(), "$.data[*].id");
+                         assertFalse(articleIds.isEmpty(), "Popular articles list should not be empty");
+                         assertEquals(createdArticleId, Long.parseLong(articleIds.getFirst().toString()),
+                                      "First popular article should be the one we created");
                      });
     }
 
@@ -186,7 +215,7 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     @DisplayName("Test concurrent creation of multiple requests and only one should exist in the database")
     void testConcurrentCreateArticle(@Autowired @NotNull MockMvc mockMvc) {
         ConcurrencyTestUtil.doAsyncAndConcurrently(10, () -> mockMvc
@@ -202,7 +231,7 @@ class ArticleControllerTestIT extends ApplicationBaseIntegrationTest {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     @DisplayName("Test delete article where an authenticated admin attempts to delete an article")
     void testDeleteArticle() {
         mockMvcTester.delete().uri(BASE_URL + "/{articleId}", createdArticleId).headers(authHeader()).assertThat()
