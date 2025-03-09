@@ -12,8 +12,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -49,7 +51,7 @@ class NotificationControllerTestIT extends ApplicationBaseIntegrationTest {
                      .headers(authHeader())
                      .assertThat().hasStatusOk().bodyJson().extractingPath("$.data").satisfies(data -> {
                          assertInstanceOf(List.class, JsonPath.read(data, "$.content"));
-                         assertTrue((Integer) JsonPath.read(data, "$.totalElements") > 10);
+                         assertTrue((Integer) JsonPath.read(data, "$.page.totalElements") > 10);
                          assertEquals(10, (int) (Integer) JsonPath.read(data, "$.content.length()"));
 
                          notificationsIds = JsonPath.read(data, "$.content[*].id");
@@ -77,13 +79,16 @@ class NotificationControllerTestIT extends ApplicationBaseIntegrationTest {
     @Order(4)
     @DisplayName("Change notification status in bulk successfully")
     void changeNotificationStatusInBulk() throws JsonProcessingException {
+        Map<String, List<Long>> requestBody = new HashMap<>();
+        requestBody.put("notificationIds", notificationsIds.subList(0, 3));
+
         mockMvcTester
                 .patch()
                 .uri(BASE_URL + "/status")
                 .param("isRead", "true")
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(authHeader())
-                .content(new ObjectMapper().writeValueAsString(notificationsIds.subList(0, 3)))
+                .content(new ObjectMapper().writeValueAsString(requestBody))
                 .assertThat()
                 .hasStatusOk()
                 .bodyJson()
