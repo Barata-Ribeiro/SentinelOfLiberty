@@ -5,9 +5,6 @@ import NewCommentForm                                               from "@/comp
 import { formatCommentDate }                                        from "@/utils/functions"
 import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
 import { Session }                                                  from "next-auth"
-import {
-    DialogHeader,
-}                                                                   from "next/dist/client/components/react-dev-overlay/internal/components/Dialog"
 import { useState }                                                 from "react"
 import { FaPenToSquare }                                            from "react-icons/fa6"
 
@@ -42,11 +39,11 @@ export default function CommentReplyButton({ session, comment }: CommentReplyMod
                         <DialogPanel
                             transition
                             className="relative max-h-[90dvh] transform overflow-auto rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[enter]:ease-out data-[leave]:duration-200 data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-2xl sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95">
-                            <DialogHeader className="text-shadow-50 relative flex h-24 items-center justify-center rounded-md bg-stone-800">
+                            <header className="text-shadow-50 relative flex h-24 items-center justify-center rounded-md bg-stone-800">
                                 <DialogTitle as="h3" className="text-2xl text-balance max-sm:px-1">
                                     Reply to { comment.user.username }
                                 </DialogTitle>
-                            </DialogHeader>
+                            </header>
 
                             <div className="my-4 border-b border-stone-200 pb-2">
                                 <div className="flex flex-col justify-between sm:flex-row sm:items-center">

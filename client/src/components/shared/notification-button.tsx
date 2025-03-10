@@ -1,10 +1,6 @@
 import { useWebsocket }                                          from "@/providers/websocket-provider"
 import { Button, Description, Dialog, DialogPanel, DialogTitle } from "@headlessui/react"
 import { useSession }                                            from "next-auth/react"
-import {
-    DialogBody,
-    DialogContent,
-}                                                                from "next/dist/client/components/react-dev-overlay/internal/components/Dialog"
 import Link                                                      from "next/link"
 import { useEffect, useRef, useState }                           from "react"
 import { FaRegBell, FaX }                                        from "react-icons/fa6"
@@ -66,11 +62,11 @@ export default function NotificationButton() {
                 className="relative z-50 transition duration-300 ease-out data-[closed]:opacity-0">
                 <div className="fixed right-0 bottom-4 flex w-screen items-center justify-end p-4">
                     <DialogPanel className="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white p-4 ring-1 shadow-lg ring-stone-200">
-                        <DialogContent className="flex items-start">
+                        <article className="flex items-start">
                             <div className="flex-shrink-0">
                                 <HiBellAlert aria-hidden="true" className="text-marigold-400 size-6" />
                             </div>
-                            <DialogBody className="ml-3 w-0 flex-1 pt-0.5">
+                            <div className="ml-3 w-0 flex-1 pt-0.5">
                                 <DialogTitle as="h2" className="text-shadow-900 text-md font-medium">
                                     New Notification! { notifications.length > 1 ? `(${ notifications.length })` : "" }
                                 </DialogTitle>
@@ -85,7 +81,7 @@ export default function NotificationButton() {
                                     </Link>
                                     .
                                 </Description>
-                            </DialogBody>
+                            </div>
                             <div className="ml-4 flex flex-shrink-0">
                                 <Button
                                     type="button"
@@ -97,7 +93,7 @@ export default function NotificationButton() {
                                     <FaX aria-hidden="true" className="size-4" />
                                 </Button>
                             </div>
-                        </DialogContent>
+                        </article>
                     </DialogPanel>
                 </div>
             </Dialog>

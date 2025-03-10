@@ -4,9 +4,6 @@ import deleteAuthLogout                                     from "@/actions/auth
 import RegularButton                                        from "@/components/shared/regular-button"
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
 import { useSession }                                       from "next-auth/react"
-import {
-    DialogContent,
-}                                                           from "next/dist/client/components/react-dev-overlay/internal/components/Dialog"
 import { redirect }                                         from "next/navigation"
 import { useState, useTransition }                          from "react"
 import { FaExclamationTriangle }                            from "react-icons/fa"
@@ -65,9 +62,9 @@ export default function LogoutButton() {
                                             Logout
                                         </DialogTitle>
 
-                                        <DialogContent className="text-shadow-500 mt-2 text-sm">
+                                        <p className="text-shadow-500 mt-2 text-sm">
                                             Are you sure you want to logout?
-                                        </DialogContent>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
