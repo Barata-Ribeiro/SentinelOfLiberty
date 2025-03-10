@@ -40,7 +40,7 @@ function scrambleField<T, K extends keyof T>(obj: T, key: K, scrambler: (value: 
     if (typeof field === "string") obj[key] = scrambler(field) as T[K]
 }
 
-export default async function ProfilePage({ params }: ProfilePageProps) {
+export default async function ProfilePage({ params }: Readonly<ProfilePageProps>) {
     const username = (await params).username
     if (!username) return notFound()
     

@@ -15,7 +15,11 @@ interface DashboardNotificationTableProps {
     notifications: Notification[]
 }
 
-function TableHeader(props: { ref: RefObject<HTMLInputElement | null>; checked: boolean; onChange: () => void }) {
+function TableHeader(props: Readonly<{
+    ref: RefObject<HTMLInputElement | null>;
+    checked: boolean;
+    onChange: () => void
+}>) {
     return (
         <thead>
             <tr>

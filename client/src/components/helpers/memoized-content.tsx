@@ -10,7 +10,7 @@ interface MemoizedContentProps {
     html: string
 }
 
-export default function MemoizedContent({ html }: MemoizedContentProps) {
+export default function MemoizedContent({ html }: Readonly<MemoizedContentProps>) {
     const memoized = useMemo(() => generateJSON(html, [ ...configuredExtensions ]), [ html ])
     const editor = useEditor({
                                  editable: false,

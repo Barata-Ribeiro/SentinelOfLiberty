@@ -10,7 +10,7 @@ interface LinkButtonProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
     buttonStyle: "ghost" | "inverted-ghost" | "colored"
 }
 
-export default function LinkButton({ children, href, buttonStyle, ...props }: LinkButtonProps) {
+export default function LinkButton({ children, href, buttonStyle, ...props }: Readonly<LinkButtonProps>) {
     const baseStyles = tw`rounded-md border px-4 py-2 text-center text-sm font-medium transition-all duration-300 ease-in`
     
     const coloredStyle = twMerge(

@@ -9,7 +9,7 @@ interface MainArticleCommentTreeProps {
     commentTreePromise: Promise<State>
 }
 
-export default function MainArticleCommentTree({ commentTreePromise }: MainArticleCommentTreeProps) {
+export default function MainArticleCommentTree({ commentTreePromise }: Readonly<MainArticleCommentTreeProps>) {
     const [ shouldLoad, setShouldLoad ] = useState(false)
     const regionRef = useRef<HTMLDivElement>(null)
     

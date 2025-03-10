@@ -19,7 +19,13 @@ export const metadata: Metadata = {
     description: "Listing all the notices issued by you on this platform.",
 }
 
-function TableHeader(props: { href: string; direction: string; orderBy: string; href1: string; href2: string }) {
+function TableHeader(props: Readonly<{
+    href: string;
+    direction: string;
+    orderBy: string;
+    href1: string;
+    href2: string
+}>) {
     return (
         <thead>
             <tr>

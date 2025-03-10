@@ -6,7 +6,7 @@ interface HomeSuggestionItemProps {
     suggestion: Suggestion
 }
 
-export default function HomeSuggestionItem({ suggestion }: HomeSuggestionItemProps) {
+export default function HomeSuggestionItem({ suggestion }: Readonly<HomeSuggestionItemProps>) {
     return (
         <li className="flex items-center gap-2 rounded-lg border-2 border-stone-200 p-2">
             <Image

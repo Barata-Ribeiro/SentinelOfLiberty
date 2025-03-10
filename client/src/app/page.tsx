@@ -24,7 +24,7 @@ export const metadata: Metadata = {
         "Welcome to the Sentinel of Liberty, the place where you can engage with your favorite creator and help them create the content you love.",
 }
 
-function NoMoreWrittenArticleMessage(props: { session: Session | null }) {
+function NoMoreWrittenArticleMessage(props: Readonly<{ session: Session | null }>) {
     return (
         <li className="text-shadow-600 col-span-2 my-20 text-center lg:my-52">
             No more articles to show.{ " " }

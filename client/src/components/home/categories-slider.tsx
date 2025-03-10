@@ -10,7 +10,7 @@ interface CategoriesSliderProps {
     categoriesPromise: Promise<State>
 }
 
-export default function CategoriesSlider({ categoriesPromise }: CategoriesSliderProps) {
+export default function CategoriesSlider({ categoriesPromise }: Readonly<CategoriesSliderProps>) {
     const categories = use(categoriesPromise)
     if (!categories) return null
     

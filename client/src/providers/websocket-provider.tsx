@@ -11,7 +11,7 @@ interface WebSocketContextProps {
 
 const WebSocketContext = createContext<WebSocketContextProps>({ notifications: [] })
 
-export function WebsocketProvider({ children }: { children: ReactNode }) {
+export function WebsocketProvider({ children }: Readonly<{ children: ReactNode }>) {
     const { data: session } = useSession()
     const [ notifications, setNotifications ] = useState<Notification[]>([])
     const subscriptionRef = useRef<StompSubscription | null>(null)

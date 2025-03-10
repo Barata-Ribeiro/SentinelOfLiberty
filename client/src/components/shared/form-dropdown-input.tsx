@@ -10,7 +10,12 @@ interface FormDropdownInputProps extends InputHTMLAttributes<HTMLInputElement> {
     disabledField?: boolean
 }
 
-export default function FormDropdownInput({ label, options, disabledField, ...props }: FormDropdownInputProps) {
+export default function FormDropdownInput({
+                                              label,
+                                              options,
+                                              disabledField,
+                                              ...props
+                                          }: Readonly<FormDropdownInputProps>) {
     return (
         <Field className="mt-4 w-full max-w-sm min-w-[200px]" disabled={ disabledField }>
             <Label className="text-shadow-600 mb-1 block text-sm capitalize">{ label }</Label>

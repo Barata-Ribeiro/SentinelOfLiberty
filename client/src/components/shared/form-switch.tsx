@@ -11,7 +11,7 @@ interface FormSwitchProps {
     disabledField?: boolean
 }
 
-export default function FormSwitch({ checked, label, description, name, disabledField }: FormSwitchProps) {
+export default function FormSwitch({ checked, label, description, name, disabledField }: Readonly<FormSwitchProps>) {
     const [ enabled, setEnabled ] = useState(checked)
     
     return (

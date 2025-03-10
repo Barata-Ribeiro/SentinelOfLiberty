@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Readonly<DashboardHomePagePro
     }
 }
 
-function NoWrittenArticleMessage(props: { profile: Profile }) {
+function NoWrittenArticleMessage(props: Readonly<{ profile: Profile }>) {
     return (
         <p className="text-shadow-600 text-center">
             You have not written any articles.{ " " }

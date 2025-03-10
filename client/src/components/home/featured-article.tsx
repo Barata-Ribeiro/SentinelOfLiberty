@@ -6,7 +6,7 @@ interface FeaturedArticleProps {
     latestArticle: ArticleSummary
 }
 
-export default function FeaturedArticle({ latestArticle }: FeaturedArticleProps) {
+export default function FeaturedArticle({ latestArticle }: Readonly<FeaturedArticleProps>) {
     return (
         <article className="relative flex h-[30rem] w-full flex-wrap rounded-lg bg-stone-50 max-md:p-5 md:px-10 md:py-32">
             <Image

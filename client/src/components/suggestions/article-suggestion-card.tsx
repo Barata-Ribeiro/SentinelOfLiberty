@@ -10,7 +10,7 @@ interface ArticleSuggestionCardProps {
     suggestionPromise: Promise<State> | undefined
 }
 
-export default function ArticleSuggestionCard({ suggestionPromise }: ArticleSuggestionCardProps) {
+export default function ArticleSuggestionCard({ suggestionPromise }: Readonly<ArticleSuggestionCardProps>) {
     if (!suggestionPromise) return null
     const suggestionState = use(suggestionPromise)
     

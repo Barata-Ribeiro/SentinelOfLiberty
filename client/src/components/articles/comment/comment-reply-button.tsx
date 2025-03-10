@@ -13,7 +13,7 @@ interface CommentReplyModalProps {
     comment: Comment
 }
 
-export default function CommentReplyButton({ session, comment }: CommentReplyModalProps) {
+export default function CommentReplyButton({ session, comment }: Readonly<CommentReplyModalProps>) {
     const [ open, setOpen ] = useState(false)
     
     return (

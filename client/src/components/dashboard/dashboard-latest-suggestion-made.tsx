@@ -5,7 +5,7 @@ interface DashboardLatestSuggestionMadeProps {
     suggestion: Suggestion
 }
 
-export default function DashboardLatestSuggestionMade({ suggestion }: DashboardLatestSuggestionMadeProps) {
+export default function DashboardLatestSuggestionMade({ suggestion }: Readonly<DashboardLatestSuggestionMadeProps>) {
     return (
         <li>
             <time dateTime={ String(suggestion.createdAt) } className="text-shadow-300 text-sm">

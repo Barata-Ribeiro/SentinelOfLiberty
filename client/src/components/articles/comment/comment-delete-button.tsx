@@ -15,7 +15,7 @@ interface CommentDeleteButtonProps {
     comment: Comment
 }
 
-export default function CommentDeleteButton({ session, comment }: CommentDeleteButtonProps) {
+export default function CommentDeleteButton({ session, comment }: Readonly<CommentDeleteButtonProps>) {
     const [ open, setOpen ] = useState(false)
     const [ isPending, startTransition ] = useTransition()
     const router = useRouter()

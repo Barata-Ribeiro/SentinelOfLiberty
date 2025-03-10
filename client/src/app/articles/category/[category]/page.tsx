@@ -10,7 +10,7 @@ interface ArticlesCategoryPageProps {
     searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-export default async function ArticlesCategoryPageProps({ params, searchParams }: ArticlesCategoryPageProps) {
+export default async function ArticlesCategoryPageProps({ params, searchParams }: Readonly<ArticlesCategoryPageProps>) {
     const [ pageParams, { category } ] = await Promise.all([ searchParams, params ])
     if (!pageParams) return null
     if (!category) return notFound()

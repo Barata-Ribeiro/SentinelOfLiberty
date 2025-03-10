@@ -7,7 +7,7 @@ interface FormTextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> 
     description?: string
 }
 
-export default function FormTextarea({ label, description, ...props }: FormTextareaProps) {
+export default function FormTextarea({ label, description, ...props }: Readonly<FormTextareaProps>) {
     return (
         <Field className="relative w-full min-w-[200px] space-y-2" disabled={ props.disabled }>
             <Label className="text-shadow-800 dark:text-shadow-50 font-sans text-sm font-semibold antialiased">

@@ -6,7 +6,7 @@ interface SuggestionCardProps {
     suggestion: Suggestion
 }
 
-export default function SuggestionCard({ suggestion }: SuggestionCardProps) {
+export default function SuggestionCard({ suggestion }: Readonly<SuggestionCardProps>) {
     return (
         <article className="grid grid-cols-1 gap-4 rounded-md border border-stone-200 p-4 md:grid-cols-2 lg:grid-cols-[auto_1fr_auto]">
             <div className="relative h-40 w-full md:h-48 md:w-72">

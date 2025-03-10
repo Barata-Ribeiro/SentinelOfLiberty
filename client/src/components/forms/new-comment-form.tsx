@@ -31,7 +31,7 @@ function UnauthenticatedState() {
     )
 }
 
-function OptimisticNewComment(props: { newComment: string }) {
+function OptimisticNewComment(props: Readonly<{ newComment: string }>) {
     return (
         <div className="rounded-md border border-stone-200 p-4">
             <div className="inline-flex gap-x-2 divide-x divide-stone-200">

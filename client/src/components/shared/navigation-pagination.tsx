@@ -14,7 +14,7 @@ interface NavigationPaginationProps {
     }
 }
 
-export default function NavigationPagination({ pageInfo }: NavigationPaginationProps) {
+export default function NavigationPagination({ pageInfo }: Readonly<NavigationPaginationProps>) {
     const router = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()

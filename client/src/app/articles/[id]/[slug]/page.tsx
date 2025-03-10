@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: ArticlePageProps, parent: Res
     }
 }
 
-export default async function ArticlePage({ params }: ArticlePageProps) {
+export default async function ArticlePage({ params }: Readonly<ArticlePageProps>) {
     const { id, slug } = await params
     if (!id || !slug) return notFound()
     

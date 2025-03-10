@@ -16,7 +16,7 @@ interface MainArticleCommentProps {
     depth?: number
 }
 
-const MAX_VISIBLE_DEPTH = 2 as const
+const MAX_VISIBLE_DEPTH = 2
 
 export default function MainArticleComment({ comment, depth = 0 }: Readonly<MainArticleCommentProps>) {
     const [ isExpanded, setIsExpanded ] = useState(true)

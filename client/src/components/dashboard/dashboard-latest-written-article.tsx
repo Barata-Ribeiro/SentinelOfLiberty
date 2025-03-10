@@ -6,7 +6,7 @@ interface DashboardLatestWrittenArticleProps {
     article: ArticleSummary
 }
 
-export default function DashboardLatestWrittenArticle({ article }: DashboardLatestWrittenArticleProps) {
+export default function DashboardLatestWrittenArticle({ article }: Readonly<DashboardLatestWrittenArticleProps>) {
     return (
         <article className="grid grid-cols-1 gap-4 lg:grid-cols-[auto_1fr]">
             <div className="relative h-48 w-full lg:h-auto lg:w-72">
