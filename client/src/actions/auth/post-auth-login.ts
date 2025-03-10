@@ -42,7 +42,7 @@ export default async function postAuthLogin(state: State, formData: unknown) {
                 status: "Ok",
                 code: 200,
                 message: "You have successfully logged in",
-                data: formData.get("username")?.toString(),
+                data: formData.get("username"),
             } satisfies RestResponse,
         }
     } catch (error) {
