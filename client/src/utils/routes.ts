@@ -70,6 +70,10 @@ export function getLatestPublicArticlesUrl(): string {
     return `${ API_URL }/articles/public/latest`
 }
 
+export function getPopularPublicArticlesUrl(): string {
+    return `${ API_URL }/articles/public/popular`
+}
+
 export function getAllArticlesUrl(
     page: number = 0,
     perPage: number = 10,
