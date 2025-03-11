@@ -69,7 +69,7 @@ export default function NewCommentForm({ parentId, displayAvatar = true, setOpen
     if (!session || status !== "authenticated") return <UnauthenticatedState />
     
     return (
-        <div className="flex max-w-3xl items-start space-x-4">
+        <div className="flex w-full items-start space-x-4">
             { displayAvatar && (
                 <Avatar name={ session?.user.username } size={ 48 } src={ session.user.avatarUrl } animate={ false } />
             ) }

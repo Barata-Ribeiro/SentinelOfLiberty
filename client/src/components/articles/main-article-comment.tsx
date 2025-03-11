@@ -30,7 +30,7 @@ export default function MainArticleComment({ comment, depth = 0 }: Readonly<Main
             id={ `comment-${ comment.id }` }
             data-hasdepth={ depth > 0 }
             className="group data-[hasdepth=true]:ml-6 data-[hasdepth=true]:border-l-2 data-[hasdepth=true]:pl-4">
-            <div className="flex max-w-3xl items-start gap-2 rounded-md border border-stone-200 p-4">
+            <div className="flex w-full items-start gap-2 rounded-md border border-stone-200 p-4">
                 <Disclosure as="details" className="flex-1" open defaultOpen>
                     <DisclosureButton
                         as="summary"

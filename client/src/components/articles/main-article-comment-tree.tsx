@@ -38,12 +38,12 @@ export default function MainArticleCommentTree({ commentTreePromise }: Readonly<
     }
     
     return (
-        <div id="comments" className="space-y-4 align-middle mb-8">
+        <div id="comments" className="mb-8 grid gap-4 align-middle">
             { comments.map(comment => (
                 <MainArticleComment key={ comment.id } comment={ comment } depth={ 0 } />
             )) }
             
-            { comments.length <= 0 && <p className="text-center text-shadow-500">No comments yet.</p> }
+            { comments.length <= 0 && <p className="text-shadow-500 text-center">No comments yet.</p> }
             { comments.length === 0 && <div ref={ regionRef } className="h-1" /> }
         </div>
     )
