@@ -1,6 +1,7 @@
 import { Article }                     from "@/@types/articles"
 import getArticleById                  from "@/actions/articles/get-article-by-id"
 import getLatestPublicArticles         from "@/actions/articles/get-latest-public-articles"
+import getPopularPublicArticles        from "@/actions/articles/get-popular-public-articles"
 import getCommentTree                  from "@/actions/comments/get-comment-tree"
 import LatestArticlesListing           from "@/components/articles/latest-articles-listing"
 import MainArticleAuthor               from "@/components/articles/main-article-author"
@@ -8,6 +9,7 @@ import MainArticleCommentTree          from "@/components/articles/main-article-
 import MainArticleFooter               from "@/components/articles/main-article-footer"
 import MainArticleHeader               from "@/components/articles/main-article-header"
 import MainArticleReferences           from "@/components/articles/main-article-references"
+import PopularArticlesListing          from "@/components/articles/popular-articles-listing"
 import NewCommentForm                  from "@/components/forms/new-comment-form"
 import MemoizedContent                 from "@/components/helpers/memoized-content"
 import CommentSkeleton                 from "@/components/layout/skeletons/comment-skeleton"
@@ -53,8 +55,11 @@ export default async function ArticlePage({ params }: Readonly<ArticlePageProps>
     
     const latestArticlesPromise = getLatestPublicArticles()
     
-    const [ headersList, session, articleState ] = await Promise
-        .all([ headers(), auth(), getArticleById({ id: parseInt(id) }) ])
+    const [ headersList, session, articleState ] = await Promise.all([
+                                                                         headers(),
+                                                                         auth(),
+                                                                         getArticleById({ id: parseInt(id) }),
+                                                                     ])
     if (!articleState) return notFound()
     
     const pathname = headersList.get("x-current-path")
@@ -62,10 +67,11 @@ export default async function ArticlePage({ params }: Readonly<ArticlePageProps>
     if (article.slug !== slug) return notFound()
     
     const commentTreePromise = getCommentTree({ articleId: article.id })
+    const popularArticlesPromise = getPopularPublicArticles()
     
     return (
-        <div className="grid grid-cols-1 gap-4">
-            <article id="article" className="container space-y-6">
+        <div className="container grid grid-cols-1 gap-4">
+            <article id="article" className="space-y-6">
                 <MainArticleHeader article={ article } />
 
                 <main className="grid grid-cols-1 gap-4 md:grid-cols-[auto_1fr] md:gap-8">
@@ -84,7 +90,7 @@ export default async function ArticlePage({ params }: Readonly<ArticlePageProps>
             <section id="latest-articles-section" className="bg-stone-200">
                 <div className="container grid grid-cols-1 gap-4 md:grid-cols-[auto_1fr] md:gap-8">
                     <div className="mt-8 min-w-0 space-y-2 sm:min-w-[17.5rem]">
-                        <h3 className="text-shadow-900 text-4xl font-semibold text-balance">Latest Articles</h3>
+                        <h2 className="text-shadow-900 text-4xl font-semibold text-balance">Latest Articles</h2>
                         <Link
                             href="/articles"
                             className="text-marigold-600 hover:text-marigold-700 active:text-marigold-800 text-sm tracking-wide underline">
@@ -99,19 +105,44 @@ export default async function ArticlePage({ params }: Readonly<ArticlePageProps>
                     </ul>
                 </div>
             </section>
-            
-            <section id="new-comment-form" className="container" aria-labelledby="new-comment-section-title">
-                <h2 id="new-comment-section-title"
-                    className="text-shadow-900 mb-6 border-b border-stone-200 pb-3 text-2xl font-bold">New Comment</h2>
-                <NewCommentForm />
-            </section>
-            
-            <section id="article-comments" className="container" aria-labelledby="comments-section-title">
-                <h2 id="comments-section-title"
-                    className="text-shadow-900 mb-6 border-b border-stone-200 pb-3 text-2xl font-bold">Comments</h2>
-                <Suspense fallback={ <CommentSkeleton /> }>
-                    <MainArticleCommentTree commentTreePromise={ commentTreePromise } />
-                </Suspense>
+
+            <section className="grid gap-4 md:grid-cols-[1fr_auto]">
+                <div className="grid max-w-4xl grid-cols-1 gap-4">
+                    <section id="new-comment-form" aria-labelledby="new-comment-section-title">
+                        <h3
+                            id="new-comment-section-title"
+                            className="text-shadow-900 mb-6 border-b border-stone-200 pb-3 text-2xl font-bold">
+                            New Comment
+                        </h3>
+                        <NewCommentForm />
+                    </section>
+
+                    <section id="article-comments" aria-labelledby="comments-section-title">
+                        <h3
+                            id="comments-section-title"
+                            className="text-shadow-900 mb-6 border-b border-stone-200 pb-3 text-2xl font-bold">
+                            Comments
+                        </h3>
+                        <Suspense fallback={ <CommentSkeleton /> }>
+                            <MainArticleCommentTree commentTreePromise={ commentTreePromise } />
+                        </Suspense>
+                    </section>
+                </div>
+
+                <aside aria-label="Article Sidebar" className="space-y-4" aria-labelledby="article-sidebar-title">
+                    <div className="min-w-0 space-y-2">
+                        <h4 id="article-sidebar-title" className="text-shadow-900 text-4xl font-semibold text-balance">Popular Articles</h4>
+                        <Link
+                            href="/articles"
+                            className="text-marigold-600 hover:text-marigold-700 active:text-marigold-800 text-sm tracking-wide underline">
+                            View all articles
+                        </Link>
+                    </div>
+
+                    <Suspense fallback={ <p>Loading...</p> }>
+                        <PopularArticlesListing articlesState={ popularArticlesPromise } />
+                    </Suspense>
+                </aside>
             </section>
         </div>
     )
