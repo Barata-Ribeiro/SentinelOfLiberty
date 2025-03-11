@@ -13,6 +13,8 @@ import PopularArticlesListing          from "@/components/articles/popular-artic
 import NewCommentForm                  from "@/components/forms/new-comment-form"
 import MemoizedContent                 from "@/components/helpers/memoized-content"
 import CommentSkeleton                 from "@/components/layout/skeletons/comment-skeleton"
+import LatestArticlesItemSkeleton      from "@/components/layout/skeletons/latest-articles-item-skeleton"
+import PopularArticlesListSkeleton     from "@/components/layout/skeletons/popular-articles-list-skeleton"
 import { auth }                        from "auth"
 import { Metadata, ResolvingMetadata } from "next"
 import { headers }                     from "next/headers"
@@ -53,8 +55,6 @@ export default async function ArticlePage({ params }: Readonly<ArticlePageProps>
     const { id, slug } = await params
     if (!id || !slug) return notFound()
     
-    const latestArticlesPromise = getLatestPublicArticles()
-    
     const [ headersList, session, articleState ] = await Promise.all([
                                                                          headers(),
                                                                          auth(),
@@ -66,6 +66,7 @@ export default async function ArticlePage({ params }: Readonly<ArticlePageProps>
     const article = articleState.response?.data as Article
     if (article.slug !== slug) return notFound()
     
+    const latestArticlesPromise = getLatestPublicArticles()
     const commentTreePromise = getCommentTree({ articleId: article.id })
     const popularArticlesPromise = getPopularPublicArticles()
     
@@ -99,7 +100,7 @@ export default async function ArticlePage({ params }: Readonly<ArticlePageProps>
                     </div>
 
                     <ul className="grid max-w-4xl grid-cols-1 justify-items-center gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        <Suspense fallback={ <p>Loading...</p> }>
+                        <Suspense fallback={ <LatestArticlesItemSkeleton /> }>
                             <LatestArticlesListing articlesState={ latestArticlesPromise } />
                         </Suspense>
                     </ul>
@@ -139,7 +140,7 @@ export default async function ArticlePage({ params }: Readonly<ArticlePageProps>
                         </Link>
                     </div>
 
-                    <Suspense fallback={ <p>Loading...</p> }>
+                    <Suspense fallback={ <PopularArticlesListSkeleton /> }>
                         <PopularArticlesListing articlesState={ popularArticlesPromise } />
                     </Suspense>
                 </aside>
