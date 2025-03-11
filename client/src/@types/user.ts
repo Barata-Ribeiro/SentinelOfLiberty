@@ -35,7 +35,7 @@ interface Account extends User, Profile {
     unreadNotificationsCount: number
 }
 
-type Author = Omit<User, "createdAt" | "updatedAt">
+type Author = Omit<User, "createdAt" | "updatedAt"> & { displayName?: string }
 
 interface Dashboard {
     latestWrittenArticle: ArticleSummary | null;
