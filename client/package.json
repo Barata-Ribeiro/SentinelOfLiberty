@@ -23,6 +23,7 @@
     "@tiptap/pm": "^2.11.5",
     "@tiptap/react": "^2.11.5",
     "@tiptap/starter-kit": "^2.11.5",
+    "babel-plugin-react-compiler": "^19.0.0-beta-bafa41b-20250307",
     "jsdom": "^26.0.0",
     "next": "15.2.1",
     "next-auth": "^5.0.0-beta.25",
