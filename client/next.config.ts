@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
         ],
     },
     experimental: {
+        reactCompiler: true,
         optimizePackageImports: [
             "tailwindcss",
             "@headlessui/react",
