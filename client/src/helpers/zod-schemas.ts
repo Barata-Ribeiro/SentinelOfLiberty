@@ -170,13 +170,27 @@ const userAccountDetailsSchema = z
     })
 
 // NOTICES
-const noticeRequestSchema = z.object({
-                                         title: z.string().min(3, "Title must be at least 3 characters.")
-                                             .max(100, "Title must be at most 100 characters.")
-                                             .trim().nullish().or(z.literal("")),
-                                         message: z.string().min(10, "Message must be at least 10 characters.")
-                                             .max(100, "Message must be at most 100 characters.").trim(),
-                                     })
+const noticeRequestSchema = z
+    .object({
+                id: z.coerce.number().int().optional(),
+                title: z
+                    .string()
+                    .min(3, "Title must be at least 3 characters.")
+                    .max(100, "Title must be at most 100 characters.")
+                    .trim()
+                    .nullish()
+                    .or(z.literal("")),
+                message: z
+                    .string()
+                    .min(10, "Message must be at least 10 characters.")
+                    .max(100, "Message must be at most 100 characters.")
+                    .trim(),
+            })
+    .transform(data => {
+        if (data.title === "") delete data.title
+        if (data.id === 0 || data.id === undefined || data.id === null) delete data.id
+        return data
+    })
 
 // SUGGESTIONS
 const suggestionRequestSchema = z.object({
