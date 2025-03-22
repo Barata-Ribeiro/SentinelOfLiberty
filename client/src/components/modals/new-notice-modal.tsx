@@ -35,7 +35,7 @@ export default function NewNoticeModal() {
                                 </DialogTitle>
                             </header>
 
-                            <NewNoticeForm />
+                            <NewNoticeForm setOpen={ setOpen } />
                         </DialogPanel>
                     </div>
                 </div>

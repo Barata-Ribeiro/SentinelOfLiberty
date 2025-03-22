@@ -1,22 +1,27 @@
 "use client"
 
-import { ProblemDetails }            from "@/@types/application"
-import postNewNotice                 from "@/actions/notices/post-new-notice"
-import ApplicationRequestFormError   from "@/components/feedback/application-request-form-error"
-import InputValidationError          from "@/components/feedback/input-validation-error"
-import FormButton                    from "@/components/shared/form-button"
-import FormInput                     from "@/components/shared/form-input"
-import { getInitialFormState }       from "@/utils/functions"
-import { useRouter }                 from "next/navigation"
-import { useActionState, useEffect } from "react"
+import { ProblemDetails }                                                from "@/@types/application"
+import postNewNotice                                                     from "@/actions/notices/post-new-notice"
+import ApplicationRequestFormError
+                                                                         from "@/components/feedback/application-request-form-error"
+import InputValidationError
+                                                                         from "@/components/feedback/input-validation-error"
+import FormButton                                                        from "@/components/shared/form-button"
+import FormInput                                                         from "@/components/shared/form-input"
+import { getInitialFormState }                                           from "@/utils/functions"
+import { useRouter }                                                     from "next/navigation"
+import { type Dispatch, type SetStateAction, useActionState, useEffect } from "react"
 
-export default function NewNoticeForm() {
+export default function NewNoticeForm({ setOpen }: Readonly<{ setOpen?: Dispatch<SetStateAction<boolean>> }>) {
     const [ formState, formAction, pending ] = useActionState(postNewNotice, getInitialFormState())
     const router = useRouter()
     
     useEffect(() => {
-        if (formState.ok) router.refresh()
-    }, [ formState.ok, router ])
+        if (formState.ok) {
+            if (setOpen) setOpen(false)
+            router.refresh()
+        }
+    }, [ formState.ok, router, setOpen ])
     
     return (
         <form action={ formAction } className="mt-6 space-y-6">
