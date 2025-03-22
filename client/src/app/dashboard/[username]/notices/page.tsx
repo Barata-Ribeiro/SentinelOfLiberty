@@ -1,6 +1,7 @@
 import { Paginated }                   from "@/@types/application"
 import { Notice }                      from "@/@types/notices"
 import getAllOwnIssuedNoticesPaginated from "@/actions/notices/get-all-own-issued-notices-paginated"
+import EditNoticeModal                 from "@/components/modals/edit-notice-modal"
 import NewNoticeModal                  from "@/components/modals/new-notice-modal"
 import NavigationPagination            from "@/components/shared/navigation-pagination"
 import { auth }                        from "auth"
@@ -19,13 +20,15 @@ export const metadata: Metadata = {
     description: "Listing all the notices issued by you on this platform.",
 }
 
-function TableHeader(props: Readonly<{
-    href: string;
-    direction: string;
-    orderBy: string;
-    href1: string;
-    href2: string
-}>) {
+function TableHeader(
+    props: Readonly<{
+        href: string
+        direction: string
+        orderBy: string
+        href1: string
+        href2: string
+    }>,
+) {
     return (
         <thead>
             <tr>
@@ -101,7 +104,7 @@ export default async function NoticesPage({ params, searchParams }: Readonly<Not
         return orderUrl
     }
     
-    // TODO: Implement the EditNoticeModal component
+    // TODO: Implement the DeleteNoticeModal component
     
     return (
         <div
@@ -154,11 +157,13 @@ export default async function NoticesPage({ params, searchParams }: Readonly<Not
                                         <td className="text-shadow-500 px-3 py-4 text-sm whitespace-nowrap">
                                             { notice.isActive ? "Active" : "Inactive" }
                                         </td>
-                                        <td className="relative py-4 pr-4 pl-3 text-right text-sm whitespace-nowrap sm:pr-0">
+                                        <td className="relative inline-flex gap-x-2 py-4 pr-4 pl-3 text-right text-sm whitespace-nowrap sm:pr-0">
+                                            <EditNoticeModal notice={ notice } />
+                                            
                                             <Link
                                                 href="#"
-                                                className="text-marigold-600 hover:text-marigold-700 active:text-marigold-800">
-                                                Edit{ " " }
+                                                className="text-red-600 hover:text-red-700 active:text-red-800">
+                                                Delete{ " " }
                                                 <span className="sr-only">, { notice.title ?? "Current Notice" }</span>
                                             </Link>
                                         </td>
