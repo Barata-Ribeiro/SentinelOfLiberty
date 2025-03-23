@@ -1,6 +1,7 @@
 import { Paginated }                   from "@/@types/application"
 import { Notice }                      from "@/@types/notices"
 import getAllOwnIssuedNoticesPaginated from "@/actions/notices/get-all-own-issued-notices-paginated"
+import DeleteNoticeModal               from "@/components/modals/delete-notice-modal"
 import EditNoticeModal                 from "@/components/modals/edit-notice-modal"
 import NewNoticeModal                  from "@/components/modals/new-notice-modal"
 import NavigationPagination            from "@/components/shared/navigation-pagination"
@@ -104,8 +105,6 @@ export default async function NoticesPage({ params, searchParams }: Readonly<Not
         return orderUrl
     }
     
-    // TODO: Implement the DeleteNoticeModal component
-    
     return (
         <div
             className="flex h-full min-h-0 flex-col justify-between"
@@ -159,13 +158,8 @@ export default async function NoticesPage({ params, searchParams }: Readonly<Not
                                         </td>
                                         <td className="relative inline-flex gap-x-2 py-4 pr-4 pl-3 text-right text-sm whitespace-nowrap sm:pr-0">
                                             <EditNoticeModal notice={ notice } />
-                                            
-                                            <Link
-                                                href="#"
-                                                className="text-red-600 hover:text-red-700 active:text-red-800">
-                                                Delete{ " " }
-                                                <span className="sr-only">, { notice.title ?? "Current Notice" }</span>
-                                            </Link>
+
+                                            <DeleteNoticeModal id={ notice.id } title={ notice.title } />
                                         </td>
                                     </tr>
                                 )) }
