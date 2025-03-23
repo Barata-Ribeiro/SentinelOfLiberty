@@ -1,6 +1,7 @@
 import { Paginated }                   from "@/@types/application"
 import { Notice }                      from "@/@types/notices"
 import getAllOwnIssuedNoticesPaginated from "@/actions/notices/get-all-own-issued-notices-paginated"
+import NoticeStatusSwitch              from "@/components/dashboard/notice/notice-status-switch"
 import DeleteNoticeModal               from "@/components/modals/delete-notice-modal"
 import EditNoticeModal                 from "@/components/modals/edit-notice-modal"
 import NewNoticeModal                  from "@/components/modals/new-notice-modal"
@@ -154,7 +155,7 @@ export default async function NoticesPage({ params, searchParams }: Readonly<Not
                                             { notice.message }
                                         </td>
                                         <td className="text-shadow-500 px-3 py-4 text-sm whitespace-nowrap">
-                                            { notice.isActive ? "Active" : "Inactive" }
+                                            <NoticeStatusSwitch isActive={ notice.isActive } />
                                         </td>
                                         <td className="relative inline-flex gap-x-2 py-4 pr-4 pl-3 text-right text-sm whitespace-nowrap sm:pr-0">
                                             <EditNoticeModal notice={ notice } />
