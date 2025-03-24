@@ -1,13 +1,14 @@
-import { Paginated }                  from "@/@types/application"
-import { ArticleSummary }             from "@/@types/articles"
-import getAllOwnArticlesPaginated     from "@/actions/articles/get-all-own-articles-paginated"
-import LinkButton                     from "@/components/shared/link-button"
-import NavigationPagination           from "@/components/shared/navigation-pagination"
-import { auth }                       from "auth"
-import { Metadata }                   from "next"
-import Link                           from "next/link"
-import { permanentRedirect }          from "next/navigation"
-import { LuChevronDown, LuChevronUp } from "react-icons/lu"
+import { Paginated }                            from "@/@types/application"
+import { ArticleSummary }                       from "@/@types/articles"
+import getAllOwnArticlesPaginated               from "@/actions/articles/get-all-own-articles-paginated"
+import LinkButton                               from "@/components/shared/link-button"
+import NavigationPagination                     from "@/components/shared/navigation-pagination"
+import { Button, Field, Input, Label }          from "@headlessui/react"
+import { auth }                                 from "auth"
+import { Metadata }                             from "next"
+import Link                                     from "next/link"
+import { permanentRedirect }                    from "next/navigation"
+import { LuChevronDown, LuChevronUp, LuSearch } from "react-icons/lu"
 
 interface ArticlePageProps {
     params: Promise<{ username: string }>
@@ -119,8 +120,6 @@ export default async function ArticlePage({ params, searchParams }: Readonly<Art
         return orderUrl
     }
     
-    // TODO: IMPLEMENT SEARCH FUNCTIONALITY
-    
     return (
         <div
             className="flex h-full min-h-0 flex-col justify-between"
@@ -151,6 +150,32 @@ export default async function ArticlePage({ params, searchParams }: Readonly<Art
             <main className="mt-8 flow-root h-full border-t border-stone-200 pt-8">
                 <div className="-mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                        {/*TODO: IMPLEMENT DELETE SEARCHPARAMS BUTTON*/ }
+                        <form action={ baseUrl } method="GET" className="max-sm:pl-4">
+                            <Field className="w-full max-w-sm">
+                                <Label htmlFor="search" className="sr-only">
+                                    Search
+                                </Label>
+
+                                <div className="relative">
+                                    <Input
+                                        id="search"
+                                        name="search"
+                                        type="search"
+                                        className="peer text-shadow-800 placeholder:text-shadow-300 aria-disabled:cursor-not-allowedfocus:border-stone-400 dark:text-shadow-50 w-full rounded-md border border-stone-200 bg-transparent py-2 pr-10 pl-3 text-sm shadow-sm ring ring-transparent transition-all duration-300 ease-in outline-none hover:border-stone-800 hover:ring-stone-300 focus:border-stone-800 focus:shadow focus:ring-stone-300 focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+                                        placeholder="e.g. Title, Subtitle, etc."
+                                    />
+                                    <Button
+                                        className="from-marigold-500 to-marigold-600 border-marigold-500 text-shadow-50 absolute top-1 right-1 inline-grid cursor-pointer place-items-center rounded-md border bg-gradient-to-tr p-1.5 text-center align-middle font-sans text-sm leading-none font-medium transition-all duration-300 ease-in select-none hover:brightness-110 focus:shadow-none"
+                                        aria-label="Click to search"
+                                        title="Click to search"
+                                        type="submit">
+                                        <LuSearch aria-hidden="true" className="size-4" />
+                                    </Button>
+                                </div>
+                            </Field>
+                        </form>
+
                         <table className="min-w-full divide-y divide-stone-300">
                             <TableHeader
                                 href={ buildUrl("id", direction) }
