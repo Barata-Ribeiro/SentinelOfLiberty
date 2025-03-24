@@ -1,12 +1,13 @@
-import { Paginated }              from "@/@types/application"
-import { ArticleSummary }         from "@/@types/articles"
-import getAllOwnArticlesPaginated from "@/actions/articles/get-all-own-articles-paginated"
-import LinkButton                 from "@/components/shared/link-button"
-import NavigationPagination       from "@/components/shared/navigation-pagination"
-import { auth }                   from "auth"
-import { Metadata }               from "next"
-import Link                       from "next/link"
-import { permanentRedirect }      from "next/navigation"
+import { Paginated }                  from "@/@types/application"
+import { ArticleSummary }             from "@/@types/articles"
+import getAllOwnArticlesPaginated     from "@/actions/articles/get-all-own-articles-paginated"
+import LinkButton                     from "@/components/shared/link-button"
+import NavigationPagination           from "@/components/shared/navigation-pagination"
+import { auth }                       from "auth"
+import { Metadata }                   from "next"
+import Link                           from "next/link"
+import { permanentRedirect }          from "next/navigation"
+import { LuChevronDown, LuChevronUp } from "react-icons/lu"
 
 interface ArticlePageProps {
     params: Promise<{ username: string }>
@@ -16,6 +17,73 @@ interface ArticlePageProps {
 export const metadata: Metadata = {
     title: "My Article",
     description: "Listing all the articles written by you on this platform.",
+}
+
+function TableHeader(props: {
+    href: string
+    direction: string
+    orderBy: string
+    href1: string
+    href2: string
+    href3: string
+}) {
+    return (
+        <thead>
+            <tr>
+                <th scope="col" className="text-shadow-900 py-3.5 pr-3 pl-4 text-left text-sm font-semibold sm:pl-0">
+                    <Link href={ props.href } className="group inline-flex">
+                        Id{ " " }
+                        <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
+                            { props.direction === "ASC" && props.orderBy === "id" ? (
+                                <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
+                            ) : (
+                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                              ) }
+                        </span>
+                    </Link>
+                </th>
+                <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
+                    <Link href={ props.href1 } className="group inline-flex">
+                        Title{ " " }
+                        <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
+                            { props.direction === "ASC" && props.orderBy === "title" ? (
+                                <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
+                            ) : (
+                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                              ) }
+                        </span>
+                    </Link>
+                </th>
+                <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
+                    <Link href={ props.href2 } className="group inline-flex">
+                        Subtitle{ " " }
+                        <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
+                            { props.direction === "ASC" && props.orderBy === "subTitle" ? (
+                                <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
+                            ) : (
+                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                              ) }
+                        </span>
+                    </Link>
+                </th>
+                <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
+                    <Link href={ props.href3 } className="group inline-flex">
+                        Created At{ " " }
+                        <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
+                            { props.direction === "ASC" && props.orderBy === "createdAt" ? (
+                                <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
+                            ) : (
+                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                              ) }
+                        </span>
+                    </Link>
+                </th>
+                <th scope="col" className="relative py-3.5 pr-0 pl-3">
+                    <span className="sr-only">Manage</span>
+                </th>
+            </tr>
+        </thead>
+    )
 }
 
 export default async function ArticlePage({ params, searchParams }: Readonly<ArticlePageProps>) {
@@ -40,7 +108,12 @@ export default async function ArticlePage({ params, searchParams }: Readonly<Art
     
     function buildUrl(item: string, direction: string) {
         let orderUrl = `${ baseUrl }?orderBy=${ item }`
-        if (direction === "ASC") orderUrl += "&direction=ASC"
+        
+        function getNextDirection(currentOrderBy: string) {
+            return orderBy === currentOrderBy ? (direction === "ASC" ? "DESC" : "ASC") : "ASC"
+        }
+        
+        if (getNextDirection(item) === "ASC") orderUrl += "&direction=ASC"
         if (search) orderUrl += `&search=${ encodeURIComponent(search) }`
         if (page) orderUrl += `&page=${ page }`
         return orderUrl
@@ -79,34 +152,14 @@ export default async function ArticlePage({ params, searchParams }: Readonly<Art
                 <div className="-mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <table className="min-w-full divide-y divide-stone-300">
-                            {/*TODO: IMPLEMENT SORTING*/ }
-                            <thead>
-                                <tr>
-                                    <th
-                                        scope="col"
-                                        className="text-shadow-900 py-3.5 pr-3 pl-4 text-left text-sm font-semibold sm:pl-0">
-                                        Id
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
-                                        Title
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
-                                        Subtitle
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
-                                        Publish Date
-                                    </th>
-                                    <th scope="col" className="relative py-3.5 pr-0 pl-3">
-                                        <span className="sr-only">Edit</span>
-                                    </th>
-                                </tr>
-                            </thead>
+                            <TableHeader
+                                href={ buildUrl("id", direction) }
+                                direction={ direction }
+                                orderBy={ orderBy }
+                                href1={ buildUrl("title", direction) }
+                                href2={ buildUrl("subTitle", direction) }
+                                href3={ buildUrl("createdAt", direction) }
+                            />
 
                             <tbody className="divide-y divide-stone-200 bg-white">
                                 { content.map(article => (
