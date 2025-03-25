@@ -1,7 +1,8 @@
 import { State }                     from "@/@types/application"
-import { Article }                   from "@/@types/articles"
+import { Article, Category }         from "@/@types/articles"
 import getAllAvailableCategories     from "@/actions/articles/get-all-available-categories"
 import getArticleById                from "@/actions/articles/get-article-by-id"
+import EditArticleForm               from "@/components/forms/edit-article-form"
 import ArticleSuggestionCardSkeleton from "@/components/layout/skeletons/article-suggestion-card-skeleton"
 import ArticleSuggestionCard         from "@/components/suggestions/article-suggestion-card"
 import { auth }                      from "auth"
@@ -30,6 +31,7 @@ export default async function EditArticlePage({ params }: Readonly<EditArticlePa
     
     const article = articleState.response?.data as Article
     if (article.slug !== slug) return notFound()
+    const categories = categoriesState.response?.data as Category[]
     
     const suggestionPromise = new Promise<State>(resolve =>
                                                      resolve({
@@ -60,7 +62,7 @@ export default async function EditArticlePage({ params }: Readonly<EditArticlePa
                     <ArticleSuggestionCard suggestionPromise={ suggestionPromise } />
                 </Suspense>
                 
-                {/*TODO: IMPLEMENT EDIT FORM*/ }
+                <EditArticleForm categories={ categories } article={ article } />
             </main>
         </div>
     )
