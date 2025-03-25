@@ -1,4 +1,5 @@
-import { Author } from "@/@types/user"
+import { Suggestion } from "@/@types/suggestions"
+import { Author }     from "@/@types/user"
 
 interface Category {
     id: number;
@@ -17,6 +18,7 @@ interface Article {
     slug: string;
     wasEdit: boolean;
     author: Author;
+    suggestion: Suggestion;
     categories: Set<Category>;
     createdAt: Date;
     updatedAt: Date;

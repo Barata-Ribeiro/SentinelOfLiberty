@@ -2,6 +2,7 @@ package com.barataribeiro.sentinelofliberty.repositories;
 
 import com.barataribeiro.sentinelofliberty.models.entities.Article;
 import jakarta.persistence.QueryHint;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -14,6 +15,10 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface ArticleRepository extends JpaRepository<Article, Long> {
+    @Override
+    @EntityGraph(attributePaths = {"author", "suggestion.user", "categories", "references"})
+    @NotNull Optional<Article> findById(@Param("id") @NotNull Long id);
+
     @EntityGraph(attributePaths = {"author", "categories", "references"})
     Page<Article> findAllByAuthor_Username(String username, Pageable pageable);
 

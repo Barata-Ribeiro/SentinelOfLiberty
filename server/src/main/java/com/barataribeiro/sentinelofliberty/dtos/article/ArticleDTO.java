@@ -1,5 +1,6 @@
 package com.barataribeiro.sentinelofliberty.dtos.article;
 
+import com.barataribeiro.sentinelofliberty.dtos.suggestion.SuggestionDTO;
 import com.barataribeiro.sentinelofliberty.dtos.user.AuthorDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,7 @@ public class ArticleDTO implements Serializable {
     private String slug;
     private Boolean wasEdit;
     private AuthorDTO author;
+    private SuggestionDTO suggestion;
     private Set<CategoryDTO> categories;
     private Instant createdAt;
     private Instant updatedAt;
