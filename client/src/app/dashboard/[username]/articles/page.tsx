@@ -1,6 +1,7 @@
 import { Paginated }                            from "@/@types/application"
 import { ArticleSummary }                       from "@/@types/articles"
 import getAllOwnArticlesPaginated               from "@/actions/articles/get-all-own-articles-paginated"
+import DeleteArticleModal                       from "@/components/modals/delete-article-modal"
 import LinkButton                               from "@/components/shared/link-button"
 import NavigationPagination                     from "@/components/shared/navigation-pagination"
 import { Button, Field, Input, Label }          from "@headlessui/react"
@@ -218,8 +219,8 @@ export default async function ArticlePage({ params, searchParams }: Readonly<Art
                                         <td className="relative inline-flex gap-x-2 py-4 pr-4 pl-3 text-right text-sm whitespace-nowrap sm:pr-0">
                                             {/*TODO: IMPLEMENT EDIT BUTTON*/ }
                                             <a>Edit</a>
-                                            {/*TODO: IMPLEMENT DELETE BUTTON*/ }
-                                            <a>Delete</a>
+                                            
+                                            <DeleteArticleModal article={ article } />
                                         </td>
                                     </tr>
                                 )) }
