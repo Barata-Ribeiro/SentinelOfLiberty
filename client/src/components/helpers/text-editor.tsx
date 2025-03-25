@@ -12,6 +12,7 @@ import { Dispatch, SetStateAction }             from "react"
 import ImageResize                              from "tiptap-extension-resize-image"
 
 export interface TextEditorProps {
+    content?: string
     onUpdate: Dispatch<SetStateAction<string>>
 }
 
@@ -64,7 +65,7 @@ export const configuredExtensions: Extensions = [
                       }),
 ]
 
-export default function TextEditor({ onUpdate }: Readonly<TextEditorProps>) {
+export default function TextEditor({ content, onUpdate }: Readonly<TextEditorProps>) {
     const editor = useEditor({
                                  extensions: [ ...configuredExtensions ],
                                  editorProps: {
@@ -73,6 +74,7 @@ export default function TextEditor({ onUpdate }: Readonly<TextEditorProps>) {
                                          class: tw`prose prose-sm sm:prose-base text-shadow-900 dark:text-shadow-50 block max-h-96 min-h-96 !max-w-none overflow-auto focus:outline-none`,
                                      },
                                  },
+                                 content,
                                  onUpdate: ({ editor }) => onUpdate(editor.getHTML()),
                                  enableContentCheck: true,
                                  onContentError({ error }) {
