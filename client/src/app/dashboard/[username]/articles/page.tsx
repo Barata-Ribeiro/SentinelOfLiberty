@@ -21,13 +21,17 @@ export const metadata: Metadata = {
     description: "Listing all the articles written by you on this platform.",
 }
 
+type ArticlePageParams = Pick<ArticleSummary, "id" | "title" | "subTitle" | "createdAt" | "updatedAt">
+type Direction = "ASC" | "DESC"
+
 function TableHeader(props: {
     href: string
-    direction: string
-    orderBy: string
+    direction: Direction
+    orderBy: keyof ArticlePageParams
     href1: string
     href2: string
     href3: string
+    href4: string
 }) {
     return (
         <thead>
@@ -70,7 +74,7 @@ function TableHeader(props: {
                 </th>
                 <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
                     <Link href={ props.href3 } className="group inline-flex">
-                        Published At{ " " }
+                        Published On{ " " }
                         <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
                             { props.direction === "ASC" && props.orderBy === "createdAt" ? (
                                 <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
@@ -81,8 +85,8 @@ function TableHeader(props: {
                     </Link>
                 </th>
                 <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
-                    <Link href={ props.href3 } className="group inline-flex">
-                        Edit At{ " " }
+                    <Link href={ props.href4 } className="group inline-flex">
+                        Edited On{ " " }
                         <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
                             { props.direction === "ASC" && props.orderBy === "updatedAt" ? (
                                 <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
@@ -111,8 +115,8 @@ export default async function ArticlePage({ params, searchParams }: Readonly<Art
     const search = (pageParams.search as string) || ""
     const page = parseInt(pageParams.page as string, 10) || 0
     const perPage = parseInt(pageParams.perPage as string, 10) || 10
-    const direction = (pageParams.direction as string) || "DESC"
-    const orderBy = (pageParams.orderBy as string) || "createdAt"
+    const direction = (pageParams.direction as Direction) || "DESC"
+    const orderBy = (pageParams.orderBy as keyof ArticlePageParams) || "createdAt"
     
     const articlesState = await getAllOwnArticlesPaginated({ page, perPage, direction, orderBy, search })
     const pagination = articlesState.response?.data as Paginated<ArticleSummary>
@@ -120,7 +124,7 @@ export default async function ArticlePage({ params, searchParams }: Readonly<Art
     
     const baseUrl = `/dashboard/${ username }/articles`
     
-    function buildUrl(item: string, direction: string) {
+    function buildUrl(item: keyof ArticlePageParams, direction: Direction) {
         let orderUrl = `${ baseUrl }?orderBy=${ item }`
         
         function getNextDirection(currentOrderBy: string) {
@@ -205,6 +209,7 @@ export default async function ArticlePage({ params, searchParams }: Readonly<Art
                                 href1={ buildUrl("title", direction) }
                                 href2={ buildUrl("subTitle", direction) }
                                 href3={ buildUrl("createdAt", direction) }
+                                href4={ buildUrl("updatedAt", direction) }
                             />
 
                             <tbody className="divide-y divide-stone-200 bg-white">
@@ -223,7 +228,7 @@ export default async function ArticlePage({ params, searchParams }: Readonly<Art
                                             </Link>
                                         </td>
                                         <td
-                                            className="text-shadow-500 max-w-1/2 truncate px-3 py-4 text-sm whitespace-nowrap"
+                                            className="text-shadow-500 max-w-[36ch] truncate px-3 py-4 text-sm whitespace-nowrap"
                                             title={ article.subTitle }
                                             aria-label={ article.subTitle }>
                                             { article.subTitle }
@@ -251,7 +256,7 @@ export default async function ArticlePage({ params, searchParams }: Readonly<Art
                                                     }) }
                                                 </time>
                                             ) : (
-                                                  <span className="text-shadow-400">NotEdit</span>
+                                                  <span className="text-shadow-300">Never</span>
                                               ) }
                                         </td>
                                         <td className="relative inline-flex gap-x-2 py-4 pr-4 pl-3 text-right text-sm whitespace-nowrap sm:pr-0">
