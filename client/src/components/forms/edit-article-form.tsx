@@ -68,6 +68,8 @@ export default function EditArticleForm({ categories, article }: Readonly<EditAr
                     name="title"
                     defaultValue={ article.title }
                     placeholder="e.g., An opinion on the current state of the world"
+                    required
+                    aria-required
                 />
 
                 <FormInput
@@ -76,6 +78,8 @@ export default function EditArticleForm({ categories, article }: Readonly<EditAr
                     type="text"
                     defaultValue={ article.subTitle }
                     placeholder="e.g., An In-Depth Look at Recent Developments"
+                    required
+                    aria-required
                 />
 
                 <FormTextarea
@@ -87,6 +91,8 @@ export default function EditArticleForm({ categories, article }: Readonly<EditAr
                     defaultValue={ article.summary }
                     placeholder="Write your summary here..."
                     description="Use at least 50 characters and a maximum of 250 characters."
+                    required
+                    aria-required
                 />
             </Fieldset>
 
@@ -100,7 +106,7 @@ export default function EditArticleForm({ categories, article }: Readonly<EditAr
 
                 <TextEditor content={ editorContent } onUpdate={ setEditorContent } />
 
-                <input type="hidden" name="content" value={ editorContent } />
+                <input type="hidden" name="content" value={ editorContent } required aria-required />
             </Fieldset>
 
             <Field className="mx-auto w-full max-w-2xl space-y-3">
@@ -113,6 +119,8 @@ export default function EditArticleForm({ categories, article }: Readonly<EditAr
                     defaultValue={ article.mediaUrl }
                     description="Add the URL of the image you want to use as a cover for your article."
                     onChange={ event => setImgUrl(event.target.value) }
+                    required
+                    aria-required
                 />
                 
                 { imgUrl && (
@@ -138,10 +146,12 @@ export default function EditArticleForm({ categories, article }: Readonly<EditAr
                     label="References"
                     name="references"
                     rows={ 8 }
-                    value={ article.references.join(", ") }
+                    defaultValue={ article.references.join(", ") }
                     placeholder="Write your references here..."
                     description="Add the references of your article in case you used any external sources. Separate each reference
                     with a comma."
+                    required
+                    aria-required
                 />
             </Fieldset>
 
@@ -154,6 +164,8 @@ export default function EditArticleForm({ categories, article }: Readonly<EditAr
                     description="Add the categories of your article. Separate each category with a comma."
                     onChange={ handleCategoryInputChange }
                     value={ categoriesInput }
+                    required
+                    aria-required
                 />
 
                 <div>
