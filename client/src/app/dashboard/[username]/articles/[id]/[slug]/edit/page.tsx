@@ -59,7 +59,7 @@ export default async function EditArticlePage({ params }: Readonly<EditArticlePa
 
             <main className="mt-8 border-t border-stone-200 pt-8 sm:mt-14 sm:pt-14">
                 <Suspense fallback={ <ArticleSuggestionCardSkeleton /> }>
-                    <ArticleSuggestionCard suggestionPromise={ suggestionPromise } />
+                    { article.suggestion && <ArticleSuggestionCard suggestionPromise={ suggestionPromise } /> }
                 </Suspense>
                 
                 <EditArticleForm categories={ categories } article={ article } />
