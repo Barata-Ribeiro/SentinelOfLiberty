@@ -24,16 +24,11 @@ interface Article {
     updatedAt: Date;
 }
 
-interface ArticleSummary {
-    id: number;
-    title: string;
-    subTitle: string;
-    summary: string;
-    mediaUrl: string;
-    slug: string;
+type ArticleSummary = Pick<
+    Article,
+    "id" | "title" | "subTitle" | "summary" | "mediaUrl" | "slug" | "wasEdit" | "author" | "createdAt" | "updatedAt"
+> & {
     commentsCount: number;
-    author: Author;
-    createdAt: Date;
 }
 
 export type { Category, Article, ArticleSummary }

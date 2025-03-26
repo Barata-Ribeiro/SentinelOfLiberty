@@ -24,6 +24,9 @@ public class ArticleSummaryDTO implements Serializable {
     private String mediaUrl;
     private String slug;
     private Long commentsCount;
+    private Boolean wasEdit;
     private AuthorDTO author;
     private Instant createdAt;
+    private Instant updatedAt;
+
 }
