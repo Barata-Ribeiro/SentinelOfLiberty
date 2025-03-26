@@ -70,9 +70,21 @@ function TableHeader(props: {
                 </th>
                 <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
                     <Link href={ props.href3 } className="group inline-flex">
-                        Created At{ " " }
+                        Published At{ " " }
                         <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
                             { props.direction === "ASC" && props.orderBy === "createdAt" ? (
+                                <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
+                            ) : (
+                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                              ) }
+                        </span>
+                    </Link>
+                </th>
+                <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
+                    <Link href={ props.href3 } className="group inline-flex">
+                        Edit At{ " " }
+                        <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
+                            { props.direction === "ASC" && props.orderBy === "updatedAt" ? (
                                 <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
                             ) : (
                                   <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
@@ -210,7 +222,10 @@ export default async function ArticlePage({ params, searchParams }: Readonly<Art
                                                 { article.title }
                                             </Link>
                                         </td>
-                                        <td className="text-shadow-500 px-3 py-4 text-sm whitespace-nowrap">
+                                        <td
+                                            className="text-shadow-500 max-w-1/2 truncate px-3 py-4 text-sm whitespace-nowrap"
+                                            title={ article.subTitle }
+                                            aria-label={ article.subTitle }>
                                             { article.subTitle }
                                         </td>
                                         <td className="text-shadow-500 px-3 py-4 text-sm whitespace-nowrap">
@@ -223,6 +238,21 @@ export default async function ArticlePage({ params, searchParams }: Readonly<Art
                                                     minute: "numeric",
                                                 }) }
                                             </time>
+                                        </td>
+                                        <td className="text-shadow-500 px-3 py-4 text-sm whitespace-nowrap">
+                                            { article.createdAt !== article.updatedAt ? (
+                                                <time dateTime={ new Date(article.updatedAt).toISOString() }>
+                                                    { new Date(article.updatedAt).toLocaleDateString("en-US", {
+                                                        month: "long",
+                                                        day: "numeric",
+                                                        year: "numeric",
+                                                        hour: "numeric",
+                                                        minute: "numeric",
+                                                    }) }
+                                                </time>
+                                            ) : (
+                                                  <span className="text-shadow-400">NotEdit</span>
+                                              ) }
                                         </td>
                                         <td className="relative inline-flex gap-x-2 py-4 pr-4 pl-3 text-right text-sm whitespace-nowrap sm:pr-0">
                                             <Link
