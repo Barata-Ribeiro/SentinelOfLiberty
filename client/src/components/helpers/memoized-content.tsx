@@ -2,7 +2,6 @@
 
 import { configuredExtensions }     from "@/components/helpers/text-editor"
 import tw                           from "@/utils/tw"
-import { generateJSON }             from "@tiptap/html"
 import { EditorContent, useEditor } from "@tiptap/react"
 import { useMemo }                  from "react"
 
@@ -11,10 +10,9 @@ interface MemoizedContentProps {
 }
 
 export default function MemoizedContent({ html }: Readonly<MemoizedContentProps>) {
-    const memoized = useMemo(() => generateJSON(html, [ ...configuredExtensions ]), [ html ])
     const editor = useEditor({
                                  editable: false,
-                                 content: memoized,
+                                 content: useMemo(() => html, [ html ]),
                                  extensions: [ ...configuredExtensions ],
                                  editorProps: {
                                      attributes: {
