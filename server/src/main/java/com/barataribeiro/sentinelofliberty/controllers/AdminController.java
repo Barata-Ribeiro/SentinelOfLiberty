@@ -7,6 +7,7 @@ import com.barataribeiro.sentinelofliberty.dtos.suggestion.SuggestionDTO;
 import com.barataribeiro.sentinelofliberty.dtos.suggestion.SuggestionUpdateRequestDTO;
 import com.barataribeiro.sentinelofliberty.dtos.user.ProfileUpdateRequestDTO;
 import com.barataribeiro.sentinelofliberty.dtos.user.UserProfileDTO;
+import com.barataribeiro.sentinelofliberty.dtos.user.UserSecurityDTO;
 import com.barataribeiro.sentinelofliberty.services.ArticleService;
 import com.barataribeiro.sentinelofliberty.services.SuggestionService;
 import com.barataribeiro.sentinelofliberty.services.UserService;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +31,23 @@ public class AdminController {
     private final UserService userService;
     private final SuggestionService suggestionService;
     private final ArticleService articleService;
+
+    @Operation(summary = "Get all users", description = "This endpoint allows an admin to get all users in the " +
+            "system, regardless of verification, ban status, or role. The listing is paginated.")
+    @GetMapping("/users")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApplicationResponseDTO<Page<UserSecurityDTO>>> adminGetAllUsers(
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int perPage,
+            @RequestParam(defaultValue = "ASC") String direction,
+            @RequestParam(defaultValue = "createdAt") String orderBy,
+            Authentication authentication) {
+        Page<UserSecurityDTO> response = userService
+                .adminGetAllUsers(search, page, perPage, direction, orderBy, authentication);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully retrieved all users", response));
+    }
 
     @Operation(summary = "Update an user",
                description = "This endpoint allows an admin to update an user's information.")
