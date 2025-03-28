@@ -1,15 +1,16 @@
-import { Dashboard, Profile }        from "@/@types/user"
-import getOwnDashboard               from "@/actions/users/get-own-dashboard"
-import getOwnProfile                 from "@/actions/users/get-own-profile"
-import DashboardLatestCommentMade    from "@/components/dashboard/dashboard-latest-comment-made"
-import DashboardLatestSuggestionMade from "@/components/dashboard/dashboard-latest-suggestion-made"
-import DashboardLatestWrittenArticle from "@/components/dashboard/dashboard-latest-written-article"
-import DashboardSiteInteractions     from "@/components/dashboard/dashboard-site-interactions"
-import DashboardUserProfile          from "@/components/dashboard/dashboard-user-profile"
-import LogoutButton                  from "@/components/dashboard/logout-button"
-import LinkButton                    from "@/components/shared/link-button"
-import Link                          from "next/link"
-import { notFound, redirect }        from "next/navigation"
+import { Dashboard, Profile }                           from "@/@types/user"
+import getOwnDashboard                                  from "@/actions/users/get-own-dashboard"
+import getOwnProfile                                    from "@/actions/users/get-own-profile"
+import DashboardLatestCommentMade                       from "@/components/dashboard/dashboard-latest-comment-made"
+import DashboardLatestSuggestionMade                    from "@/components/dashboard/dashboard-latest-suggestion-made"
+import DashboardLatestWrittenArticle                    from "@/components/dashboard/dashboard-latest-written-article"
+import DashboardSiteInteractions                        from "@/components/dashboard/dashboard-site-interactions"
+import DashboardUserProfile                             from "@/components/dashboard/dashboard-user-profile"
+import LogoutButton                                     from "@/components/dashboard/logout-button"
+import LinkButton                                       from "@/components/shared/link-button"
+import Link                                             from "next/link"
+import { notFound, redirect }                           from "next/navigation"
+import { LuInfo, LuMailbox, LuNewspaper, LuUserSearch } from "react-icons/lu"
 
 interface DashboardHomePageProps {
     params: Promise<{ username: string }>
@@ -76,25 +77,46 @@ export default async function DashboardHomePage({ params }: Readonly<DashboardHo
     return (
         <>
             <nav className="my-6 rounded-md bg-stone-200 px-6 py-2.5 sm:px-3.5">
-                <div role="list" className="flex flex-col items-center justify-between sm:flex-row gap-4">
-                    <div className="flex items-center gap-2">
+                <div role="list" className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+                    <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+                        <LinkButton
+                            href={ `/dashboard/${ username }/notifications` }
+                            aria-label="List all my notifications"
+                            title="List all my notifications"
+                            buttonStyle="ghost">
+                            <span className="hidden sm:block">Notifications</span>
+                            <LuMailbox aria-hidden="true" className="block size-4 text-inherit sm:hidden" />
+                        </LinkButton>
+                        
                         { isAdmin && (
-                            <LinkButton
-                                href={ `/dashboard/${ username }/articles` }
-                                aria-label="List all my articles"
-                                title="List all my articles"
-                                buttonStyle="ghost">
-                                Articles
-                            </LinkButton>
-                        ) }
-                        { isAdmin && (
-                            <LinkButton
-                                href={ `/dashboard/${ username }/notices` }
-                                aria-label="List all notices issued by me"
-                                title="List all notices issued by me"
-                                buttonStyle="ghost">
-                                Notices
-                            </LinkButton>
+                            <>
+                                <LinkButton
+                                    href={ `/dashboard/${ username }/articles` }
+                                    aria-label="List all my articles"
+                                    title="List all my articles"
+                                    buttonStyle="ghost">
+                                    <span className="hidden sm:block">Articles</span>
+                                    <LuNewspaper aria-hidden="true" className="block size-4 text-inherit sm:hidden" />
+                                </LinkButton>
+
+                                <LinkButton
+                                    href={ `/dashboard/${ username }/notices` }
+                                    aria-label="List all notices issued by me"
+                                    title="List all notices issued by me"
+                                    buttonStyle="ghost">
+                                    <span className="hidden sm:block">Notices</span>
+                                    <LuInfo aria-hidden="true" className="block size-4 text-inherit sm:hidden" />
+                                </LinkButton>
+
+                                <LinkButton
+                                    href={ `/dashboard/${ username }/users` }
+                                    aria-label="List all platform users"
+                                    title="List all platform users"
+                                    buttonStyle="ghost">
+                                    <span className="hidden sm:block">Users</span>
+                                    <LuUserSearch aria-hidden="true" className="block size-4 text-inherit sm:hidden" />
+                                </LinkButton>
+                            </>
                         ) }
                     </div>
 

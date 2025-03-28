@@ -38,7 +38,8 @@ export default function LogoutButton() {
                 buttonStyle="ghost"
                 onClick={ () => setOpen(true) }
                 disabled={ !session || status !== "authenticated" }>
-                Logout <FaArrowRightFromBracket aria-hidden="true" className="size-4 text-inherit" />
+                <span className="sm:block hidden">Logout</span>
+                <FaArrowRightFromBracket aria-hidden="true" className="size-4 text-inherit" />
             </RegularButton>
 
             <Dialog open={ open } onClose={ setOpen } className="relative z-10">
