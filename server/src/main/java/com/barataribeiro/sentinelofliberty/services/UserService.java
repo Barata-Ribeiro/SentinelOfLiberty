@@ -1,9 +1,7 @@
 package com.barataribeiro.sentinelofliberty.services;
 
-import com.barataribeiro.sentinelofliberty.dtos.user.DashboardDTO;
-import com.barataribeiro.sentinelofliberty.dtos.user.ProfileUpdateRequestDTO;
-import com.barataribeiro.sentinelofliberty.dtos.user.UserAccountDTO;
-import com.barataribeiro.sentinelofliberty.dtos.user.UserProfileDTO;
+import com.barataribeiro.sentinelofliberty.dtos.user.*;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 
 public interface UserService {
@@ -14,6 +12,9 @@ public interface UserService {
     UserAccountDTO getOwnProfile(Authentication authentication);
 
     DashboardDTO getOwnDashboardInformation(Authentication authentication);
+
+    Page<UserSecurityDTO> adminGetAllUsers(String search, int page, int perPage, String direction, String orderBy,
+                                           Authentication authentication);
 
     void deleteUserProfile(Authentication authentication);
 

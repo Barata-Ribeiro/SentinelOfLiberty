@@ -7,10 +7,7 @@ import com.barataribeiro.sentinelofliberty.builders.UserMapper;
 import com.barataribeiro.sentinelofliberty.dtos.article.ArticleSummaryDTO;
 import com.barataribeiro.sentinelofliberty.dtos.comment.CommentDTO;
 import com.barataribeiro.sentinelofliberty.dtos.suggestion.SuggestionDTO;
-import com.barataribeiro.sentinelofliberty.dtos.user.DashboardDTO;
-import com.barataribeiro.sentinelofliberty.dtos.user.ProfileUpdateRequestDTO;
-import com.barataribeiro.sentinelofliberty.dtos.user.UserAccountDTO;
-import com.barataribeiro.sentinelofliberty.dtos.user.UserProfileDTO;
+import com.barataribeiro.sentinelofliberty.dtos.user.*;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.IllegalRequestException;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.InvalidCredentialsException;
@@ -24,6 +21,9 @@ import com.barataribeiro.sentinelofliberty.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -103,6 +103,25 @@ public class UserServiceImpl implements UserService {
 
         return new DashboardDTO(latestWrittenArticle, latestThreeSuggestions, latestThreeComments, totalWrittenArticles,
                                 totalWrittenSuggestions, totalWrittenComments);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<UserSecurityDTO> adminGetAllUsers(String search, int page, int perPage, String direction,
+                                                  String orderBy,
+                                                  Authentication authentication) {
+        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+        orderBy = orderBy.equalsIgnoreCase("createdAt") ? "createdAt" : orderBy;
+        PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
+
+        Page<UserSecurityDTO> usersPage;
+        if (search != null && !search.isBlank()) {
+            usersPage = userRepository.findAllUsersBySearchParams(search, pageable).map(userMapper::toUserSecurityDTO);
+        } else {
+            usersPage = userRepository.findAll(pageable).map(userMapper::toUserSecurityDTO);
+        }
+
+        return usersPage;
     }
 
     @Override
