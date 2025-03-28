@@ -11,7 +11,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @DirtiesContext
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -19,6 +21,24 @@ class AdminControllerTestIT extends ApplicationBaseIntegrationTest {
     private static final String BASE_URL = "/api/v1/admin";
 
     private final MockMvcTester mockMvcTester;
+
+    @Test
+    @DisplayName("Test to get all users in the system paginated")
+    void testGetAllUsersPaginated() {
+        mockMvcTester.get().uri(BASE_URL + "/users")
+                     .param("search", "testuser")
+                     .param("page", "0")
+                     .param("perPage", "10")
+                     .param("direction", "ASC")
+                     .param("orderBy", "createdAt")
+                     .headers(authHeader())
+                     .assertThat().hasStatusOk().bodyJson().satisfies(jsonContent -> {
+                         assertEquals("You have successfully retrieved all users",
+                                      JsonPath.read(jsonContent.getJson(), "$.message"));
+                         assertInstanceOf(List.class, JsonPath.read(jsonContent.getJson(), "$.data.content"));
+                         assertTrue((Integer) JsonPath.read(jsonContent.getJson(), "$.data.page.totalElements") > 0);
+                     });
+    }
 
     @Test
     @DisplayName("Test admin banning and unbanning an user")
