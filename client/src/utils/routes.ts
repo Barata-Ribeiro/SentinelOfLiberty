@@ -74,23 +74,13 @@ export function getPopularPublicArticlesUrl(): string {
     return `${ API_URL }/articles/public/popular`
 }
 
-export function getAllArticlesUrl(
-    page: number = 0,
-    perPage: number = 10,
-    direction: string = "ASC",
-    orderBy: string = "createdAt",
-): string {
+export function getAllArticlesUrl(page: number, perPage: number, direction: string, orderBy: string): string {
     const queryString = buildQueryParams({ page, perPage, direction, orderBy })
     return `${ API_URL }/articles/public${ queryString }`
 }
 
-export function getAllArticlesByCategoryUrl(
-    category: string,
-    page: number = 0,
-    perPage: number = 10,
-    direction: string = "ASC",
-    orderBy: string = "createdAt",
-): string {
+export function getAllArticlesByCategoryUrl(category: string, page: number, perPage: number, direction: string,
+                                            orderBy: string): string {
     const queryString = buildQueryParams({ page, perPage, direction, orderBy })
     return `${ API_URL }/articles/public/category/${ category }${ queryString }`
 }
@@ -103,13 +93,8 @@ export function getAllCategoriesUrl(): string {
     return `${ API_URL }/articles/public/categories`
 }
 
-export function getAllOwnArticlesUrl(
-    search?: string,
-    page: number = 0,
-    perPage: number = 10,
-    direction: string = "ASC",
-    orderBy: string = "createdAt",
-): string {
+export function getAllOwnArticlesUrl(search?: string, page?: number, perPage?: number, direction?: string,
+                                     orderBy?: string): string {
     const queryString = buildQueryParams({ search, page, perPage, direction, orderBy })
     return `${ API_URL }/articles${ queryString }`
 }
@@ -148,13 +133,8 @@ export function getLatestNoticeUrl(): string {
     return `${ API_URL }/notices/public/latest`
 }
 
-export function getAllOwnNoticesUrl(
-    search?: string,
-    page: number = 0,
-    perPage: number = 10,
-    direction: string = "ASC",
-    orderBy: string = "createdAt",
-): string {
+export function getAllOwnNoticesUrl(search?: string, page?: number, perPage?: number, direction?: string,
+                                    orderBy?: string): string {
     const queryString = buildQueryParams({ search, page, perPage, direction, orderBy })
     return `${ API_URL }/notices${ queryString }`
 }
@@ -183,12 +163,7 @@ export function getLatestSuggestionsUrl(): string {
     return `${ API_URL }/suggestions/public/latest`
 }
 
-export function getAllSuggestionsUrl(
-    page: number = 0,
-    perPage: number = 10,
-    direction: string = "ASC",
-    orderBy: string = "createdAt",
-): string {
+export function getAllSuggestionsUrl(page: number, perPage: number, direction: string, orderBy: string): string {
     const queryString = buildQueryParams({ page, perPage, direction, orderBy })
     return `${ API_URL }/suggestions/public${ queryString }`
 }
@@ -244,6 +219,12 @@ export function deleteNotificationsInBulkUrl(ids: number[]): string {
 // ==================================================================
 // ====================  Admin Module Functions  ====================
 // ==================================================================
+export function adminGetAllUsersUrl(search?: string, page?: number, perPage?: number, direction?: string,
+                                    orderBy?: string): string {
+    const queryString = buildQueryParams({ search, page, perPage, direction, orderBy })
+    return `${ API_URL }/admin/users${ queryString }`
+}
+
 export function adminUpdateUserUrl(username: string): string {
     return `${ API_URL }/admin/users/${ username }/update`
 }
