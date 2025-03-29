@@ -1,15 +1,24 @@
 import tw          from "@/utils/tw"
 import Image       from "next/image"
 import Link        from "next/link"
+import { LuLock }  from "react-icons/lu"
 import { twMerge } from "tailwind-merge"
 
 interface AvatarWithTextProps {
     name: string
-    size: 32 | 36 | 48
+    size: 32 | 36 | 48 | 64 | 72 | 96
     src: string | null
+    type?: "dashboard" | "profile"
+    isPrivate?: boolean
 }
 
-export default function AvatarWithText({ name, size, src }: Readonly<AvatarWithTextProps>) {
+export default function AvatarWithText({
+                                           name,
+                                           size,
+                                           src,
+                                           type = "dashboard",
+                                           isPrivate = false,
+                                       }: Readonly<AvatarWithTextProps>) {
     let styleSize, textSize
     
     switch (size) {
@@ -21,18 +30,36 @@ export default function AvatarWithText({ name, size, src }: Readonly<AvatarWithT
             styleSize = "size-9"
             textSize = "text-xl"
             break
-        default:
+        case 48:
             styleSize = "size-12"
             textSize = "text-2xl"
+            break
+        case 64:
+            styleSize = "size-16"
+            textSize = "text-3xl"
+            break
+        case 72:
+            styleSize = "size-18"
+            textSize = "text-4xl"
+            break
+        default:
+            styleSize = "size-24"
+            textSize = "text-6xl"
     }
     
-    const placeHolderBaseStyles = tw`flex shrink-0 select-none items-center justify-center rounded-full bg-stone-200 shadow-xs ring-2 ring-white`
+    const placeHolderBaseStyles = tw`flex shrink-0 items-center justify-center rounded-full bg-stone-200 shadow-xs ring-2 ring-white select-none`
     
     const placeHolderMergedStyles = twMerge(placeHolderBaseStyles, styleSize)
     const spanStyles = twMerge("font-heading capitalize text-stone-500", textSize)
     
+    const avatarLink = type === "dashboard" ? `/dashboard/${ name }` : `/profile/${ name }`
+    
     return (
-        <Link href={ `/dashboard/${ name }` } className="group block shrink-0">
+        <Link
+            href={ avatarLink }
+            className="group block shrink-0"
+            aria-label={ `Go to ${ type === "dashboard" ? "your Dashboard" : `Profile for ${ name }` }` }
+            title={ `Go to ${ type === "dashboard" ? "your Dashboard" : `Profile for ${ name }` }` }>
             <div className="flex items-center">
                 <div>
                     { src ? (
@@ -56,10 +83,12 @@ export default function AvatarWithText({ name, size, src }: Readonly<AvatarWithT
                       ) }
                 </div>
                 <div className="ml-3">
-                    <p className="text-sm font-semibold text-shadow-800 group-hover:text-shadow-900">
-                        { name }
-                    </p>
-                    <p className="text-xs font-medium text-shadow-700 group-hover:text-shadow-800">View profile</p>
+                    <p className="text-shadow-800 group-hover:text-shadow-900 text-sm font-semibold">{ name }</p>
+                    { type === "profile" && (
+                        <p className="text-shadow-700 group-hover:text-shadow-800 inline-flex items-center gap-x-1 text-xs font-medium">
+                            View profile { isPrivate && <LuLock aria-hidden="true" /> }
+                        </p>
+                    ) }
                 </div>
             </div>
         </Link>
