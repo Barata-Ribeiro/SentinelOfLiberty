@@ -1,14 +1,16 @@
-import { Paginated }                                                  from "@/@types/application"
-import { User }                                                       from "@/@types/user"
-import getAllUsersPaginated                                           from "@/actions/admin/get-all-users-paginated"
-import AvatarWithText                                                 from "@/components/shared/avatar-with-text"
-import LinkButton                                                     from "@/components/shared/link-button"
-import { Button, Field, Input, Label }                                from "@headlessui/react"
-import { auth }                                                       from "auth"
-import { Metadata }                                                   from "next"
-import Link                                                           from "next/link"
-import { permanentRedirect }                                          from "next/navigation"
-import { LuChevronDown, LuChevronUp, LuEllipsis, LuSearch, LuTrash2 } from "react-icons/lu"
+import { Paginated }                                      from "@/@types/application"
+import { User }                                           from "@/@types/user"
+import getAllUsersPaginated                               from "@/actions/admin/get-all-users-paginated"
+import ActionsMenu                                        from "@/components/dashboard/users/actions-menu"
+import AvatarWithText                                     from "@/components/shared/avatar-with-text"
+import LinkButton                                         from "@/components/shared/link-button"
+import NavigationPagination                               from "@/components/shared/navigation-pagination"
+import { Button, Field, Input, Label }                    from "@headlessui/react"
+import { auth }                                           from "auth"
+import { Metadata }                                       from "next"
+import Link                                               from "next/link"
+import { permanentRedirect }                              from "next/navigation"
+import { LuChevronDown, LuChevronUp, LuSearch, LuTrash2 } from "react-icons/lu"
 
 interface UsersPageProps {
     params: Promise<{ username: string }>
@@ -243,9 +245,8 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
                                                       <span className="text-shadow-300">No updates</span>
                                                   ) }
                                             </td>
-                                            <td className="py-4 pr-4 pl-3 text-sm whitespace-nowrap sm:pr-0">
-                                                {/*TODO: Implement management actions*/ }
-                                                <LuEllipsis aria-hidden="true" className="size-4 text-inherit" />
+                                            <td className="relative py-4 pr-4 pl-3 text-sm whitespace-nowrap sm:pr-0">
+                                                <ActionsMenu user={ user } />
                                             </td>
                                         </tr>
                                     )
@@ -261,6 +262,8 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
                     </div>
                 ) }
             </main>
+            
+            <NavigationPagination pageInfo={ pagination.page } />
         </div>
     )
 }
