@@ -5,6 +5,7 @@ import ActionsMenu                                        from "@/components/das
 import AvatarWithText                                     from "@/components/shared/avatar-with-text"
 import LinkButton                                         from "@/components/shared/link-button"
 import NavigationPagination                               from "@/components/shared/navigation-pagination"
+import RoleBadge                                          from "@/components/shared/role-badge"
 import { Button, Field, Input, Label }                    from "@headlessui/react"
 import { auth }                                           from "auth"
 import { Metadata }                                       from "next"
@@ -32,6 +33,7 @@ function TableHeader(props: {
     href1: string
     href2: string
     href3: string
+    href4: string
 }) {
     return (
         <thead>
@@ -65,6 +67,18 @@ function TableHeader(props: {
                 </th>
                 <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
                     <Link href={ props.href2 } className="group inline-flex">
+                        Role{ " " }
+                        <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
+                            { props.direction === "ASC" && props.orderBy === "email" ? (
+                                <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
+                            ) : (
+                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                              ) }
+                        </span>
+                    </Link>
+                </th>
+                <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
+                    <Link href={ props.href3 } className="group inline-flex">
                         Created At{ " " }
                         <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
                             { props.direction === "ASC" && props.orderBy === "createdAt" ? (
@@ -76,7 +90,7 @@ function TableHeader(props: {
                     </Link>
                 </th>
                 <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
-                    <Link href={ props.href3 } className="group inline-flex">
+                    <Link href={ props.href4 } className="group inline-flex">
                         Last Update{ " " }
                         <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
                             { props.direction === "ASC" && props.orderBy === "updatedAt" ? (
@@ -189,8 +203,9 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
                                 direction={ direction }
                                 orderBy={ orderBy }
                                 href1={ buildUrl("email", direction) }
-                                href2={ buildUrl("createdAt", direction) }
-                                href3={ buildUrl("updatedAt", direction) }
+                                href2={ buildUrl("role", direction) }
+                                href3={ buildUrl("createdAt", direction) }
+                                href4={ buildUrl("updatedAt", direction) }
                             />
 
                             <tbody className="divide-y divide-stone-200 bg-white">
@@ -222,6 +237,9 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
                                                     title={ `Send email to ${ user.email }` }>
                                                     { user.email }
                                                 </Link>
+                                            </td>
+                                            <td className="px-3 py-4 text-sm whitespace-nowrap">
+                                                <RoleBadge role={ user.role } />
                                             </td>
                                             <td className="px-3 py-4 text-sm whitespace-nowrap">
                                                 { new Date(user.createdAt).toLocaleDateString("en-US", {
@@ -262,7 +280,7 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
                     </div>
                 ) }
             </main>
-            
+
             <NavigationPagination pageInfo={ pagination.page } />
         </div>
     )
