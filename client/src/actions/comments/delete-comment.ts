@@ -1,5 +1,6 @@
 "use server"
 
+import { ProblemDetails }   from "@/@types/application"
 import ResponseError        from "@/actions/application/response-error"
 import { deleteCommentUrl } from "@/utils/routes"
 import { auth }             from "auth"
@@ -21,6 +22,12 @@ export default async function deleteComment({ articleId, commentId }: DeleteComm
                 Authorization: `Bearer ${ session?.accessToken }`,
             },
         })
+        
+        if (!response.ok) {
+            const json = await response.json()
+            const problemDetails = json as ProblemDetails
+            return ResponseError(problemDetails)
+        }
         
         return {
             ok: response.status === 204,

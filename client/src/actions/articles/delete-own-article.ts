@@ -23,9 +23,8 @@ export default async function deleteOwnArticle({ id }: DeleteOwnArticle) {
             },
         })
         
-        const json = await response.json()
-        
         if (!response.ok) {
+            const json = await response.json()
             const problemDetails = json as ProblemDetails
             return ResponseError(problemDetails)
         }
