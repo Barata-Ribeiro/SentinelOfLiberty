@@ -1,11 +1,12 @@
 "use client"
 
-import { User }                                          from "@/@types/user"
-import AdminBanButton                                    from "@/components/dashboard/users/admin-ban-button"
-import { Button, Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
-import { useSession }                                    from "next-auth/react"
-import Link                                              from "next/link"
-import { LuEllipsisVertical, LuPencil, LuTrash2 }        from "react-icons/lu"
+import { User }                                  from "@/@types/user"
+import AdminBanButton                            from "@/components/dashboard/users/admin-ban-button"
+import AdminDeleteButton                         from "@/components/dashboard/users/admin-delete-button"
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
+import { useSession }                            from "next-auth/react"
+import Link                                      from "next/link"
+import { LuEllipsisVertical, LuPencil }          from "react-icons/lu"
 
 interface ActionsMenuProps {
     user: User
@@ -40,11 +41,7 @@ export default function ActionsMenu({ user }: Readonly<ActionsMenuProps>) {
                     <AdminBanButton username={ user.username } isBanned={ user.role === "BANNED" } />
                 </MenuItem>
                 <MenuItem>
-                    {/*TODO: Add action to delete user*/ }
-                    <Button className="group flex w-full cursor-pointer items-center px-4 py-2 text-sm text-red-600 data-focus:bg-stone-100 data-focus:text-red-800 data-focus:outline-hidden data-hover:text-red-700">
-                        <LuTrash2 aria-hidden="true" className="mr-3 size-4 text-inherit" />
-                        Delete
-                    </Button>
+                    <AdminDeleteButton username={ user.username } />
                 </MenuItem>
             </MenuItems>
         </Menu>
