@@ -1,24 +1,5 @@
 import { ProblemDetails, State } from "@/@types/application"
 
-function getBackgroundImage(srcSet = "") {
-    const imageSet = srcSet
-        .split(", ")
-        .map(str => {
-            const [ url, dpi ] = str.split(" ")
-            return `url("${ url }") ${ dpi }`
-        })
-        .join(", ")
-    return `image-set(${ imageSet })`
-}
-
-function getInitialFormState(): State {
-    return {
-        ok: false,
-        error: null,
-        response: null,
-    }
-}
-
 function formatCommentDate(date: string): string {
     const now = new Date()
     const past = new Date(date)
@@ -50,6 +31,34 @@ function formatCommentDate(date: string): string {
     return `Posted ${ rtf.format(value, unit) }`
 }
 
+function formatDisplayDate(date: string): string {
+    return new Date(date).toLocaleDateString(navigator.language ?? "en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+    })
+}
+
+function getBackgroundImage(srcSet = "") {
+    const imageSet = srcSet
+        .split(", ")
+        .map(str => {
+            const [ url, dpi ] = str.split(" ")
+            return `url("${ url }") ${ dpi }`
+        })
+        .join(", ")
+    return `image-set(${ imageSet })`
+}
+
+function getInitialFormState(): State {
+    return {
+        ok: false,
+        error: null,
+        response: null,
+    }
+}
 
 function problemDetailsFactory({ type, title, status, detail, instance }: ProblemDetails): ProblemDetails {
     return {
@@ -75,9 +84,10 @@ function textScrambler(text: string): string {
 }
 
 export {
+    formatCommentDate,
+    formatDisplayDate,
     getBackgroundImage,
     getInitialFormState,
-    formatCommentDate,
     problemDetailsFactory,
     textScrambler,
 }
