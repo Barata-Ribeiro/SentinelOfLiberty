@@ -60,7 +60,7 @@ export default function ArticleSummaryCard({ article }: Readonly<ArticleSummaryC
                         </span>
 
                         <time
-                            dateTime={ article.createdAt.toISOString() }
+                            dateTime={ new Date(article.createdAt).toISOString() }
                             aria-label={ `Published on ${ formatDisplayDate(String(article.createdAt), "date") }` }
                             title={ `Published on ${ formatDisplayDate(String(article.createdAt), "date") }` }
                             className="text-shadow-500">

@@ -51,7 +51,7 @@ export default function MainArticleComment({ comment, depth = 0 }: Readonly<Main
                         </div>
                         <div className="flex flex-col gap-2 divide-stone-200 max-sm:divide-y sm:flex-row sm:divide-x">
                             <time
-                                dateTime={ comment.createdAt.toISOString() }
+                                dateTime={ new Date(comment.createdAt).toISOString() }
                                 aria-label={ `Comment created at ${ formatDisplayDate(String(comment.createdAt),
                                                                                       "date") }` }
                                 title={ `Comment created at ${ formatDisplayDate(String(comment.createdAt), "date") }` }

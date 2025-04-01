@@ -32,7 +32,7 @@ export default function SuggestionCard({ suggestion }: Readonly<SuggestionCardPr
             <div className="grid content-between gap-4">
                 <div className="w-max space-y-2">
                     <time
-                        dateTime={ suggestion.createdAt.toISOString() }
+                        dateTime={ new Date(suggestion.createdAt).toISOString() }
                         aria-label={ `Suggested on ${ formatDisplayDate(String(suggestion.createdAt), "date") }` }
                         title={ `Suggested on ${ formatDisplayDate(String(suggestion.createdAt), "date") }` }
                         className="text-shadow-300 text-sm">

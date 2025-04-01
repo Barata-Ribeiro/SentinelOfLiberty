@@ -53,7 +53,7 @@ export default function CommentReplyButton({ session, comment }: Readonly<Commen
 
                                     <div className="order-1 flex flex-col gap-2 divide-stone-200 max-sm:divide-y sm:order-2 sm:flex-row sm:divide-x">
                                         <time
-                                            dateTime={ comment.createdAt.toISOString() }
+                                            dateTime={ new Date(comment.createdAt).toISOString() }
                                             aria-label={ `Commented on ${ formatDisplayDate(String(comment.createdAt),
                                                                                             "date") }` }
                                             title={ `Commented on ${ formatDisplayDate(String(comment.createdAt),

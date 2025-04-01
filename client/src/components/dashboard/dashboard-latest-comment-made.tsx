@@ -11,7 +11,7 @@ export default function DashboardLatestCommentMade({ comment }: Readonly<Dashboa
         <li className="grid gap-y-2 not-last:pb-4">
             <div className="flex w-max flex-col gap-2 divide-stone-200 max-sm:divide-y sm:flex-row sm:divide-x">
                 <time
-                    dateTime={ comment.createdAt.toISOString() }
+                    dateTime={ new Date(comment.createdAt).toISOString() }
                     aria-label={ `Commented on ${ formatDisplayDate(String(comment.createdAt), "date") }` }
                     title={ `Commented on ${ formatDisplayDate(String(comment.createdAt), "date") }` }
                     className="text-shadow-500 block pr-0 pb-2 text-xs sm:pr-2 sm:pb-0">

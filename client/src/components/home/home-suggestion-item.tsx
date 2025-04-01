@@ -1,6 +1,7 @@
-import { Suggestion } from "@/@types/suggestions"
-import Image          from "next/image"
-import Link           from "next/link"
+import { Suggestion }        from "@/@types/suggestions"
+import { formatDisplayDate } from "@/utils/functions"
+import Image                 from "next/image"
+import Link                  from "next/link"
 
 interface HomeSuggestionItemProps {
     suggestion: Suggestion
@@ -20,12 +21,12 @@ export default function HomeSuggestionItem({ suggestion }: Readonly<HomeSuggesti
             />
 
             <div className="grid w-fit">
-                <time dateTime={ String(suggestion.createdAt) } className="text-shadow-600 text-sm">
-                    { new Date(suggestion.createdAt).toLocaleDateString("en-US", {
-                        month: "long",
-                        day: "numeric",
-                        year: "numeric",
-                    }) }
+                <time
+                    dateTime={ new Date(suggestion.createdAt).toISOString() }
+                    aria-label={ `Suggested on ${ formatDisplayDate(String(suggestion.createdAt), "date") }` }
+                    title={ `Suggested on ${ formatDisplayDate(String(suggestion.createdAt), "date") }` }
+                    className="text-shadow-600 text-sm">
+                    { formatDisplayDate(String(suggestion.createdAt), "date") }
                 </time>
                 <Link
                     href={ suggestion.sourceUrl }
