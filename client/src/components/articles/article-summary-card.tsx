@@ -1,5 +1,6 @@
 import { ArticleSummary }            from "@/@types/articles"
 import Avatar                        from "@/components/shared/avatar"
+import { formatDisplayDate }         from "@/utils/functions"
 import Image                         from "next/image"
 import Link                          from "next/link"
 import { FaCircleCheck, FaComments } from "react-icons/fa6"
@@ -58,12 +59,12 @@ export default function ArticleSummaryCard({ article }: Readonly<ArticleSummaryC
                             <span>({ article.commentsCount })</span>
                         </span>
 
-                        <time dateTime={ article.createdAt.toString() } className="text-shadow-500">
-                            { new Date(article.createdAt).toLocaleDateString("en-US", {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                            }) }
+                        <time
+                            dateTime={ article.createdAt.toISOString() }
+                            aria-label={ `Published on ${ formatDisplayDate(String(article.createdAt), "date") }` }
+                            title={ `Published on ${ formatDisplayDate(String(article.createdAt), "date") }` }
+                            className="text-shadow-500">
+                            { formatDisplayDate(String(article.createdAt), "date") }
                         </time>
                     </div>
                 </div>

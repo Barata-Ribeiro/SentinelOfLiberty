@@ -1,6 +1,7 @@
-import { Suggestion } from "@/@types/suggestions"
-import LinkButton     from "@/components/shared/link-button"
-import Image          from "next/image"
+import { Suggestion }        from "@/@types/suggestions"
+import LinkButton            from "@/components/shared/link-button"
+import { formatDisplayDate } from "@/utils/functions"
+import Image                 from "next/image"
 
 interface SuggestionCardProps {
     suggestion: Suggestion
@@ -30,12 +31,12 @@ export default function SuggestionCard({ suggestion }: Readonly<SuggestionCardPr
 
             <div className="grid content-between gap-4">
                 <div className="w-max space-y-2">
-                    <time dateTime={ String(suggestion.createdAt) } className="text-shadow-300 text-sm">
-                        { new Date(suggestion.createdAt).toLocaleDateString("en-US", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                        }) }
+                    <time
+                        dateTime={ suggestion.createdAt.toISOString() }
+                        aria-label={ `Suggested on ${ formatDisplayDate(String(suggestion.createdAt), "date") }` }
+                        title={ `Suggested on ${ formatDisplayDate(String(suggestion.createdAt), "date") }` }
+                        className="text-shadow-300 text-sm">
+                        { formatDisplayDate(String(suggestion.createdAt), "date") }
                     </time>
                     <p className="text-shadow-400">
                         Suggested by <span className="font-semibold">{ suggestion.user.username }</span>

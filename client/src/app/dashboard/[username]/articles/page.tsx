@@ -4,6 +4,7 @@ import getAllOwnArticlesPaginated                         from "@/actions/articl
 import DeleteArticleModal                                 from "@/components/modals/delete-article-modal"
 import LinkButton                                         from "@/components/shared/link-button"
 import NavigationPagination                               from "@/components/shared/navigation-pagination"
+import { formatDisplayDate }                              from "@/utils/functions"
 import { Button, Field, Input, Label }                    from "@headlessui/react"
 import { auth }                                           from "auth"
 import { Metadata }                                       from "next"
@@ -234,26 +235,24 @@ export default async function ArticlePage({ params, searchParams }: Readonly<Art
                                             { article.subTitle }
                                         </td>
                                         <td className="text-shadow-500 px-3 py-4 text-sm whitespace-nowrap">
-                                            <time dateTime={ new Date(article.createdAt).toISOString() }>
-                                                { new Date(article.createdAt).toLocaleDateString("en-US", {
-                                                    month: "long",
-                                                    day: "numeric",
-                                                    year: "numeric",
-                                                    hour: "numeric",
-                                                    minute: "numeric",
-                                                }) }
+                                            <time
+                                                dateTime={ new Date(article.createdAt).toISOString() }
+                                                aria-label={ `Published on ${ formatDisplayDate(
+                                                    String(article.createdAt)) }` }
+                                                title={ `Published on ${ formatDisplayDate(
+                                                    String(article.createdAt)) }` }>
+                                                { formatDisplayDate(String(article.createdAt)) }
                                             </time>
                                         </td>
                                         <td className="text-shadow-500 px-3 py-4 text-sm whitespace-nowrap">
                                             { article.createdAt !== article.updatedAt ? (
-                                                <time dateTime={ new Date(article.updatedAt).toISOString() }>
-                                                    { new Date(article.updatedAt).toLocaleDateString("en-US", {
-                                                        month: "long",
-                                                        day: "numeric",
-                                                        year: "numeric",
-                                                        hour: "numeric",
-                                                        minute: "numeric",
-                                                    }) }
+                                                <time
+                                                    dateTime={ new Date(article.updatedAt).toISOString() }
+                                                    aria-label={ `Edited on ${ formatDisplayDate(
+                                                        String(article.updatedAt)) }` }
+                                                    title={ `Edited on ${ formatDisplayDate(
+                                                        String(article.updatedAt)) }` }>
+                                                    { formatDisplayDate(String(article.updatedAt)) }
                                                 </time>
                                             ) : (
                                                   <span className="text-shadow-300">Never</span>

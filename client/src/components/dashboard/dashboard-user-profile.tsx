@@ -3,6 +3,7 @@ import EditAccountDetailsModal      from "@/components/modals/edit-account-detai
 import EditAccountModal             from "@/components/modals/edit-account-modal"
 import Avatar                       from "@/components/shared/avatar"
 import RoleBadge                    from "@/components/shared/role-badge"
+import { formatDisplayDate }        from "@/utils/functions"
 import { FaCircleCheck }            from "react-icons/fa6"
 import { LuCalendarClock, LuMails } from "react-icons/lu"
 
@@ -43,17 +44,12 @@ export default function DashboardUserProfile({ name, profile }: Readonly<Dashboa
                     title="Account creation date"
                     className="text-shadow-500 inline-flex items-center gap-x-2 text-sm">
                     <LuCalendarClock aria-hidden="true" className="size-4 text-inherit" />
-                    Since{ " " }
-                    { new Date(profile.createdAt).toLocaleDateString("en-US", {
-                        month: "long",
-                        day: "numeric",
-                        year: "numeric",
-                    }) }
+                    Since { formatDisplayDate(profile.createdAt, "date") }
                 </time>
             </div>
-            
+
             <RoleBadge role={ profile.role } />
-            
+
             <div className="my-4 flex flex-col items-center justify-center gap-4 lg:mt-6 lg:flex-row">
                 <EditAccountModal />
 

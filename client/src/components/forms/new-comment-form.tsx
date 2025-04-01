@@ -10,7 +10,7 @@ import InputValidationError
 import Avatar                                                            from "@/components/shared/avatar"
 import FormButton                                                        from "@/components/shared/form-button"
 import FormTextarea                                                      from "@/components/shared/form-textarea"
-import { formatCommentDate, getInitialFormState }                        from "@/utils/functions"
+import { formatCommentDate, formatDisplayDate, getInitialFormState }     from "@/utils/functions"
 import { useSession }                                                    from "next-auth/react"
 import { useParams, useRouter }                                          from "next/navigation"
 import { Dispatch, SetStateAction, useActionState, useEffect, useState } from "react"
@@ -36,11 +36,7 @@ function OptimisticNewComment(props: Readonly<{ newComment: string }>) {
         <div className="rounded-md border border-stone-200 p-4">
             <div className="inline-flex gap-x-2 divide-x divide-stone-200">
                 <time dateTime={ new Date().toISOString() } className="text-shadow-500 block pr-2 text-xs">
-                    { new Date().toLocaleDateString("en-US", {
-                        month: "long",
-                        day: "numeric",
-                        year: "numeric",
-                    }) }
+                    { formatDisplayDate(new Date().toString(), "date") }
                 </time>
 
                 <p className="text-shadow-300 block text-xs">{ formatCommentDate(new Date().toISOString()) }</p>

@@ -6,6 +6,7 @@ import AvatarWithText                                                   from "@/
 import LinkButton                                                       from "@/components/shared/link-button"
 import NavigationPagination                                             from "@/components/shared/navigation-pagination"
 import RoleBadge                                                        from "@/components/shared/role-badge"
+import { formatDisplayDate }                                            from "@/utils/functions"
 import { Button, Field, Input, Label }                                  from "@headlessui/react"
 import { auth }                                                         from "auth"
 import { Metadata }                                                     from "next"
@@ -255,6 +256,12 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
                                             <td className="px-3 py-4 text-sm whitespace-nowrap">
                                                 <small
                                                     data-verified={ user.isVerified }
+                                                    aria-label={ `User is ${
+                                                        user.isVerified ? "verified" : "not verified"
+                                                    }` }
+                                                    title={ `User is ${ user.isVerified
+                                                                        ? "verified"
+                                                                        : "not verified" }` }
                                                     className="data-[verified=true]:text-marigold-500 data-[verified=false]:text-shadow-200 inline-flex items-center gap-x-1 text-sm">
                                                     { user.isVerified ? (
                                                         <>
@@ -273,23 +280,24 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
                                                 <RoleBadge role={ user.role } />
                                             </td>
                                             <td className="px-3 py-4 text-sm whitespace-nowrap">
-                                                { new Date(user.createdAt).toLocaleDateString("en-US", {
-                                                    month: "long",
-                                                    day: "numeric",
-                                                    year: "numeric",
-                                                    hour: "numeric",
-                                                    minute: "numeric",
-                                                }) }
+                                                <time
+                                                    dateTime={ new Date(user.createdAt).toISOString() }
+                                                    aria-label={ `Created at ${ formatDisplayDate(user.createdAt) }` }
+                                                    title={ `Created at ${ formatDisplayDate(user.createdAt) }` }>
+                                                    { formatDisplayDate(user.createdAt) }
+                                                </time>
                                             </td>
                                             <td className="px-3 py-4 text-sm whitespace-nowrap">
                                                 { user.createdAt !== user.updatedAt ? (
-                                                    new Date(user.updatedAt).toLocaleDateString("en-US", {
-                                                        month: "long",
-                                                        day: "numeric",
-                                                        year: "numeric",
-                                                        hour: "numeric",
-                                                        minute: "numeric",
-                                                    })
+                                                    <time
+                                                        dateTime={ new Date(user.createdAt).toISOString() }
+                                                        aria-label={ `Last updated at ${ formatDisplayDate(
+                                                            user.updatedAt,
+                                                        ) }` }
+                                                        title={ `Last updated at ${ formatDisplayDate(
+                                                            user.updatedAt) }` }>
+                                                        { formatDisplayDate(user.updatedAt) }
+                                                    </time>
                                                 ) : (
                                                       <span className="text-shadow-300">No updates</span>
                                                   ) }

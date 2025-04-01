@@ -6,6 +6,7 @@ import deleteNotificationsInBulk                        from "@/actions/notifica
 import patchChangeNotifStatusById                       from "@/actions/notifications/patch-change-notif-status-by-id"
 import patchChangeNotifStatusInBulk                     from "@/actions/notifications/patch-change-notif-status-in-bulk"
 import RegularButton                                    from "@/components/shared/regular-button"
+import { formatDisplayDate }                            from "@/utils/functions"
 import { Button, Input, Transition }                    from "@headlessui/react"
 import { RefObject, useLayoutEffect, useRef, useState } from "react"
 import { FaCircleExclamation, FaX }                     from "react-icons/fa6"
@@ -15,11 +16,13 @@ interface DashboardNotificationTableProps {
     notifications: Notification[]
 }
 
-function TableHeader(props: Readonly<{
-    ref: RefObject<HTMLInputElement | null>;
-    checked: boolean;
-    onChange: () => void
-}>) {
+function TableHeader(
+    props: Readonly<{
+        ref: RefObject<HTMLInputElement | null>
+        checked: boolean
+        onChange: () => void
+    }>,
+) {
     return (
         <thead>
             <tr>
@@ -125,7 +128,7 @@ export default function DashboardNotificationTable({ notifications }: Readonly<D
                                 className="px-2 py-1">
                                 Bulk status
                             </RegularButton>
-                            
+
                             <RegularButton
                                 buttonStyle="ghost"
                                 aria-label="Delete selected"
@@ -190,11 +193,14 @@ export default function DashboardNotificationTable({ notifications }: Readonly<D
                                             { notification.type.toLowerCase() }
                                         </td>
                                         <td className="text-shadow-500 px-3 py-4 text-sm whitespace-nowrap">
-                                            { new Date(notification.createdAt).toLocaleDateString("en-US", {
-                                                month: "long",
-                                                day: "numeric",
-                                                year: "numeric",
-                                            }) }
+                                            <time
+                                                dateTime={ new Date(notification.createdAt).toISOString() }
+                                                aria-label={ `Notification sent on ${ formatDisplayDate(
+                                                    String(notification.createdAt)) }` }
+                                                title={ `Notification sent on ${ formatDisplayDate(
+                                                    String(notification.createdAt)) }` }>
+                                                { formatDisplayDate(String(notification.createdAt)) }
+                                            </time>
                                         </td>
                                         <td className="py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-3">
                                             <Button
@@ -225,7 +231,7 @@ export default function DashboardNotificationTable({ notifications }: Readonly<D
                     className="pointer-events-none fixed right-0 bottom-4 z-50 flex w-full items-end px-4 py-6 sm:items-start sm:p-6">
                     <div className="flex w-full flex-col items-center space-y-4 sm:items-end">
                         <Transition show={ show }>
-                            <div className="ring-opacity-5 pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-red-50 ring-1 shadow-lg ring-red-200 transition data-[closed]:opacity-0 data-[enter]:transform data-[enter]:duration-300 data-[enter]:ease-out data-[closed]:data-[enter]:translate-y-2 data-[leave]:duration-100 data-[leave]:ease-in data-[closed]:data-[enter]:sm:translate-x-2 data-[closed]:data-[enter]:sm:translate-y-0">
+                            <div className="ring-opacity-5 pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-red-50 shadow-lg ring-1 ring-red-200 transition data-[closed]:opacity-0 data-[enter]:transform data-[enter]:duration-300 data-[enter]:ease-out data-[closed]:data-[enter]:translate-y-2 data-[leave]:duration-100 data-[leave]:ease-in data-[closed]:data-[enter]:sm:translate-x-2 data-[closed]:data-[enter]:sm:translate-y-0">
                                 <div className="p-4">
                                     <div className="flex items-start">
                                         <div className="flex-shrink-0">

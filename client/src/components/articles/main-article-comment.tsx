@@ -5,7 +5,7 @@ import CommentDeleteButton
                                                                  from "@/components/articles/comment/comment-delete-button"
 import CommentReplyButton
                                                                  from "@/components/articles/comment/comment-reply-button"
-import { formatCommentDate }                                     from "@/utils/functions"
+import { formatCommentDate, formatDisplayDate }                  from "@/utils/functions"
 import { Button, Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react"
 import { useSession }                                            from "next-auth/react"
 import { useEffect, useState }                                   from "react"
@@ -51,13 +51,12 @@ export default function MainArticleComment({ comment, depth = 0 }: Readonly<Main
                         </div>
                         <div className="flex flex-col gap-2 divide-stone-200 max-sm:divide-y sm:flex-row sm:divide-x">
                             <time
-                                dateTime={ String(comment.createdAt) }
+                                dateTime={ comment.createdAt.toISOString() }
+                                aria-label={ `Comment created at ${ formatDisplayDate(String(comment.createdAt),
+                                                                                      "date") }` }
+                                title={ `Comment created at ${ formatDisplayDate(String(comment.createdAt), "date") }` }
                                 className="text-shadow-500 block pr-0 pb-2 text-xs sm:pr-2 sm:pb-0">
-                                { new Date(comment.createdAt).toLocaleDateString("en-US", {
-                                    month: "long",
-                                    day: "numeric",
-                                    year: "numeric",
-                                }) }
+                                { formatDisplayDate(String(comment.createdAt), "date") }
                             </time>
 
                             <p className="text-shadow-300 block text-xs">

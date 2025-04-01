@@ -2,7 +2,7 @@
 
 import { Comment }                                                  from "@/@types/comments"
 import NewCommentForm                                               from "@/components/forms/new-comment-form"
-import { formatCommentDate }                                        from "@/utils/functions"
+import { formatCommentDate, formatDisplayDate }                     from "@/utils/functions"
 import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
 import { Session }                                                  from "next-auth"
 import { useState }                                                 from "react"
@@ -53,13 +53,13 @@ export default function CommentReplyButton({ session, comment }: Readonly<Commen
 
                                     <div className="order-1 flex flex-col gap-2 divide-stone-200 max-sm:divide-y sm:order-2 sm:flex-row sm:divide-x">
                                         <time
-                                            dateTime={ String(comment.createdAt) }
+                                            dateTime={ comment.createdAt.toISOString() }
+                                            aria-label={ `Commented on ${ formatDisplayDate(String(comment.createdAt),
+                                                                                            "date") }` }
+                                            title={ `Commented on ${ formatDisplayDate(String(comment.createdAt),
+                                                                                       "date") }` }
                                             className="text-shadow-500 block pr-0 pb-2 text-xs sm:pr-2 sm:pb-0">
-                                            { new Date(comment.createdAt).toLocaleDateString("en-US", {
-                                                month: "long",
-                                                day: "numeric",
-                                                year: "numeric",
-                                            }) }
+                                            { formatDisplayDate(String(comment.createdAt), "date") }
                                         </time>
 
                                         <p className="text-shadow-300 block text-xs">

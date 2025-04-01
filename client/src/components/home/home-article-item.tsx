@@ -1,7 +1,8 @@
-import { ArticleSummary } from "@/@types/articles"
-import { Session }        from "next-auth"
-import Image              from "next/image"
-import Link               from "next/link"
+import { ArticleSummary }    from "@/@types/articles"
+import { formatDisplayDate } from "@/utils/functions"
+import { Session }           from "next-auth"
+import Image                 from "next/image"
+import Link                  from "next/link"
 
 interface HomeArticleItemProps {
     article: ArticleSummary
@@ -22,12 +23,12 @@ export default function HomeArticleItem({ article, session }: Readonly<HomeArtic
             />
 
             <div className="grid w-fit">
-                <time dateTime={ String(article.createdAt) } className="text-shadow-600 text-sm">
-                    { new Date(article.createdAt).toLocaleDateString("en-US", {
-                        month: "long",
-                        day: "numeric",
-                        year: "numeric",
-                    }) }
+                <time
+                    dateTime={ String(article.createdAt) }
+                    aria-label={ `Published on ${ formatDisplayDate(String(article.createdAt), "date") }` }
+                    title={ `Published on ${ formatDisplayDate(String(article.createdAt), "date") }` }
+                    className="text-shadow-600 text-sm">
+                    { formatDisplayDate(String(article.createdAt), "date") }
                 </time>
                 <Link
                     href={ `/articles/${ article.id }/${ article.slug }` }
