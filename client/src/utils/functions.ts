@@ -31,14 +31,20 @@ function formatCommentDate(date: string): string {
     return `Posted ${ rtf.format(value, unit) }`
 }
 
-function formatDisplayDate(date: string): string {
-    return new Date(date).toLocaleDateString(navigator.language ?? "en-US", {
+function formatDisplayDate(date: string, size?: "dateTime" | "date"): string {
+    const options: Intl.DateTimeFormatOptions = {
         month: "long",
         day: "numeric",
         year: "numeric",
         hour: "numeric",
         minute: "numeric",
-    })
+    }
+    if (size === "date") {
+        delete options.hour
+        delete options.minute
+    }
+    
+    return new Date(date).toLocaleDateString(navigator.language ?? "en-US", options)
 }
 
 function getBackgroundImage(srcSet = "") {
