@@ -3,6 +3,7 @@
 import { User }                                  from "@/@types/user"
 import AdminBanButton                            from "@/components/dashboard/users/admin-ban-button"
 import AdminDeleteButton                         from "@/components/dashboard/users/admin-delete-button"
+import AdminVerificationButton                   from "@/components/dashboard/users/admin-verification-button"
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
 import { useSession }                            from "next-auth/react"
 import Link                                      from "next/link"
@@ -36,6 +37,9 @@ export default function ActionsMenu({ user }: Readonly<ActionsMenuProps>) {
                         <LuPencil aria-hidden="true" className="mr-3 size-4 text-inherit" />
                         Edit
                     </Link>
+                </MenuItem>
+                <MenuItem>
+                    <AdminVerificationButton username={ user.username } isVerified={ user.isVerified } />
                 </MenuItem>
                 <MenuItem>
                     <AdminBanButton username={ user.username } isBanned={ user.role === "BANNED" } />
