@@ -1,17 +1,17 @@
-import { Paginated }                                      from "@/@types/application"
-import { User }                                           from "@/@types/user"
-import getAllUsersPaginated                               from "@/actions/admin/get-all-users-paginated"
-import ActionsMenu                                        from "@/components/dashboard/users/actions-menu"
-import AvatarWithText                                     from "@/components/shared/avatar-with-text"
-import LinkButton                                         from "@/components/shared/link-button"
-import NavigationPagination                               from "@/components/shared/navigation-pagination"
-import RoleBadge                                          from "@/components/shared/role-badge"
-import { Button, Field, Input, Label }                    from "@headlessui/react"
-import { auth }                                           from "auth"
-import { Metadata }                                       from "next"
-import Link                                               from "next/link"
-import { permanentRedirect }                              from "next/navigation"
-import { LuChevronDown, LuChevronUp, LuSearch, LuTrash2 } from "react-icons/lu"
+import { Paginated }                                                    from "@/@types/application"
+import { User }                                                         from "@/@types/user"
+import getAllUsersPaginated                                             from "@/actions/admin/get-all-users-paginated"
+import ActionsMenu                                                      from "@/components/dashboard/users/actions-menu"
+import AvatarWithText                                                   from "@/components/shared/avatar-with-text"
+import LinkButton                                                       from "@/components/shared/link-button"
+import NavigationPagination                                             from "@/components/shared/navigation-pagination"
+import RoleBadge                                                        from "@/components/shared/role-badge"
+import { Button, Field, Input, Label }                                  from "@headlessui/react"
+import { auth }                                                         from "auth"
+import { Metadata }                                                     from "next"
+import Link                                                             from "next/link"
+import { permanentRedirect }                                            from "next/navigation"
+import { LuBadgeCheck, LuChevronDown, LuChevronUp, LuSearch, LuTrash2 } from "react-icons/lu"
 
 interface UsersPageProps {
     params: Promise<{ username: string }>
@@ -34,6 +34,7 @@ function TableHeader(props: {
     href2: string
     href3: string
     href4: string
+    href5: string
 }) {
     return (
         <thead>
@@ -67,9 +68,9 @@ function TableHeader(props: {
                 </th>
                 <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
                     <Link href={ props.href2 } className="group inline-flex">
-                        Role{ " " }
+                        Verification{ " " }
                         <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
-                            { props.direction === "ASC" && props.orderBy === "email" ? (
+                            { props.direction === "ASC" && props.orderBy === "isVerified" ? (
                                 <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
                             ) : (
                                   <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
@@ -79,6 +80,18 @@ function TableHeader(props: {
                 </th>
                 <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
                     <Link href={ props.href3 } className="group inline-flex">
+                        Role{ " " }
+                        <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
+                            { props.direction === "ASC" && props.orderBy === "role" ? (
+                                <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
+                            ) : (
+                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                              ) }
+                        </span>
+                    </Link>
+                </th>
+                <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
+                    <Link href={ props.href4 } className="group inline-flex">
                         Created At{ " " }
                         <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
                             { props.direction === "ASC" && props.orderBy === "createdAt" ? (
@@ -90,7 +103,7 @@ function TableHeader(props: {
                     </Link>
                 </th>
                 <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
-                    <Link href={ props.href4 } className="group inline-flex">
+                    <Link href={ props.href5 } className="group inline-flex">
                         Last Update{ " " }
                         <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
                             { props.direction === "ASC" && props.orderBy === "updatedAt" ? (
@@ -203,9 +216,10 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
                                 direction={ direction }
                                 orderBy={ orderBy }
                                 href1={ buildUrl("email", direction) }
-                                href2={ buildUrl("role", direction) }
-                                href3={ buildUrl("createdAt", direction) }
-                                href4={ buildUrl("updatedAt", direction) }
+                                href2={ buildUrl("isVerified", direction) }
+                                href3={ buildUrl("role", direction) }
+                                href4={ buildUrl("createdAt", direction) }
+                                href5={ buildUrl("updatedAt", direction) }
                             />
 
                             <tbody className="divide-y divide-stone-200 bg-white">
@@ -237,6 +251,23 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
                                                     title={ `Send email to ${ user.email }` }>
                                                     { user.email }
                                                 </Link>
+                                            </td>
+                                            <td className="px-3 py-4 text-sm whitespace-nowrap">
+                                                <small
+                                                    data-verified={ user.isVerified }
+                                                    className="data-[verified=true]:text-marigold-500 data-[verified=false]:text-shadow-200 inline-flex items-center gap-x-1 text-sm">
+                                                    { user.isVerified ? (
+                                                        <>
+                                                            Verified{ " " }
+                                                            <LuBadgeCheck
+                                                                aria-hidden="true"
+                                                                className="size-4 text-inherit"
+                                                            />
+                                                        </>
+                                                    ) : (
+                                                          "Not Verified"
+                                                      ) }
+                                                </small>
                                             </td>
                                             <td className="px-3 py-4 text-sm whitespace-nowrap">
                                                 <RoleBadge role={ user.role } />
