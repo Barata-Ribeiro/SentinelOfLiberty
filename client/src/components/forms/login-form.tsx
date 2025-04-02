@@ -73,7 +73,7 @@ export default function LoginForm() {
             </Fieldset>
             
             { formState.error && !Array.isArray(formState.error) && (
-                <ApplicationRequestFormError error={ JSON.parse(String(formState.error).split(". R")[0]) } />
+                <ApplicationRequestFormError error={ JSON.parse((formState.error as string).split(". R")[0]) } />
             ) }
             
             { formState.error && Array.isArray(formState.error) && <InputValidationError errors={ formState.error } /> }
