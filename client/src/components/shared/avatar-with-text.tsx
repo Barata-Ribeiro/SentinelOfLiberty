@@ -54,12 +54,14 @@ export default function AvatarWithText({
     
     const avatarLink = type === "dashboard" ? `/dashboard/${ name }` : `/profile/${ name }`
     
+    const profileNameDesc = `Profile for ${ name }`
+    
     return (
         <Link
             href={ avatarLink }
             className="group block shrink-0"
-            aria-label={ `Go to ${ type === "dashboard" ? "your Dashboard" : `Profile for ${ name }` }` }
-            title={ `Go to ${ type === "dashboard" ? "your Dashboard" : `Profile for ${ name }` }` }>
+            aria-label={ `Go to ${ type === "dashboard" ? "your Dashboard" : profileNameDesc }` }
+            title={ `Go to ${ type === "dashboard" ? "your Dashboard" : profileNameDesc }` }>
             <div className="flex items-center">
                 <div>
                     { src ? (
