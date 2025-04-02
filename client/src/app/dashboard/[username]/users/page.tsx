@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 type UsersPageParams = Pick<User, "username" | "email" | "role" | "isVerified" | "createdAt" | "updatedAt">
 type Direction = "ASC" | "DESC"
 
-function TableHeader(props: {
+function TableHeader(props: Readonly<{
     href: string
     direction: "ASC" | "DESC"
     orderBy: "username" | "email" | "role" | "isVerified" | "createdAt" | "updatedAt"
@@ -36,7 +36,7 @@ function TableHeader(props: {
     href3: string
     href4: string
     href5: string
-}) {
+}>) {
     return (
         <thead>
             <tr>
@@ -147,7 +147,8 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
         let orderUrl = `${ baseUrl }?orderBy=${ item }`
         
         function getNextDirection(currentOrderBy: string) {
-            return orderBy === currentOrderBy ? (direction === "ASC" ? "DESC" : "ASC") : "ASC"
+            const isAscDirection = direction === "ASC" ? "DESC" : "ASC"
+            return orderBy === currentOrderBy ? isAscDirection : "ASC"
         }
         
         if (getNextDirection(item) === "ASC") orderUrl += "&direction=ASC"
