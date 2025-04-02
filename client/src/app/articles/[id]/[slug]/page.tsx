@@ -9,6 +9,7 @@ import MainArticleCommentTree          from "@/components/articles/main-article-
 import MainArticleFooter               from "@/components/articles/main-article-footer"
 import MainArticleHeader               from "@/components/articles/main-article-header"
 import MainArticleReferences           from "@/components/articles/main-article-references"
+import MainArticleSuggestion           from "@/components/articles/main-article-suggestion"
 import PopularArticlesListing          from "@/components/articles/popular-articles-listing"
 import NewCommentForm                  from "@/components/forms/new-comment-form"
 import MemoizedContent                 from "@/components/helpers/memoized-content"
@@ -77,8 +78,9 @@ export default async function ArticlePage({ params }: Readonly<ArticlePageProps>
 
                 <main className="grid grid-cols-1 gap-4 md:grid-cols-[auto_1fr] md:gap-8">
                     <aside className="border-marigold-500 w-max border-t-4 pt-4">
-                        <MainArticleAuthor session={ session } article={ article } />
-                        <MainArticleReferences article={ article } />
+                        <MainArticleAuthor session={ session } author={ article.author } />
+                        <MainArticleSuggestion suggestion={ article.suggestion } />
+                        <MainArticleReferences references={ article.references } />
                     </aside>
 
                     <div id="article-content" className="w-full !max-w-4xl">
@@ -132,7 +134,9 @@ export default async function ArticlePage({ params }: Readonly<ArticlePageProps>
 
                 <aside aria-label="Article Sidebar" className="space-y-4" aria-labelledby="article-sidebar-title">
                     <div className="min-w-0 space-y-2">
-                        <h4 id="article-sidebar-title" className="text-shadow-900 text-4xl font-semibold text-balance">Popular Articles</h4>
+                        <h4 id="article-sidebar-title" className="text-shadow-900 text-4xl font-semibold text-balance">
+                            Popular Articles
+                        </h4>
                         <Link
                             href="/articles"
                             className="text-marigold-600 hover:text-marigold-700 active:text-marigold-800 text-sm tracking-wide underline">
