@@ -33,17 +33,16 @@ export default async function EditArticlePage({ params }: Readonly<EditArticlePa
     if (article.slug !== slug) return notFound()
     const categories = categoriesState.response?.data as Category[]
     
-    const suggestionPromise = new Promise<State>(resolve =>
-                                                     resolve({
-                                                                 ok: true,
-                                                                 error: null,
-                                                                 response: {
-                                                                     data: article.suggestion,
-                                                                     status: articleState.response?.status ?? "INTERNAL_SERVER_ERROR",
-                                                                     code: articleState.response?.code ?? 0,
-                                                                     message: articleState.response?.message ?? "Unknown error",
-                                                                 },
-                                                             }))
+    const suggestionPromise = Promise.resolve<State>({
+                                                         ok: true,
+                                                         error: null,
+                                                         response: {
+                                                             data: article.suggestion,
+                                                             status: articleState.response?.status ?? "INTERNAL_SERVER_ERROR",
+                                                             code: articleState.response?.code ?? 0,
+                                                             message: articleState.response?.message ?? "Unknown error",
+                                                         },
+                                                     })
     
     return (
         <div className="container">
