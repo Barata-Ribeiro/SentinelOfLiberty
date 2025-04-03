@@ -25,6 +25,7 @@ export default async function patchUpdateUser(state: State, formData: unknown) {
     
     
     try {
+        // TODO: Redo zod schema to use all Profile properties
         const rawFormData = Object.fromEntries(formData.entries())
         const parsedFormData = userProfileUpdateSchema.safeParse(rawFormData)
         
