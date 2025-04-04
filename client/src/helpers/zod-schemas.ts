@@ -169,6 +169,108 @@ const userAccountDetailsSchema = z
         return data
     })
 
+const adminAccountUpdateSchema = z
+    .object({
+                currentUsername: z.string({ message: "Current username is required" }).trim().optional(),
+                username: z
+                    .string({ message: "Username is required" })
+                    .trim()
+                    .min(3, "Username must be at least 3 characters")
+                    .max(50, "Username must be at most 50 characters")
+                    .regex(/^[a-z]*$/, "Username must contain only lowercase letters")
+                    .nullish()
+                    .or(z.literal("")),
+                displayName: z
+                    .string({ message: "Display Name is required" })
+                    .trim()
+                    .min(3, "Display Name must be at least 3" + " characters")
+                    .max(50, "Display Name must be at most 50 characters")
+                    .regex(/^[a-zA-Z\s]*$/, "Display Name must contain only letters and spaces")
+                    .nullish()
+                    .or(z.literal("")),
+                email: z.string({ message: "Email is required" }).trim().email().nullish().or(z.literal("")),
+                biography: z.string().max(160, "Biography must be at most 160 characters").nullish().or(z.literal("")),
+                firstName: z.string().trim().nullish().or(z.literal("")),
+                lastName: z.string().trim().nullish().or(z.literal("")),
+                birthDate: z
+                    .preprocess(
+                        val => {
+                            if (typeof val === "string" && val.trim() !== "") return new Date(val)
+                            return undefined
+                        },
+                        
+                        z.date({ required_error: "Birth date is required." }).refine(
+                            date => {
+                                const today = new Date()
+                                let age = today.getFullYear() - date.getFullYear()
+                                const monthDiff = today.getMonth() - date.getMonth()
+                                
+                                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < date.getDate())) age--
+                                
+                                return age >= 18
+                            },
+                            { message: "User must be over 18 years old." },
+                        ),
+                    )
+                    .nullish()
+                    .or(z.literal("")),
+                location: z.string().trim().nullish().or(z.literal("")),
+                website: z
+                    .string()
+                    .url("Invalid URL format.")
+                    .regex(/^(https?):\/\/[^\s/$.?#].\S*$/, "Url must be a valid URL.")
+                    .nullish()
+                    .or(z.literal("")),
+                socialMedia: z.string().url().nullish().or(z.literal("")),
+                videoChannel: z.string().trim().nullish().or(z.literal("")),
+                streamingChannel: z.string().trim().nullish().or(z.literal("")),
+                isPrivate: z.string().optional().transform(Boolean),
+                fullName: z.string().optional(),
+                currentPassword: z.string({ message: "Current password is required" }),
+            })
+    .transform((data, ctx) => {
+        if (data.username === "") delete data.username
+        if (data.username === data.currentUsername) {
+            ctx.addIssue({
+                             code: "custom",
+                             message: "Username must be different from current username.",
+                         })
+            
+            return z.NEVER
+        }
+        
+        if (data.displayName === "") delete data.displayName
+        if (data.email === "") delete data.email
+        if (data.biography === "") delete data.biography
+        if (data.firstName || data.lastName) {
+            const fullName = [ data.firstName, data.lastName ].filter(Boolean).join(" ").trim()
+            
+            if (!/^[a-zA-Z ]*$/.test(fullName)) {
+                ctx.addIssue({
+                                 code: "custom",
+                                 message: "Invalid name format.",
+                             })
+                
+                return z.NEVER
+            }
+            
+            data.fullName = fullName
+        }
+        
+        delete data.firstName
+        delete data.lastName
+        delete data.currentUsername
+        
+        if (data.birthDate === "") delete data.birthDate
+        if (data.location === "") delete data.location
+        if (data.website === "") delete data.website
+        if (data.socialMedia === "") delete data.socialMedia
+        if (data.videoChannel === "") delete data.videoChannel
+        if (data.streamingChannel === "") delete data.streamingChannel
+        
+        return data
+    })
+
 // NOTICES
 const noticeRequestSchema = z
     .object({
@@ -303,6 +405,7 @@ export {
     authRegisterSchema,
     userProfileUpdateSchema,
     userAccountDetailsSchema,
+    adminAccountUpdateSchema,
     noticeRequestSchema,
     suggestionRequestSchema,
     articleRequestSchema,
