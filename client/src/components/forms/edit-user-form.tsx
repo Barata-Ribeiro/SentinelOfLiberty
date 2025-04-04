@@ -22,6 +22,8 @@ export default function EditUserForm({ user }: Readonly<EditUserFormProps>) {
     
     return (
         <form action={ formAction } className="mx-auto mb-8 grid max-w-1/2 grid-cols-1 content-stretch gap-6">
+            <input type="hidden" name="currentUsername" defaultValue={ user.username } />
+
             <FormInput
                 type="password"
                 label="Current Password"
@@ -72,7 +74,7 @@ export default function EditUserForm({ user }: Readonly<EditUserFormProps>) {
                 type="date"
                 label="Birth Date"
                 name="birthDate"
-                defaultValue={ user.birthDate ?? "" }
+                defaultValue={ user.birthDate ? new Date(user.birthDate).toISOString().split("T")[0] : "" }
                 max={ new Date().toISOString().split("T")[0] }
                 autoComplete="bday"
                 aria-autocomplete="list"
