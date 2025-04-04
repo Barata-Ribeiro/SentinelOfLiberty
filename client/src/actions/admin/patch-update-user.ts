@@ -2,7 +2,7 @@
 
 import { ProblemDetails, RestResponse, State } from "@/@types/application"
 import ResponseError                           from "@/actions/application/response-error"
-import { userProfileUpdateSchema }             from "@/helpers/zod-schemas"
+import { adminAccountUpdateSchema }            from "@/helpers/zod-schemas"
 import { problemDetailsFactory }               from "@/utils/functions"
 import { adminUpdateUserUrl }                  from "@/utils/routes"
 import { auth }                                from "auth"
@@ -25,15 +25,14 @@ export default async function patchUpdateUser(state: State, formData: unknown) {
     
     
     try {
-        // TODO: Redo zod schema to use all Profile properties
         const rawFormData = Object.fromEntries(formData.entries())
-        const parsedFormData = userProfileUpdateSchema.safeParse(rawFormData)
+        const parsedFormData = adminAccountUpdateSchema.safeParse(rawFormData)
         
         if (!parsedFormData.success) {
             return ResponseError(parsedFormData.error)
         }
         
-        const URL = adminUpdateUserUrl(formData.get("username") as unknown as string)
+        const URL = adminUpdateUserUrl(formData.get("currentUsername") as unknown as string)
         
         const response = await fetch(URL, {
             method: "PATCH",
