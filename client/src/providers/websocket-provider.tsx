@@ -1,6 +1,8 @@
 "use client"
 
-import websocketClient                                                                      from "@/helpers/websocket-client"
+import { Notification }                                                                     from "@/@types/user"
+import websocketClient
+                                                                                            from "@/helpers/websocket-client"
 import { IMessage, StompSubscription }                                                      from "@stomp/stompjs"
 import { useSession }                                                                       from "next-auth/react"
 import { createContext, ReactNode, useContext, useLayoutEffect, useMemo, useRef, useState } from "react"
