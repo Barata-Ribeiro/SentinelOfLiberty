@@ -1,3 +1,5 @@
+import { Notification }                                          from "@/@types/user"
+import getLatestNotifications                                    from "@/actions/notifications/get-latest-notifications"
 import { useWebsocket }                                          from "@/providers/websocket-provider"
 import { Button, Description, Dialog, DialogPanel, DialogTitle } from "@headlessui/react"
 import { useSession }                                            from "next-auth/react"
@@ -6,53 +8,87 @@ import { useEffect, useRef, useState }                           from "react"
 import { FaRegBell, FaX }                                        from "react-icons/fa6"
 import { HiBellAlert }                                           from "react-icons/hi2"
 
-function NotificationPingIcon() {
+function NotificationPingIcon({ total }: Readonly<{ total: number }>) {
+    if (total === 0) return null
+    
     return (
         <>
             <span
                 aria-hidden="true"
-                className="absolute top-[14%] right-[14%] z-[1] grid min-h-[12px] min-w-[12px] -translate-y-2/4 translate-x-2/4 place-items-center rounded-full border border-white bg-red-500 px-1 py-1 text-xs leading-none font-medium text-white content-['']"></span>
+                className="absolute top-[14%] right-[14%] z-[1] grid min-h-[12px] min-w-[12px] translate-x-2/4 -translate-y-2/4 place-items-center rounded-full bg-red-500 px-1 py-0.5 text-xs leading-none font-medium text-red-50 content-['']">
+                { total }
+            </span>
             <span
                 aria-hidden="true"
-                className="absolute top-[14%] right-[14%] z-0 grid min-h-[12px] min-w-[12px] -translate-y-2/4 translate-x-2/4 animate-ping place-items-center rounded-full border bg-red-500 px-1 py-1 text-xs leading-none font-medium content-['']"></span>
+                className="absolute top-[14%] right-[14%] z-0 grid min-h-[12px] min-w-[12px] translate-x-2/4 -translate-y-2/4 animate-ping place-items-center rounded-full bg-red-500 px-1 py-0.5 text-xs leading-none font-medium content-['']">
+                { total }
+            </span>
         </>
     )
 }
 
 export default function NotificationButton() {
     const [ isOpen, setIsOpen ] = useState(false)
-    const { notifications } = useWebsocket()
+    const [ unreadNotifications, setUnreadNotifications ] = useState(0)
+    const { notifications: websocketNotifications } = useWebsocket()
     const { data: session, status } = useSession()
     
-    const prevNotificationsLength = useRef(notifications.length)
+    const prevNotificationsLength = useRef(websocketNotifications.length)
     const hasMounted = useRef(false)
+    
+    useEffect(() => {
+        getLatestNotifications()
+            .then(result => {
+                if (!result.ok || !result.response) {
+                    console.error("Error fetching notifications:", result.error)
+                    return
+                }
+                
+                const latestNotifications = result.response.data as Notification[]
+                const unreadCount = latestNotifications.filter(notification => !notification.isRead).length
+                setUnreadNotifications(unreadCount)
+            })
+            .catch(error => console.error("Error fetching notifications:", error))
+    }, [])
     
     useEffect(() => {
         if (!hasMounted.current) {
             hasMounted.current = true
-            prevNotificationsLength.current = notifications.length
+            prevNotificationsLength.current = websocketNotifications.length
             return
         }
         
-        if (notifications.length > prevNotificationsLength.current) {
+        if (websocketNotifications.length > prevNotificationsLength.current) {
             setIsOpen(true)
         }
         
-        prevNotificationsLength.current = notifications.length
-    }, [ notifications.length ])
+        prevNotificationsLength.current = websocketNotifications.length
+    }, [ websocketNotifications.length ])
     
+    const totalUnreadNotifications =
+        unreadNotifications + websocketNotifications.filter(notification => !notification.isRead).length
+    
+    const notificationsLabel = `Notifications${
+        totalUnreadNotifications > 0 ? `, ${ totalUnreadNotifications } unread` : ""
+    }`
     return (
         <>
-            <Link
-                href={ `/dashboard/${ session?.user.username }/notifications` }
-                data-disabled={ status !== "authenticated" }
-                className="text-shadow-400 hover:text-shadow-500 focus:outline-marigold-900 relative mr-4 shrink-0 rounded-full bg-stone-50 p-1 focus:outline-2 focus:outline-offset-2 data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50"
-                aria-live="polite"
-                aria-atomic="true">
-                <span className="sr-only">View notifications</span>
-                <FaRegBell aria-hidden="true" className="h-6 w-7" />
-                { notifications.length > 0 && <NotificationPingIcon /> }
-            </Link>
+            <div className="relative inline-flex items-center">
+                <Link
+                    href={ `/dashboard/${ session?.user.username }/notifications` }
+                    aria-disabled={ status !== "authenticated" }
+                    aria-label={ notificationsLabel }
+                    title={ notificationsLabel }
+                    className="inline-grid min-h-[36px] min-w-[36px] place-items-center rounded-full border border-stone-200 bg-stone-200 text-center align-middle font-sans text-sm leading-none font-medium text-stone-900 transition-all duration-300 ease-in select-none hover:bg-stone-100 disabled:pointer-events-none disabled:opacity-60"
+                    role="button">
+                    <FaRegBell aria-hidden="true" className="size-4 stroke-2" />
+                    { totalUnreadNotifications > 0 && (
+                        <span className="sr-only">{ totalUnreadNotifications } unread notifications</span>
+                    ) }
+                </Link>
+
+                <NotificationPingIcon total={ totalUnreadNotifications } />
+            </div>
 
             <Dialog
                 open={ isOpen }
@@ -61,14 +97,15 @@ export default function NotificationButton() {
                 transition
                 className="relative z-50 transition duration-300 ease-out data-[closed]:opacity-0">
                 <div className="fixed right-0 bottom-4 flex w-screen items-center justify-end p-4">
-                    <DialogPanel className="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white p-4 ring-1 shadow-lg ring-stone-200">
+                    <DialogPanel className="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white p-4 shadow-lg ring-1 ring-stone-200">
                         <article className="flex items-start">
                             <div className="flex-shrink-0">
                                 <HiBellAlert aria-hidden="true" className="text-marigold-400 size-6" />
                             </div>
                             <div className="ml-3 w-0 flex-1 pt-0.5">
                                 <DialogTitle as="h2" className="text-shadow-900 text-md font-medium">
-                                    New Notification! { notifications.length > 1 ? `(${ notifications.length })` : "" }
+                                    New Notification!{ " " }
+                                    { totalUnreadNotifications > 1 ? `(${ totalUnreadNotifications })` : "" }
                                 </DialogTitle>
                                 <Description className="text-shadow-600 mt-1 text-sm">
                                     You just received a new notification, go check it out{ " " }
