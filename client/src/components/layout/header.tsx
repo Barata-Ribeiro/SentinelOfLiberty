@@ -109,7 +109,7 @@ export default function Header() {
                         </div>
                     </div>
 
-                    <div className="flex flex-1 justify-end">
+                    <div className="flex flex-1 justify-end gap-x-4">
                         { status === "loading" ? (
                             <HeaderAvatarSkeleton />
                         ) : (
@@ -131,7 +131,7 @@ export default function Header() {
                                 </Button>
                             </div>
 
-                            <div className="flex flex-1 justify-end">
+                            <div className="flex flex-1 justify-end gap-x-4">
                                 { status === "loading" ? (
                                     <HeaderAvatarSkeleton />
                                 ) : (
