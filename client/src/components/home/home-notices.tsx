@@ -75,9 +75,9 @@ export default function HomeNotices({ notices }: Readonly<HomeNoticesProps>) {
                 <div
                     aria-roledescription="slide"
                     aria-label={ `Notice ${ currentNoticeIndex + 1 } of ${ totalNotices }` }
-                    className="flex flex-shrink-0">
+                    className="flex">
                     <FaExclamationTriangle aria-hidden="true" className="size-5 text-yellow-400" />
-                    <p id="notice-description" className="ml-3 text-sm text-yellow-700">
+                    <p id="notice-description" className="ml-3 text-sm text-yellow-700 text-balance">
                         { currentNotice.message }
                     </p>
                 </div>
