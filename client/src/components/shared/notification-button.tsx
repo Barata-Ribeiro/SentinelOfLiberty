@@ -122,10 +122,8 @@ export default function NotificationButton() {
                             <div className="ml-4 flex flex-shrink-0">
                                 <Button
                                     type="button"
-                                    onClick={ () => {
-                                        setIsOpen(false)
-                                    } }
-                                    className="text-shadow-400 hover:text-shadow-500 focus:ring-marigold-500 inline-flex rounded-md bg-white focus:ring-2 focus:ring-offset-2 focus:outline-none">
+                                    onClick={ () => setIsOpen(false) }
+                                    className="text-shadow-400 hover:text-shadow-500 focus:ring-marigold-500 inline-flex cursor-pointer rounded-md bg-white transition duration-300 ease-in focus:ring-2 focus:ring-offset-2 focus:outline-none">
                                     <span className="sr-only">Close</span>
                                     <FaX aria-hidden="true" className="size-4" />
                                 </Button>
