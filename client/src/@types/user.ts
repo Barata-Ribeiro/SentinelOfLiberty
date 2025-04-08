@@ -59,4 +59,11 @@ interface Notification {
     updatedAt: Date;
 }
 
-export type { Roles, User, Profile, Account, Author, Dashboard, NotificationType, Notification }
+interface LatestNotifications {
+    latestNotifications: Notification[];
+    totalCount: number;
+    totalRead: number;
+    totalUnread: number;
+}
+
+export type { Roles, User, Profile, Account, Author, Dashboard, NotificationType, Notification, LatestNotifications }

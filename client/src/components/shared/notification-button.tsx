@@ -1,4 +1,4 @@
-import { Notification }                                          from "@/@types/user"
+import { LatestNotifications }                                   from "@/@types/user"
 import getLatestNotifications                                    from "@/actions/notifications/get-latest-notifications"
 import { useWebsocket }                                          from "@/providers/websocket-provider"
 import { Button, Description, Dialog, DialogPanel, DialogTitle } from "@headlessui/react"
@@ -44,8 +44,8 @@ export default function NotificationButton() {
                     return
                 }
                 
-                const latestNotifications = result.response.data as Notification[]
-                const unreadCount = latestNotifications.filter(notification => !notification.isRead).length
+                const latestNotifications = result.response.data as LatestNotifications
+                const unreadCount = latestNotifications.totalUnread
                 setUnreadNotifications(unreadCount)
             })
             .catch(error => console.error("Error fetching notifications:", error))
