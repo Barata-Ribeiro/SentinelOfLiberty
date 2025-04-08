@@ -8,6 +8,7 @@ import CommentReplyButton
 import { formatCommentDate, formatDisplayDate }                  from "@/utils/functions"
 import { Button, Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react"
 import { useSession }                                            from "next-auth/react"
+import Link                                                      from "next/link"
 import { useEffect, useState }                                   from "react"
 import { FaChevronDown, FaCircleCheck }                          from "react-icons/fa6"
 
@@ -41,7 +42,13 @@ export default function MainArticleComment({ comment, depth = 0 }: Readonly<Main
                                 className="w-5 cursor-pointer text-stone-400 transition duration-200 ease-out group-data-[open]:rotate-180"
                             />
                             <div className="inline-flex items-center gap-x-1">
-                                <span className="font-medium">{ comment.user.username }</span>
+                                <Link
+                                    href={ `/profile/${ comment.user.username }` }
+                                    aria-label={ `View ${ comment.user.username }'s profile` }
+                                    title={ `View ${ comment.user.username }'s profile` }
+                                    className="font-medium transition-colors duration-200 ease-in-out hover:underline">
+                                    { comment.user.username }
+                                </Link>
                                 { comment.user.isVerified && (
                                     <span className="text-marigold-500" title="Verified author">
                                         <FaCircleCheck aria-hidden="true" className="size-4" />
@@ -52,8 +59,10 @@ export default function MainArticleComment({ comment, depth = 0 }: Readonly<Main
                         <div className="flex flex-col gap-2 divide-stone-200 max-sm:divide-y sm:flex-row sm:divide-x">
                             <time
                                 dateTime={ new Date(comment.createdAt).toISOString() }
-                                aria-label={ `Comment created at ${ formatDisplayDate(String(comment.createdAt),
-                                                                                      "date") }` }
+                                aria-label={ `Comment created at ${ formatDisplayDate(
+                                    String(comment.createdAt),
+                                    "date",
+                                ) }` }
                                 title={ `Comment created at ${ formatDisplayDate(String(comment.createdAt), "date") }` }
                                 className="text-shadow-500 block pr-0 pb-2 text-xs sm:pr-2 sm:pb-0">
                                 { formatDisplayDate(String(comment.createdAt), "date") }
