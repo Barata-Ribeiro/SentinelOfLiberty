@@ -42,6 +42,7 @@ export default function EditAccountDetailsForm() {
             </Fieldset>
             
             <FormInput type="url"
+                       name="website"
                        label="Your website"
                        pattern="https://.*"
                        placeholder="https://example.com"
