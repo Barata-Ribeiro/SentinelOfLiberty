@@ -1,5 +1,6 @@
 package com.barataribeiro.sentinelofliberty.services;
 
+import com.barataribeiro.sentinelofliberty.dtos.notification.LatestNotificationWithCountDTO;
 import com.barataribeiro.sentinelofliberty.dtos.notification.NotificationDTO;
 import com.barataribeiro.sentinelofliberty.dtos.notification.NotificationUpdateRequestDTO;
 import org.springframework.data.domain.Page;
@@ -10,7 +11,7 @@ import java.util.List;
 public interface NotificationService {
     void sendNotificationThroughWebsocket(String username, NotificationDTO notification);
 
-    List<NotificationDTO> getLatestNotification(Authentication authentication);
+    LatestNotificationWithCountDTO getLatestNotification(Authentication authentication);
 
     Page<NotificationDTO> getAllOwnNotifications(int page, int perPage, String direction, String orderBy,
                                                  Authentication authentication);

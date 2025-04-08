@@ -1,6 +1,7 @@
 package com.barataribeiro.sentinelofliberty.controllers;
 
 import com.barataribeiro.sentinelofliberty.dtos.ApplicationResponseDTO;
+import com.barataribeiro.sentinelofliberty.dtos.notification.LatestNotificationWithCountDTO;
 import com.barataribeiro.sentinelofliberty.dtos.notification.NotificationDTO;
 import com.barataribeiro.sentinelofliberty.dtos.notification.NotificationUpdateRequestDTO;
 import com.barataribeiro.sentinelofliberty.services.NotificationService;
@@ -28,9 +29,9 @@ public class NotificationController {
     @Operation(summary = "Get the latest notification",
                description = "This endpoint allows an authenticated user to get the latest notifications sent to them.")
     @GetMapping("/latest")
-    public ResponseEntity<ApplicationResponseDTO<List<NotificationDTO>>> getLatestNotification(
+    public ResponseEntity<ApplicationResponseDTO<LatestNotificationWithCountDTO>> getLatestNotification(
             Authentication authentication) {
-        List<NotificationDTO> response = notificationService.getLatestNotification(authentication);
+        LatestNotificationWithCountDTO response = notificationService.getLatestNotification(authentication);
         return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
                                                               "You have successfully retrieved the latest notification",
                                                               response));

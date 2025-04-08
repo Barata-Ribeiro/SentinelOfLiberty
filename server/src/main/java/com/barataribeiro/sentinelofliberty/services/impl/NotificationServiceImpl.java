@@ -1,6 +1,7 @@
 package com.barataribeiro.sentinelofliberty.services.impl;
 
 import com.barataribeiro.sentinelofliberty.builders.NotificationMapper;
+import com.barataribeiro.sentinelofliberty.dtos.notification.LatestNotificationWithCountDTO;
 import com.barataribeiro.sentinelofliberty.dtos.notification.NotificationDTO;
 import com.barataribeiro.sentinelofliberty.dtos.notification.NotificationUpdateRequestDTO;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -39,10 +41,19 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<NotificationDTO> getLatestNotification(@NotNull Authentication authentication) {
+    public LatestNotificationWithCountDTO getLatestNotification(@NotNull Authentication authentication) {
         List<Notification> notifications = notificationRepository
                 .findTop5ByRecipient_UsernameOrderByCreatedAtDesc(authentication.getName());
-        return notificationMapper.toNotificationDTOList(notifications);
+        Map<String, Long> notificationCounts = notificationRepository
+                .getNotificationCountsByRecipient_Username(authentication.getName());
+
+        LatestNotificationWithCountDTO responseBody = new LatestNotificationWithCountDTO();
+        responseBody.setLatestNotifications(notificationMapper.toNotificationDTOList(notifications));
+        responseBody.setTotalCount(notificationCounts.get("totalCount"));
+        responseBody.setTotalRead(notificationCounts.get("totalRead"));
+        responseBody.setTotalUnread(notificationCounts.get("totalUnread"));
+
+        return responseBody;
     }
 
     @Override
