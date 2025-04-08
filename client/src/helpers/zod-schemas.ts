@@ -66,6 +66,12 @@ const userProfileUpdateSchema = z
                     .nullish()
                     .or(z.literal("")),
                 email: z.string({ message: "Email is required" }).trim().email().nullish().or(z.literal("")),
+                avatarUrl: z
+                    .string()
+                    .url("Invalid URL format.")
+                    .regex(/^(https?):\/\/[^\s/$.?#].\S*$/, "Url must be a valid URL.")
+                    .nullish()
+                    .or(z.literal("")),
                 biography: z.string().max(160, "Biography must be at most 160 characters").nullish().or(z.literal("")),
                 currentPassword: z.string({ message: "Current password is required" }),
                 newPassword: z
@@ -94,6 +100,7 @@ const userProfileUpdateSchema = z
         if (data.username === "") delete data.username
         if (data.displayName === "") delete data.displayName
         if (data.email === "") delete data.email
+        if (data.avatarUrl === "") delete data.avatarUrl
         if (data.biography === "") delete data.biography
         if (data.newPassword === "") delete data.newPassword
         if (data.confirmNewPassword) delete data.confirmNewPassword
