@@ -10,6 +10,7 @@ import FormTextarea                from "@/components/shared/form-textarea"
 import { getInitialFormState }     from "@/utils/functions"
 import { Fieldset, Legend }        from "@headlessui/react"
 import { useActionState }          from "react"
+import { LuLink }                  from "react-icons/lu"
 
 export default function EditProfileForm() {
     const [ formState, formAction, pending ] = useActionState(patchOwnProfile, getInitialFormState())
@@ -31,6 +32,20 @@ export default function EditProfileForm() {
                 <FormInput type="text" label="Username" name="username" />
                 <FormInput type="email" label="Email" name="email" />
                 <FormInput type="text" label="Display Name" name="displayName" />
+            </Fieldset>
+
+            <Fieldset>
+                <Legend className="font-heading text-shadow-800 text-lg font-bold">Avatar & Biography</Legend>
+                <FormInput
+                    type="url"
+                    name="avatarUrl"
+                    label="Avatar URL"
+                    pattern="https://.*"
+                    placeholder="https://example.com/avatar.png"
+                    icon={ LuLink }
+                    iconPlacement="start"
+                />
+
                 <FormTextarea
                     label="Biography"
                     name="biography"
