@@ -70,7 +70,7 @@ export default function AvatarWithText({
                             alt={ `Avatar for ${ name }` }
                             title={ `Avatar for ${ name }` }
                             aria-label={ `Avatar for ${ name }` }
-                            className="shrink-0 rounded-full bg-stone-200 shadow-xs ring-2 ring-white"
+                            className="aspect-square shrink-0 rounded-full bg-stone-200 object-cover shadow-xs ring-2 ring-white transition-all duration-200 ease-in-out group-hover:scale-105"
                             width={ size }
                             height={ size }
                             sizes={ `${ size }px` }

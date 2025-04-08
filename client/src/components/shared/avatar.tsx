@@ -39,7 +39,7 @@ export default function Avatar({ name, size, src, animate = true }: Readonly<Ava
             textSize = "text-6xl"
     }
     
-    const baseStyles = tw`shrink-0 rounded-full bg-stone-200 ring-2 shadow-xl ring-white select-none`
+    const baseStyles = tw`aspect-square shrink-0 rounded-full bg-stone-200 object-cover shadow-xl ring-2 ring-white select-none`
     const placeHolderBaseStyles = twMerge(baseStyles, "flex items-center justify-center")
     
     const placeHolderMergedStyles = twMerge(placeHolderBaseStyles, styleSize)
