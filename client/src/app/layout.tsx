@@ -1,3 +1,4 @@
+import ScrollToTop            from "@/components/helpers/scroll-to-top"
 import Footer                 from "@/components/layout/footer"
 import Header                 from "@/components/layout/header"
 import { WebsocketProvider }  from "@/providers/websocket-provider"
@@ -65,6 +66,7 @@ export default function RootLayout({
                         <Header />
                         { children }
                         <Footer />
+                        <ScrollToTop />
                     </body>
                 </html>
             </WebsocketProvider>
