@@ -4,27 +4,28 @@ import deleteAuthLogout                                     from "@/actions/auth
 import RegularButton                                        from "@/components/shared/regular-button"
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
 import { useSession }                                       from "next-auth/react"
-import { redirect }                                         from "next/navigation"
+import { useRouter }                                        from "next/navigation"
 import { useState, useTransition }                          from "react"
 import { FaExclamationTriangle }                            from "react-icons/fa"
 import { FaArrowRightFromBracket }                          from "react-icons/fa6"
 
 export default function LogoutButton() {
-    const { data: session, status } = useSession()
+    const { data: session } = useSession()
     const [ open, setOpen ] = useState(false)
     const [ isPending, startTransition ] = useTransition()
+    const router = useRouter()
     
     function handleLogout() {
         startTransition(async () => {
             const logoutState = await deleteAuthLogout()
             if (!logoutState.ok) {
                 setOpen(false)
-                redirect("/auth/login")
+                router.push("/auth/login")
             }
             
             startTransition(() => {
                 setOpen(false)
-                redirect("/auth/login")
+                router.push("/auth/login")
             })
         })
     }
@@ -37,8 +38,8 @@ export default function LogoutButton() {
                 title="Logout"
                 buttonStyle="ghost"
                 onClick={ () => setOpen(true) }
-                disabled={ !session || status !== "authenticated" }>
-                <span className="sm:block hidden">Logout</span>
+                disabled={ !session }>
+                <span className="hidden sm:block">Logout</span>
                 <FaArrowRightFromBracket aria-hidden="true" className="size-4 text-inherit" />
             </RegularButton>
 
@@ -63,13 +64,11 @@ export default function LogoutButton() {
                                             Logout
                                         </DialogTitle>
 
-                                        <p className="text-shadow-500 mt-2 text-sm">
-                                            Are you sure you want to logout?
-                                        </p>
+                                        <p className="text-shadow-500 mt-2 text-sm">Are you sure you want to logout?</p>
                                     </div>
                                 </div>
                             </div>
-                            <div className="bg-stone-50 px-4 py-3 sm:flex gap-2 sm:flex-row-reverse sm:px-6">
+                            <div className="gap-2 bg-stone-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                                 <RegularButton
                                     type="button"
                                     pending={ isPending }
