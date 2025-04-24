@@ -1,14 +1,14 @@
-import { Profile }                            from "@/@types/user"
-import getProfileByUsername                   from "@/actions/users/get-profile-by-username"
-import { getBackgroundImage, textScrambler }  from "@/utils/functions"
-import tw                                     from "@/utils/tw"
-import Image, { getImageProps }               from "next/image"
-import Link                                   from "next/link"
-import { notFound }                           from "next/navigation"
-import { FaCircleCheck }                      from "react-icons/fa6"
-import { LuCalendarRange, LuLink2, LuMapPin } from "react-icons/lu"
-import { twMerge }                            from "tailwind-merge"
-import coverImage                             from "../../../../public/profile-cover-photo.jpg"
+import { Profile }                                              from "@/@types/user"
+import getProfileByUsername                                     from "@/actions/users/get-profile-by-username"
+import { formatDisplayDate, getBackgroundImage, textScrambler } from "@/utils/functions"
+import tw                                                       from "@/utils/tw"
+import Image, { getImageProps }                                 from "next/image"
+import Link                                                     from "next/link"
+import { notFound }                                             from "next/navigation"
+import { FaCircleCheck }                                        from "react-icons/fa6"
+import { LuCalendarRange, LuLink2, LuMapPin }                   from "react-icons/lu"
+import { twMerge }                                              from "tailwind-merge"
+import coverImage                                               from "../../../../public/profile-cover-photo.jpg"
 
 interface ProfilePageProps {
     params: Promise<{ username: string }>
@@ -82,7 +82,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                         src={ account.avatarUrl }
                         alt={ `Avatar of ${ account.username }` }
                         title={ `Avatar of ${ account.username }` }
-                        className="shring-0 mx-auto -mb-20 size-40 self-end bg-stone-200 object-cover ring-2 shadow-xl ring-white select-none sm:rounded-full"
+                        className="shring-0 mx-auto -mb-20 size-40 self-end bg-stone-200 object-cover shadow-xl ring-2 ring-white select-none sm:rounded-full"
                         width={ 160 }
                         height={ 160 }
                         priority
@@ -92,7 +92,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                       <div
                           aria-label={ `Placeholder avatar of ${ account.username }` }
                           title={ `Placeholder avatar of ${ account.username }` }
-                          className="shring-0 mx-auto -mb-20 flex size-40 items-center justify-center self-end rounded-full bg-stone-200 ring-2 shadow-xl ring-white select-none">
+                          className="shring-0 mx-auto -mb-20 flex size-40 items-center justify-center self-end rounded-full bg-stone-200 shadow-xl ring-2 ring-white select-none">
                         <span aria-hidden="true" className="font-heading text-8xl text-stone-500 capitalize">
                             { account.username.charAt(0) }
                         </span>
@@ -112,7 +112,7 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                                 privateStyle,
                             ) }>
                             { account.displayName }{ " " }
-                            { account.isVerified && (
+                            { account.isVerified && !account.isPrivate && (
                                 <span
                                     className="text-marigold-500"
                                     aria-label="Verified account"
@@ -137,29 +137,41 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                         @{ account.username }
                     </h2>
 
-                    <div
+                    <p
                         data-private={ account.isPrivate }
                         aria-label={ account.isPrivate ? "Redacted biography" : "" }
                         title={ account.isPrivate ? "Redacted biography" : "" }
                         className={ twMerge(
-                            "text-shadow-900 text-center text-balance whitespace-pre-wrap",
+                            "text-shadow-900 mx-auto w-fit text-center text-balance whitespace-pre-wrap",
                             privateStyle,
                         ) }>
                         { account.biography }
-                    </div>
+                    </p>
 
-                    <div className="border-t-2 border-stone-200 pt-4">
+                    <div className="border-y-2 border-stone-200 py-4">
                         <div className="text-shadow-300 mx-auto flex w-full max-w-2xl flex-wrap items-center justify-between">
                             <span className="flex items-center gap-x-1.5">
                                 <LuLink2 aria-hidden="true" className="size-5 text-inherit" />
-                                <Link
-                                    href={ account.website ?? "#" }
-                                    className="text-marigold-500 hover:text-marigold-600 active:text-marigold-700 hover:underline">
-                                    { account.website ?? "https://example.com/" }
-                                </Link>
+                                { account.website && !account.isPrivate ? (
+                                    <Link
+                                        href={ account.website }
+                                        className="text-marigold-500 hover:text-marigold-600 active:text-marigold-700 hover:underline">
+                                        { account.website }
+                                    </Link>
+                                ) : (
+                                      <span
+                                          data-private={ account.isPrivate }
+                                          className={ account.isPrivate ? privateStyle : "text-shadow-300" }>
+                                        { account.website ?? "Not informed" }
+                                    </span>
+                                  ) }
                             </span>
 
-                            <time dateTime={ String(account.createdAt) } className="flex items-center gap-x-1.5">
+                            <time
+                                dateTime={ new Date(account.createdAt).toISOString() }
+                                aria-label={ `Joined on ${ formatDisplayDate(String(account.createdAt), "date") }` }
+                                title={ `Joined on ${ formatDisplayDate(String(account.createdAt), "date") }` }
+                                className="flex items-center gap-x-1.5">
                                 <LuCalendarRange aria-hidden="true" className="size-5 text-inherit" />
                                 Joined{ " " }
                                 <span>
