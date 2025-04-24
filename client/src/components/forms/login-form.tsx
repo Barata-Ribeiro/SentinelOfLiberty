@@ -7,6 +7,7 @@ import FormButton                        from "@/components/shared/form-button"
 import FormInput                         from "@/components/shared/form-input"
 import { getInitialFormState }           from "@/utils/functions"
 import { Field, Fieldset, Input, Label } from "@headlessui/react"
+import { useSession }                    from "next-auth/react"
 import Link                              from "next/link"
 import { useRouter }                     from "next/navigation"
 import { useActionState, useEffect }     from "react"
@@ -14,15 +15,19 @@ import { FaArrowRightToBracket }         from "react-icons/fa6"
 import { LuCircleUserRound, LuLock }     from "react-icons/lu"
 
 export default function LoginForm() {
+    const { update } = useSession()
     const [ formState, formAction, pending ] = useActionState(postAuthLogin, getInitialFormState())
     const router = useRouter()
     
     useEffect(() => {
         if (formState.ok) {
-            router.replace(`/dashboard/${ formState.response?.data }`)
-            router.refresh()
+            update().then((session) => {
+                router.replace(`/dashboard/${ session?.user.username }`)
+                router.refresh()
+            })
+            
         }
-    }, [ formState.ok, formState.response?.data, router ])
+    }, [ formState.ok, formState.response?.data, router ]) // eslint-disable-line react-hooks/exhaustive-deps
     
     return (
         <form action={ formAction } className="space-y-6">

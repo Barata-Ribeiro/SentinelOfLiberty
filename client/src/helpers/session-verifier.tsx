@@ -12,16 +12,27 @@ export default function SessionVerifier() {
     
     const logout = useCallback(() => {
         console.error("There was an error with the session, logging out...")
-        update().catch(console.error)
-        deleteSession()
-            .then(response => console.log(response.message))
+        
+        const handleSignOut = async () => {
+            await signOut({ redirect: false })
+            router.push(`${ window.location.origin }/auth/login` as Route<string>)
+        }
+        
+        const handleDeleteSession = async () => {
+            try {
+                const response = await deleteSession()
+                console.log(response.message)
+            } catch (error) {
+                console.error(error)
+            } finally {
+                await handleSignOut()
+            }
+        }
+        
+        update()
+            .then(() => handleDeleteSession())
             .catch(console.error)
-            .finally(async () => {
-                signOut({ redirect: false }).then(() => {
-                    router.push(`${ window.location.origin }/auth/login` as Route<string>)
-                })
-            })
-    }, [ router, update ])
+    }, [ router ]) // eslint-disable-line react-hooks/exhaustive-deps
     
     useEffect(() => {
         if (session?.error === "RefreshAccessTokenError") logout()
