@@ -42,6 +42,8 @@ export function WebsocketProvider({ children }: Readonly<{ children: ReactNode }
         websocketClient.registerOnConnectCallback(handleConnect)
         
         return () => {
+            websocketClient.unregisterOnConnectCallback(handleConnect)
+            
             if (subscriptionRef.current) {
                 subscriptionRef.current.unsubscribe()
                 subscriptionRef.current = null
