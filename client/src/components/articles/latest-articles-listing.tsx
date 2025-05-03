@@ -1,20 +1,13 @@
-"use client"
+import { ArticleSummary }      from "@/@types/articles"
+import getLatestPublicArticles from "@/actions/articles/get-latest-public-articles"
+import Image                   from "next/image"
+import Link                    from "next/link"
 
-import { State }          from "@/@types/application"
-import { ArticleSummary } from "@/@types/articles"
-import Image              from "next/image"
-import Link               from "next/link"
-import { use }            from "react"
 
-interface LatestArticlesListingProps {
-    articlesState: Promise<State>
-}
-
-export default function LatestArticlesListing({ articlesState }: LatestArticlesListingProps) {
-    const articlesSummarized = use(articlesState)
-    if (!articlesSummarized) return null
+export default async function LatestArticlesListing() {
+    const latestArticlesState = await getLatestPublicArticles()
     
-    const articles = articlesSummarized.response?.data as ArticleSummary[]
+    const articles = latestArticlesState.response?.data as ArticleSummary[]
     
     return articles.slice(0, 3).map(article => (
         <li key={ article.slug } className="max-w-96">

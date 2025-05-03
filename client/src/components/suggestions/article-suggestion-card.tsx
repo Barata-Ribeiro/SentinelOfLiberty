@@ -1,19 +1,15 @@
-"use client"
-
-import { State }      from "@/@types/application"
-import { Suggestion } from "@/@types/suggestions"
-import Image          from "next/image"
-import Link           from "next/link"
-import { use }        from "react"
+import { Suggestion }    from "@/@types/suggestions"
+import getSuggestionById from "@/actions/suggestions/get-suggestion-by-id"
+import Image             from "next/image"
+import Link              from "next/link"
 
 interface ArticleSuggestionCardProps {
-    suggestionPromise: Promise<State> | undefined
+    suggestionId: number
 }
 
-export default function ArticleSuggestionCard({ suggestionPromise }: Readonly<ArticleSuggestionCardProps>) {
-    if (!suggestionPromise) return null
-    const suggestionState = use(suggestionPromise)
+export default async function ArticleSuggestionCard({ suggestionId }: Readonly<ArticleSuggestionCardProps>) {
     
+    const suggestionState = await getSuggestionById({ id: suggestionId })
     const suggestion = suggestionState.response?.data as Suggestion
     
     return (

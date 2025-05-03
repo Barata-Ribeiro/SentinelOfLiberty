@@ -1,7 +1,5 @@
-import { State }                     from "@/@types/application"
 import { Category }                  from "@/@types/articles"
 import getAllAvailableCategories     from "@/actions/articles/get-all-available-categories"
-import getSuggestionById             from "@/actions/suggestions/get-suggestion-by-id"
 import NewArticleForm                from "@/components/forms/new-article-form"
 import ArticleSuggestionCardSkeleton from "@/components/layout/skeletons/article-suggestion-card-skeleton"
 import ArticleSuggestionCard         from "@/components/suggestions/article-suggestion-card"
@@ -32,11 +30,6 @@ export default async function ArticlesWritePage({ searchParams }: Readonly<Artic
     
     const suggestionId = pageParams?.suggestion as string | undefined
     
-    let suggestionPromise: Promise<State> | undefined
-    if (suggestionId) {
-        suggestionPromise = getSuggestionById({ id: parseInt(suggestionId) })
-    }
-    
     return (
         <div className="container">
             <header className="mt-4 max-w-2xl sm:mt-8">
@@ -51,7 +44,7 @@ export default async function ArticlesWritePage({ searchParams }: Readonly<Artic
 
             <main className="mt-8 border-t border-stone-200 pt-8 sm:mt-14 sm:pt-14">
                 <Suspense fallback={ <ArticleSuggestionCardSkeleton /> }>
-                    { suggestionId && <ArticleSuggestionCard suggestionPromise={ suggestionPromise } /> }
+                    { suggestionId && <ArticleSuggestionCard suggestionId={ parseInt(suggestionId) } /> }
                 </Suspense>
                 <NewArticleForm categories={ categoriesState.response?.data as Category[] }
                                 suggestionId={ suggestionId } />

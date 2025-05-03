@@ -1,7 +1,6 @@
 import { ArticleSummary }         from "@/@types/articles"
 import { Notice }                 from "@/@types/notices"
 import { Suggestion }             from "@/@types/suggestions"
-import getAllAvailableCategories  from "@/actions/articles/get-all-available-categories"
 import getLatestPublicArticles    from "@/actions/articles/get-latest-public-articles"
 import getLatestNotices           from "@/actions/notices/get-latest-notices"
 import getLatestPublicSuggestions from "@/actions/suggestions/get-latest-public-suggestions"
@@ -45,7 +44,6 @@ function NoMoreWrittenArticleMessage(props: Readonly<{ session: Session | null }
 }
 
 export default async function HomePage() {
-    const availableCategoriesPromise = getAllAvailableCategories()
     const [ session, latestArticlesState, latestSuggestionsState, latestNoticesState ] = await Promise
         .all([ auth(), getLatestPublicArticles(), getLatestPublicSuggestions(), getLatestNotices() ])
     
@@ -69,7 +67,7 @@ export default async function HomePage() {
                 Categories
             </h2>
             <Suspense fallback={ <CategoriesSliderSkeleton /> }>
-                <CategoriesSlider categoriesPromise={ availableCategoriesPromise } />
+                <CategoriesSlider />
             </Suspense>
 
             <div className="my-8 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_25rem] xl:grid-cols-[1fr_30rem]">

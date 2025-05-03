@@ -1,20 +1,13 @@
-"use client"
+import { Category }              from "@/@types/articles"
+import getAllAvailableCategories from "@/actions/articles/get-all-available-categories"
+import Link                      from "next/link"
+import Marquee                   from "react-fast-marquee"
 
-import { State }    from "@/@types/application"
-import { Category } from "@/@types/articles"
-import Link         from "next/link"
-import { use }      from "react"
-import Marquee      from "react-fast-marquee"
 
-interface CategoriesSliderProps {
-    categoriesPromise: Promise<State>
-}
-
-export default function CategoriesSlider({ categoriesPromise }: Readonly<CategoriesSliderProps>) {
-    const categories = use(categoriesPromise)
-    if (!categories) return null
+export default async function CategoriesSlider() {
+    const availableCategoriesState = await getAllAvailableCategories()
     
-    const categoriesList = categories.response?.data as Category[]
+    const categoriesList = availableCategoriesState.response?.data as Category[]
     
     return (
         <div className="w-full border-y border-stone-200 py-2">

@@ -1,4 +1,3 @@
-import { State }                     from "@/@types/application"
 import { Article, Category }         from "@/@types/articles"
 import getAllAvailableCategories     from "@/actions/articles/get-all-available-categories"
 import getArticleById                from "@/actions/articles/get-article-by-id"
@@ -33,17 +32,6 @@ export default async function EditArticlePage({ params }: Readonly<EditArticlePa
     if (article.slug !== slug) return notFound()
     const categories = categoriesState.response?.data as Category[]
     
-    const suggestionPromise = Promise.resolve<State>({
-                                                         ok: true,
-                                                         error: null,
-                                                         response: {
-                                                             data: article.suggestion,
-                                                             status: articleState.response?.status ?? "INTERNAL_SERVER_ERROR",
-                                                             code: articleState.response?.code ?? 0,
-                                                             message: articleState.response?.message ?? "Unknown error",
-                                                         },
-                                                     })
-    
     return (
         <div className="container">
             <header className="mt-4 max-w-2xl sm:mt-8">
@@ -58,9 +46,9 @@ export default async function EditArticlePage({ params }: Readonly<EditArticlePa
 
             <main className="mt-8 border-t border-stone-200 pt-8 sm:mt-14 sm:pt-14">
                 <Suspense fallback={ <ArticleSuggestionCardSkeleton /> }>
-                    { article.suggestion && <ArticleSuggestionCard suggestionPromise={ suggestionPromise } /> }
+                    { article.suggestion && <ArticleSuggestionCard suggestionId={ article.suggestion.id } /> }
                 </Suspense>
-                
+
                 <EditArticleForm categories={ categories } article={ article } />
             </main>
         </div>

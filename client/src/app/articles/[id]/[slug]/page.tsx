@@ -1,6 +1,5 @@
 import { Article }                     from "@/@types/articles"
 import getArticleById                  from "@/actions/articles/get-article-by-id"
-import getLatestPublicArticles         from "@/actions/articles/get-latest-public-articles"
 import getPopularPublicArticles        from "@/actions/articles/get-popular-public-articles"
 import getCommentTree                  from "@/actions/comments/get-comment-tree"
 import LatestArticlesListing           from "@/components/articles/latest-articles-listing"
@@ -67,7 +66,6 @@ export default async function ArticlePage({ params }: Readonly<ArticlePageProps>
     const article = articleState.response?.data as Article
     if (article.slug !== slug) return notFound()
     
-    const latestArticlesPromise = getLatestPublicArticles()
     const commentTreePromise = getCommentTree({ articleId: article.id })
     const popularArticlesPromise = getPopularPublicArticles()
     
@@ -103,7 +101,7 @@ export default async function ArticlePage({ params }: Readonly<ArticlePageProps>
 
                     <ul className="grid max-w-4xl grid-cols-1 justify-items-center gap-4 md:grid-cols-2 lg:grid-cols-3">
                         <Suspense fallback={ <LatestArticlesItemSkeleton /> }>
-                            <LatestArticlesListing articlesState={ latestArticlesPromise } />
+                            <LatestArticlesListing />
                         </Suspense>
                     </ul>
                 </div>
@@ -145,7 +143,7 @@ export default async function ArticlePage({ params }: Readonly<ArticlePageProps>
                     </div>
 
                     <Suspense fallback={ <PopularArticlesListSkeleton /> }>
-                        <PopularArticlesListing articlesState={ popularArticlesPromise } />
+                        <PopularArticlesListing articlePromise={ popularArticlesPromise } />
                     </Suspense>
                 </aside>
             </section>

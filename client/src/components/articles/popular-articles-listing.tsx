@@ -7,10 +7,10 @@ import Link                                 from "next/link"
 import { use, useEffect, useRef, useState } from "react"
 
 interface PopularArticlesListingProps {
-    articlesState: Promise<State>
+    articlePromise: Promise<State>
 }
 
-export default function PopularArticlesListing({ articlesState }: Readonly<PopularArticlesListingProps>) {
+export default function PopularArticlesListing({ articlePromise }: Readonly<PopularArticlesListingProps>) {
     const [ shouldLoad, setShouldLoad ] = useState(false)
     const regionRef = useRef<HTMLUListElement>(null)
     
@@ -31,7 +31,7 @@ export default function PopularArticlesListing({ articlesState }: Readonly<Popul
     let articleSummary: ArticleSummary[] = []
     
     if (shouldLoad) {
-        const state = use(articlesState)
+        const state = use(articlePromise)
         if (state && state.ok && state.response?.data) articleSummary = state.response.data as ArticleSummary[]
     }
     
