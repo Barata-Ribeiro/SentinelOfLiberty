@@ -1,15 +1,81 @@
 @import "tailwindcss";
 
-@config '../../tailwind.config.ts';
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
 
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+@theme {
+    /*FONT*/
+    --font-heading: var(--font-lora), serif;
+    --font-body: var(--font-merriWeather), serif;
 
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
+    /*COLORS*/
+    --color-*: initial;
+    --color-current: 'currentColor';
+    --color-black: #0a0a0a;
+    --color-white: #fafafa;
+    --color-transparent: transparent;
+
+    --color-shadow-50: oklch(0.97 0.007 97.4);
+    --color-shadow-100: oklch(0.927 0.02 107);
+    --color-shadow-200: oklch(0.855 0.038 104);
+    --color-shadow-300: oklch(0.766 0.058 102);
+    --color-shadow-400: oklch(0.69 0.07 100);
+    --color-shadow-500: oklch(0.637 0.067 97.8);
+    --color-shadow-600: oklch(0.558 0.057 91.3);
+    --color-shadow-700: oklch(0.477 0.044 85.1);
+    --color-shadow-800: oklch(0.424 0.033 75.7);
+    --color-shadow-900: oklch(0.39 0.027 73.6);
+    --color-shadow-950: oklch(0.267 0.019 66.9);
+
+    --color-marigold-50: oklch(0.985 0.024 102);
+    --color-marigold-100: oklch(0.967 0.063 104);
+    --color-marigold-200: oklch(0.934 0.114 103);
+    --color-marigold-300: oklch(0.891 0.157 100);
+    --color-marigold-400: oklch(0.842 0.167 95.3);
+    --color-marigold-500: oklch(0.778 0.155 90.2);
+    --color-marigold-600: oklch(0.664 0.134 80.9);
+    --color-marigold-700: oklch(0.544 0.112 71.1);
+    --color-marigold-800: oklch(0.473 0.094 67.6);
+    --color-marigold-900: oklch(0.418 0.081 61.3);
+    --color-marigold-950: oklch(0.283 0.058 55.8);
+
+    --color-stone-50: oklch(0.985 0.001 106.423);
+    --color-stone-100: oklch(0.97 0.001 106.424);
+    --color-stone-200: oklch(0.923 0.003 48.717);
+    --color-stone-300: oklch(0.869 0.005 56.366);
+    --color-stone-400: oklch(0.709 0.01 56.259);
+    --color-stone-500: oklch(0.553 0.013 58.071);
+    --color-stone-600: oklch(0.444 0.011 73.639);
+    --color-stone-700: oklch(0.374 0.01 67.558);
+    --color-stone-800: oklch(0.268 0.007 34.298);
+    --color-stone-900: oklch(0.216 0.006 56.043);
+    --color-stone-950: oklch(0.147 0.004 49.25);
+
+    --color-yellow-50: oklch(0.987 0.026 102.212);
+    --color-yellow-100: oklch(0.973 0.071 103.193);
+    --color-yellow-200: oklch(0.945 0.129 101.54);
+    --color-yellow-300: oklch(0.905 0.182 98.111);
+    --color-yellow-400: oklch(0.852 0.199 91.936);
+    --color-yellow-500: oklch(0.795 0.184 86.047);
+    --color-yellow-600: oklch(0.681 0.162 75.834);
+    --color-yellow-700: oklch(0.554 0.135 66.442);
+    --color-yellow-800: oklch(0.476 0.114 61.907);
+    --color-yellow-900: oklch(0.421 0.095 57.708);
+    --color-yellow-950: oklch(0.286 0.066 53.813);
+
+    --color-red-50: oklch(0.971 0.013 17.38);
+    --color-red-100: oklch(0.936 0.032 17.717);
+    --color-red-200: oklch(0.885 0.062 18.334);
+    --color-red-300: oklch(0.808 0.114 19.571);
+    --color-red-400: oklch(0.704 0.191 22.216);
+    --color-red-500: oklch(0.637 0.237 25.331);
+    --color-red-600: oklch(0.577 0.245 27.325);
+    --color-red-700: oklch(0.505 0.213 27.518);
+    --color-red-800: oklch(0.444 0.177 26.899);
+    --color-red-900: oklch(0.396 0.141 25.723);
+    --color-red-950: oklch(0.258 0.092 26.042);
+}
+
 @layer base {
     :root {
         --sb-track-color: #3f2109;
@@ -73,6 +139,10 @@
             scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
         }
     }
+}
+
+@utility container {
+    @apply mx-auto px-4 sm:px-0;
 }
 
 @layer components {
