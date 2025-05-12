@@ -29,7 +29,7 @@ export default async function getAllNotificationsPaginated({
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${session?.accessToken}`,
             },
-            next: { revalidate: 30, tags: ["notification"] },
+            next: { revalidate: 30, tags: ["notifications"] },
         })
 
         const json = await response.json()

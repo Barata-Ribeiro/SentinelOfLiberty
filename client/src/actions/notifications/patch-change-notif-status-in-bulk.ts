@@ -1,9 +1,10 @@
 "use server"
 
-import { ProblemDetails, RestResponse }      from "@/@types/application"
-import ResponseError                         from "@/actions/application/response-error"
+import { ProblemDetails, RestResponse } from "@/@types/application"
+import ResponseError from "@/actions/application/response-error"
 import { changeNotificationStatusInBulkUrl } from "@/utils/routes"
-import { auth }                              from "auth"
+import { auth } from "auth"
+import { revalidateTag } from "next/cache"
 
 interface PatchChangeNotifStatusInBulk {
     idList: number[]
@@ -12,26 +13,28 @@ interface PatchChangeNotifStatusInBulk {
 
 export default async function patchChangeNotifStatusInBulk({ idList, status }: PatchChangeNotifStatusInBulk) {
     const session = await auth()
-    
+
     try {
         const URL = changeNotificationStatusInBulkUrl(status)
-        
+
         const response = await fetch(URL, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${ session?.accessToken }`,
+                Authorization: `Bearer ${session?.accessToken}`,
             },
             body: JSON.stringify({ notificationIds: idList }),
         })
-        
+
         const json = await response.json()
-        
+
         if (!response.ok) {
             const problemDetails = json as ProblemDetails
             return ResponseError(problemDetails)
         }
-        
+
+        revalidateTag("notifications")
+
         return {
             ok: true,
             error: null,
