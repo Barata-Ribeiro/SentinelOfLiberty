@@ -1,43 +1,42 @@
 "use client"
 
-import postAuthLogin                     from "@/actions/auth/post-auth-login"
-import ApplicationRequestFormError       from "@/components/feedback/application-request-form-error"
-import InputValidationError              from "@/components/feedback/input-validation-error"
-import FormButton                        from "@/components/shared/form-button"
-import FormInput                         from "@/components/shared/form-input"
-import { getInitialFormState }           from "@/utils/functions"
+import postAuthLogin from "@/actions/auth/post-auth-login"
+import ApplicationRequestFormError from "@/components/feedback/application-request-form-error"
+import InputValidationError from "@/components/feedback/input-validation-error"
+import FormButton from "@/components/shared/form-button"
+import FormInput from "@/components/shared/form-input"
+import { getInitialFormState } from "@/utils/functions"
 import { Field, Fieldset, Input, Label } from "@headlessui/react"
-import { useSession }                    from "next-auth/react"
-import Link                              from "next/link"
-import { useRouter }                     from "next/navigation"
-import { useActionState, useEffect }     from "react"
-import { FaArrowRightToBracket }         from "react-icons/fa6"
-import { LuCircleUserRound, LuLock }     from "react-icons/lu"
+import { useSession } from "next-auth/react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useActionState, useEffect } from "react"
+import { FaArrowRightToBracket } from "react-icons/fa6"
+import { LuCircleUserRound, LuLock } from "react-icons/lu"
 
 export default function LoginForm() {
     const { update } = useSession()
-    const [ formState, formAction, pending ] = useActionState(postAuthLogin, getInitialFormState())
+    const [formState, formAction, pending] = useActionState(postAuthLogin, getInitialFormState())
     const router = useRouter()
-    
+
     useEffect(() => {
         if (formState.ok) {
-            update().then((session) => {
-                router.replace(`/dashboard/${ session?.user.username }`)
+            update().then(session => {
+                router.replace(`/dashboard/${session?.user.username}`)
                 router.refresh()
             })
-            
         }
-    }, [ formState.ok, formState.response?.data, router ]) // eslint-disable-line react-hooks/exhaustive-deps
-    
+    }, [formState.ok, formState.response?.data, router]) // eslint-disable-line react-hooks/exhaustive-deps
+
     return (
-        <form action={ formAction } className="space-y-6">
+        <form action={formAction} className="space-y-6">
             <FormInput
                 label="Username"
                 type="text"
                 name="username"
                 autoComplete="username"
                 aria-autocomplete="list"
-                icon={ LuCircleUserRound }
+                icon={LuCircleUserRound}
                 iconPlacement="start"
                 required
                 aria-required
@@ -49,7 +48,7 @@ export default function LoginForm() {
                 name="password"
                 autoComplete="current-password"
                 aria-autocomplete="list"
-                icon={ LuLock }
+                icon={LuLock}
                 iconPlacement="start"
                 required
                 aria-required
@@ -76,14 +75,14 @@ export default function LoginForm() {
                     </Link>
                 </div>
             </Fieldset>
-            
-            { formState.error && !Array.isArray(formState.error) && (
-                <ApplicationRequestFormError error={ JSON.parse((formState.error as string).split(". R")[0]) } />
-            ) }
-            
-            { formState.error && Array.isArray(formState.error) && <InputValidationError errors={ formState.error } /> }
-            
-            <FormButton width="full" pending={ pending }>
+
+            {formState.error && !Array.isArray(formState.error) && (
+                <ApplicationRequestFormError error={JSON.parse((formState.error as string).split(". R")[0])} />
+            )}
+
+            {formState.error && Array.isArray(formState.error) && <InputValidationError errors={formState.error} />}
+
+            <FormButton width="full" pending={pending}>
                 Login <FaArrowRightToBracket aria-hidden="true" className="size-4 stroke-2" />
             </FormButton>
         </form>

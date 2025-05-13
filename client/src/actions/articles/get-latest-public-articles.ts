@@ -1,8 +1,8 @@
 "use server"
 
 import { ProblemDetails, RestResponse, State } from "@/@types/application"
-import ResponseError                           from "@/actions/application/response-error"
-import { getLatestPublicArticlesUrl }          from "@/utils/routes"
+import ResponseError from "@/actions/application/response-error"
+import { getLatestPublicArticlesUrl } from "@/utils/routes"
 
 export default async function getLatestPublicArticles(): Promise<State> {
     try {

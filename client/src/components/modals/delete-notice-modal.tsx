@@ -1,11 +1,11 @@
 "use client"
 
-import deleteCurrentNotice                                          from "@/actions/notices/delete-current-notice"
-import RegularButton                                                from "@/components/shared/regular-button"
+import deleteCurrentNotice from "@/actions/notices/delete-current-notice"
+import RegularButton from "@/components/shared/regular-button"
 import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
-import { useRouter }                                                from "next/navigation"
-import { useState, useTransition }                                  from "react"
-import { FaExclamationTriangle }                                    from "react-icons/fa"
+import { useRouter } from "next/navigation"
+import { useState, useTransition } from "react"
+import { FaExclamationTriangle } from "react-icons/fa"
 
 interface DeleteNoticeModalProps {
     id: number
@@ -13,37 +13,37 @@ interface DeleteNoticeModalProps {
 }
 
 export default function DeleteNoticeModal({ id, title }: Readonly<DeleteNoticeModalProps>) {
-    const [ open, setOpen ] = useState(false)
-    const [ isPending, startTransition ] = useTransition()
+    const [open, setOpen] = useState(false)
+    const [isPending, startTransition] = useTransition()
     const router = useRouter()
-    
+
     function handleDelete() {
         startTransition(async () => {
             const deleteState = await deleteCurrentNotice({ id })
-            
+
             if (!deleteState.ok) {
                 setOpen(false)
                 router.refresh()
             }
-            
+
             startTransition(() => {
                 setOpen(false)
                 router.refresh()
             })
         })
     }
-    
+
     return (
         <>
             <Button
                 type="button"
-                onClick={ () => setOpen(true) }
-                title={ `Delete, ${ title ?? "Current Notice" }` }
+                onClick={() => setOpen(true)}
+                title={`Delete, ${title ?? "Current Notice"}`}
                 className="inline-flex cursor-pointer text-red-600 transition-all duration-300 ease-in hover:text-red-700 active:text-red-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
-                Delete <span className="sr-only">, { title ?? "Current Notice" }</span>
+                Delete <span className="sr-only">, {title ?? "Current Notice"}</span>
             </Button>
 
-            <Dialog open={ open } onClose={ setOpen } className="relative z-10">
+            <Dialog open={open} onClose={setOpen} className="relative z-10">
                 <DialogBackdrop
                     transition
                     className="fixed inset-0 bg-stone-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
@@ -61,7 +61,7 @@ export default function DeleteNoticeModal({ id, title }: Readonly<DeleteNoticeMo
                                     </div>
                                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                                         <DialogTitle as="h3" className="text-shadow-900 text-base font-semibold">
-                                            Delete Notice { id } - { title ?? "Current Notice" }
+                                            Delete Notice {id} - {title ?? "Current Notice"}
                                         </DialogTitle>
 
                                         <p className="text-shadow-500 mt-2 text-sm">
@@ -73,22 +73,22 @@ export default function DeleteNoticeModal({ id, title }: Readonly<DeleteNoticeMo
                             <div className="gap-2 bg-stone-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                                 <RegularButton
                                     type="button"
-                                    pending={ isPending }
+                                    pending={isPending}
                                     buttonStyle="danger"
                                     aria-label="Yes, delete"
                                     title="Yes, delete"
-                                    onClick={ handleDelete }>
+                                    onClick={handleDelete}>
                                     Yes, delete
                                 </RegularButton>
 
                                 <RegularButton
                                     type="button"
-                                    disabled={ isPending }
+                                    disabled={isPending}
                                     buttonStyle="ghost"
                                     data-autofocus
                                     aria-label="Cancel delete notice"
                                     title="Cancel delete notice"
-                                    onClick={ () => setOpen(false) }>
+                                    onClick={() => setOpen(false)}>
                                     Cancel
                                 </RegularButton>
                             </div>

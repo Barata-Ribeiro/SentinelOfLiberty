@@ -1,6 +1,6 @@
-import tw          from "@/utils/tw"
-import Image       from "next/image"
-import Link        from "next/link"
+import tw from "@/utils/tw"
+import Image from "next/image"
+import Link from "next/link"
 import { twMerge } from "tailwind-merge"
 
 interface AvatarProps {
@@ -12,7 +12,7 @@ interface AvatarProps {
 
 export default function Avatar({ name, size, src, animate = true }: Readonly<AvatarProps>) {
     let styleSize, textSize
-    
+
     switch (size) {
         case 32:
             styleSize = "size-8"
@@ -38,38 +38,38 @@ export default function Avatar({ name, size, src, animate = true }: Readonly<Ava
             styleSize = "size-24"
             textSize = "text-6xl"
     }
-    
+
     const baseStyles = tw`aspect-square shrink-0 rounded-full bg-stone-200 object-cover shadow-xl ring-2 ring-white select-none`
     const placeHolderBaseStyles = twMerge(baseStyles, "flex items-center justify-center")
-    
+
     const placeHolderMergedStyles = twMerge(placeHolderBaseStyles, styleSize)
     const spanStyles = twMerge(tw`font-heading text-stone-500 capitalize`, textSize)
-    
+
     return (
         <Link
-            href={ `/profile/${ name }` }
-            data-animated={ animate }
+            href={`/profile/${name}`}
+            data-animated={animate}
             aria-label="Go to your public profile page"
             className="block w-max shrink-0 data-[animated=true]:transition-transform data-[animated=true]:hover:-translate-y-2.5 data-[animated=true]:hover:transform">
-            { src ? (
+            {src ? (
                 <Image
-                    src={ src }
-                    alt={ `Avatar for ${ name }` }
-                    title={ `Avatar for ${ name }` }
-                    aria-label={ `Avatar for ${ name }` }
-                    className={ baseStyles }
-                    width={ size }
-                    height={ size }
-                    sizes={ `${ size }px` }
+                    src={src}
+                    alt={`Avatar for ${name}`}
+                    title={`Avatar for ${name}`}
+                    aria-label={`Avatar for ${name}`}
+                    className={baseStyles}
+                    width={size}
+                    height={size}
+                    sizes={`${size}px`}
                 />
             ) : (
-                  <div
-                      className={ placeHolderMergedStyles }
-                      aria-label={ `Placeholder avatar for ${ name }` }
-                      title={ `Placeholder avatar for ${ name }` }>
-                    <span className={ spanStyles }>{ name.charAt(0) }</span>
+                <div
+                    className={placeHolderMergedStyles}
+                    aria-label={`Placeholder avatar for ${name}`}
+                    title={`Placeholder avatar for ${name}`}>
+                    <span className={spanStyles}>{name.charAt(0)}</span>
                 </div>
-              ) }
+            )}
         </Link>
     )
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import { Description, Field, Label, Switch } from "@headlessui/react"
-import { useState }                          from "react"
+import { useState } from "react"
 
 interface FormSwitchProps {
     checked?: boolean
@@ -12,15 +12,15 @@ interface FormSwitchProps {
 }
 
 export default function FormSwitch({ checked, label, description, name, disabledField }: Readonly<FormSwitchProps>) {
-    const [ enabled, setEnabled ] = useState(checked)
-    
+    const [enabled, setEnabled] = useState(checked)
+
     return (
-        <Field className="grid gap-y-2" disabled={ disabledField }>
-            <Label className="text-shadow-400">{ label }</Label>
+        <Field className="grid gap-y-2" disabled={disabledField}>
+            <Label className="text-shadow-400">{label}</Label>
             <Switch
-                checked={ enabled }
-                onChange={ setEnabled }
-                name={ name }
+                checked={enabled}
+                onChange={setEnabled}
+                name={name}
                 className="group focus:ring-marigold-600 relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer items-center justify-center rounded-full focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:opacity-50 disabled:grayscale-100">
                 <span className="sr-only">Toggle switch</span>
                 <span aria-hidden="true" className="pointer-events-none absolute h-full w-full rounded-md bg-white" />
@@ -30,10 +30,10 @@ export default function FormSwitch({ checked, label, description, name, disabled
                 />
                 <span
                     aria-hidden="true"
-                    className="pointer-events-none absolute left-0 inline-block h-5 w-5 transform rounded-full border border-stone-200 bg-white ring-0 shadow transition-transform duration-200 ease-in-out group-data-[checked]:translate-x-5"
+                    className="pointer-events-none absolute left-0 inline-block h-5 w-5 transform rounded-full border border-stone-200 bg-white shadow ring-0 transition-transform duration-200 ease-in-out group-data-[checked]:translate-x-5"
                 />
             </Switch>
-            <Description className="text-shadow-300 text-sm">{ description }</Description>
+            <Description className="text-shadow-300 text-sm">{description}</Description>
         </Field>
     )
 }

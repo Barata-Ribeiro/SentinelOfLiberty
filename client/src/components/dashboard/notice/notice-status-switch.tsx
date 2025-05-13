@@ -1,10 +1,10 @@
 "use client"
 
-import { Notice }                  from "@/@types/notices"
-import patchStatusNotice           from "@/actions/notices/patch-status-notice"
-import { Switch }                  from "@headlessui/react"
+import { Notice } from "@/@types/notices"
+import patchStatusNotice from "@/actions/notices/patch-status-notice"
+import { Switch } from "@headlessui/react"
 import { useState, useTransition } from "react"
-import { LuCheck, LuX }            from "react-icons/lu"
+import { LuCheck, LuX } from "react-icons/lu"
 
 interface NoticeStatusSwitchProps {
     isActive: boolean
@@ -24,39 +24,39 @@ function SwitchSpinner() {
 }
 
 export default function NoticeStatusSwitch({ isActive }: Readonly<NoticeStatusSwitchProps>) {
-    const [ enabled, setEnabled ] = useState(isActive)
-    const [ isPending, startTransition ] = useTransition()
-    
+    const [enabled, setEnabled] = useState(isActive)
+    const [isPending, startTransition] = useTransition()
+
     function handleStatusToggle() {
         startTransition(async () => {
             const noticeState = await patchStatusNotice({ id: 1, isActive: !enabled })
-            
+
             if (!noticeState.ok) {
                 window.alert("Failed to update notice status.")
             }
-            
+
             startTransition(() => {
                 const notice = noticeState.response?.data as Notice
                 setEnabled(notice.isActive)
             })
         })
     }
-    
+
     return (
         <Switch
-            disabled={ isPending }
-            checked={ enabled }
-            onChange={ handleStatusToggle }
-            title={ enabled ? "Deactivate notice" : "Activate notice" }
+            disabled={isPending}
+            checked={enabled}
+            onChange={handleStatusToggle}
+            title={enabled ? "Deactivate notice" : "Activate notice"}
             className="group focus:ring-marigold-600 data-checked:bg-marigold-600 relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-stone-200 transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
-            <span className="sr-only">{ isPending ? "Loading" : "Use setting" }</span>
+            <span className="sr-only">{isPending ? "Loading" : "Use setting"}</span>
             <span className="pointer-events-none relative inline-block size-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out group-data-checked:translate-x-5">
-                { isPending ? (
+                {isPending ? (
                     <span className="absolute inset-0 flex size-full items-center justify-center">
                         <SwitchSpinner />
                     </span>
                 ) : (
-                      <>
+                    <>
                         <span
                             aria-hidden="true"
                             className="absolute inset-0 flex size-full items-center justify-center transition-opacity duration-200 ease-in group-data-checked:opacity-0 group-data-checked:duration-100 group-data-checked:ease-out">
@@ -68,7 +68,7 @@ export default function NoticeStatusSwitch({ isActive }: Readonly<NoticeStatusSw
                             <LuCheck className="text-marigold-600 size-3" />
                         </span>
                     </>
-                  ) }
+                )}
             </span>
         </Switch>
     )

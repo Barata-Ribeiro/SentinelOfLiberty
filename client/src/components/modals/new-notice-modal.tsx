@@ -1,24 +1,24 @@
 "use client"
 
-import NewNoticeForm                                        from "@/components/forms/new-notice-form"
-import RegularButton                                        from "@/components/shared/regular-button"
+import NewNoticeForm from "@/components/forms/new-notice-form"
+import RegularButton from "@/components/shared/regular-button"
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
-import { useState }                                         from "react"
+import { useState } from "react"
 
 export default function NewNoticeModal() {
-    const [ open, setOpen ] = useState(false)
-    
+    const [open, setOpen] = useState(false)
+
     return (
         <>
             <RegularButton
                 buttonStyle="colored"
-                onClick={ () => setOpen(true) }
+                onClick={() => setOpen(true)}
                 aria-label="New Notice"
                 title="New Notice">
                 New Notice
             </RegularButton>
 
-            <Dialog open={ open } onClose={ setOpen } className="relative z-10">
+            <Dialog open={open} onClose={setOpen} className="relative z-10">
                 <DialogBackdrop
                     transition
                     className="fixed inset-0 bg-stone-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[enter]:ease-out data-[leave]:duration-200 data-[leave]:ease-in"
@@ -35,7 +35,7 @@ export default function NewNoticeModal() {
                                 </DialogTitle>
                             </header>
 
-                            <NewNoticeForm setOpen={ setOpen } />
+                            <NewNoticeForm setOpen={setOpen} />
                         </DialogPanel>
                     </div>
                 </div>

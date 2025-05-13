@@ -1,9 +1,9 @@
 "use client"
 
-import { Notice }                        from "@/@types/notices"
-import { Button }                        from "@headlessui/react"
-import { useEffect, useState }           from "react"
-import { FaExclamationTriangle }         from "react-icons/fa"
+import { Notice } from "@/@types/notices"
+import { Button } from "@headlessui/react"
+import { useEffect, useState } from "react"
+import { FaExclamationTriangle } from "react-icons/fa"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6"
 
 interface HomeNoticesProps {
@@ -29,17 +29,17 @@ export default function HomeNotices({ notices }: Readonly<HomeNoticesProps>) {
     const noticesArray = Array.from(notices).sort(
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     )
-    const [ currentNoticeIndex, setCurrentNoticeIndex ] = useState(0)
+    const [currentNoticeIndex, setCurrentNoticeIndex] = useState(0)
     const totalNotices = noticesArray.length
-    
+
     function handlePrevNotice() {
         setCurrentNoticeIndex(prevIndex => (prevIndex === 0 ? totalNotices - 1 : prevIndex - 1))
     }
-    
+
     function handleNextNotice() {
         setCurrentNoticeIndex(prevIndex => (prevIndex === totalNotices - 1 ? 0 : prevIndex + 1))
     }
-    
+
     useEffect(() => {
         if (totalNotices > 1) {
             const interval = setInterval(() => {
@@ -47,14 +47,14 @@ export default function HomeNotices({ notices }: Readonly<HomeNoticesProps>) {
             }, 5000)
             return () => clearInterval(interval)
         }
-    }, [ totalNotices ])
-    
+    }, [totalNotices])
+
     const currentNotice = noticesArray[currentNoticeIndex]
-    
+
     if (!noticesArray || noticesArray.length === 0) {
         return <NoNoticeFoundMessage />
     }
-    
+
     return (
         <div
             aria-live="polite"
@@ -62,35 +62,35 @@ export default function HomeNotices({ notices }: Readonly<HomeNoticesProps>) {
             aria-describedby="notice-description"
             className="relative my-6 rounded-md border-2 border-yellow-400 bg-yellow-50 px-6 py-2.5 sm:px-3.5">
             <div className="mx-auto flex max-w-max items-center justify-center">
-                { totalNotices > 1 && (
+                {totalNotices > 1 && (
                     <Button
                         type="button"
-                        onClick={ handlePrevNotice }
+                        onClick={handlePrevNotice}
                         aria-label="Show previous notice"
                         className="mr-4 text-yellow-600 hover:text-yellow-800">
                         <FaChevronLeft className="size-5" aria-hidden="true" />
                     </Button>
-                ) }
-                
+                )}
+
                 <div
                     aria-roledescription="slide"
-                    aria-label={ `Notice ${ currentNoticeIndex + 1 } of ${ totalNotices }` }
+                    aria-label={`Notice ${currentNoticeIndex + 1} of ${totalNotices}`}
                     className="flex">
                     <FaExclamationTriangle aria-hidden="true" className="size-5 text-yellow-400" />
-                    <p id="notice-description" className="ml-3 text-sm text-yellow-700 text-balance">
-                        { currentNotice.message }
+                    <p id="notice-description" className="ml-3 text-sm text-balance text-yellow-700">
+                        {currentNotice.message}
                     </p>
                 </div>
-                
-                { totalNotices > 1 && (
+
+                {totalNotices > 1 && (
                     <Button
                         type="button"
-                        onClick={ handleNextNotice }
+                        onClick={handleNextNotice}
                         aria-label="Show next notice"
                         className="ml-4 text-yellow-600 hover:text-yellow-800">
                         <FaChevronRight className="size-5" aria-hidden="true" />
                     </Button>
-                ) }
+                )}
             </div>
         </div>
     )

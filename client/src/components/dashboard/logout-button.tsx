@@ -1,20 +1,20 @@
 "use client"
 
-import deleteAuthLogout                                     from "@/actions/auth/delete-auth-logout"
-import RegularButton                                        from "@/components/shared/regular-button"
+import deleteAuthLogout from "@/actions/auth/delete-auth-logout"
+import RegularButton from "@/components/shared/regular-button"
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
-import { useSession }                                       from "next-auth/react"
-import { useRouter }                                        from "next/navigation"
-import { useState, useTransition }                          from "react"
-import { FaExclamationTriangle }                            from "react-icons/fa"
-import { FaArrowRightFromBracket }                          from "react-icons/fa6"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { useState, useTransition } from "react"
+import { FaExclamationTriangle } from "react-icons/fa"
+import { FaArrowRightFromBracket } from "react-icons/fa6"
 
 export default function LogoutButton() {
     const { data: session } = useSession()
-    const [ open, setOpen ] = useState(false)
-    const [ isPending, startTransition ] = useTransition()
+    const [open, setOpen] = useState(false)
+    const [isPending, startTransition] = useTransition()
     const router = useRouter()
-    
+
     function handleLogout() {
         startTransition(async () => {
             const logoutState = await deleteAuthLogout()
@@ -22,14 +22,14 @@ export default function LogoutButton() {
                 setOpen(false)
                 router.push("/auth/login")
             }
-            
+
             startTransition(() => {
                 setOpen(false)
                 router.push("/auth/login")
             })
         })
     }
-    
+
     return (
         <>
             <RegularButton
@@ -37,13 +37,13 @@ export default function LogoutButton() {
                 aria-label="Logout"
                 title="Logout"
                 buttonStyle="ghost"
-                onClick={ () => setOpen(true) }
-                disabled={ !session }>
+                onClick={() => setOpen(true)}
+                disabled={!session}>
                 <span className="hidden sm:block">Logout</span>
                 <FaArrowRightFromBracket aria-hidden="true" className="size-4 text-inherit" />
             </RegularButton>
 
-            <Dialog open={ open } onClose={ setOpen } className="relative z-10">
+            <Dialog open={open} onClose={setOpen} className="relative z-10">
                 <DialogBackdrop
                     transition
                     className="fixed inset-0 bg-stone-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
@@ -71,22 +71,22 @@ export default function LogoutButton() {
                             <div className="gap-2 bg-stone-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                                 <RegularButton
                                     type="button"
-                                    pending={ isPending }
+                                    pending={isPending}
                                     buttonStyle="danger"
                                     aria-label="Yes, logout"
                                     title="Yes, logout"
-                                    onClick={ handleLogout }>
+                                    onClick={handleLogout}>
                                     Yes, logout
                                 </RegularButton>
 
                                 <RegularButton
                                     type="button"
-                                    disabled={ isPending }
+                                    disabled={isPending}
                                     buttonStyle="ghost"
                                     data-autofocus
                                     aria-label="Cancel logout"
                                     title="Cancel logout"
-                                    onClick={ () => setOpen(false) }>
+                                    onClick={() => setOpen(false)}>
                                     Cancel
                                 </RegularButton>
                             </div>

@@ -1,16 +1,14 @@
 "use client"
 
-import { ProblemDetails }                                           from "@/@types/application"
-import patchToggleUserVerification
-                                                                    from "@/actions/admin/patch-toggle-user-verification"
-import ApplicationRequestFormError
-                                                                    from "@/components/feedback/application-request-form-error"
-import RegularButton                                                from "@/components/shared/regular-button"
+import { ProblemDetails } from "@/@types/application"
+import patchToggleUserVerification from "@/actions/admin/patch-toggle-user-verification"
+import ApplicationRequestFormError from "@/components/feedback/application-request-form-error"
+import RegularButton from "@/components/shared/regular-button"
 import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
-import { useRouter }                                                from "next/navigation"
-import { useState, useTransition }                                  from "react"
-import { FaExclamationTriangle }                                    from "react-icons/fa"
-import { LuCircleCheck }                                            from "react-icons/lu"
+import { useRouter } from "next/navigation"
+import { useState, useTransition } from "react"
+import { FaExclamationTriangle } from "react-icons/fa"
+import { LuCircleCheck } from "react-icons/lu"
 
 interface AdminVerificationButtonProps {
     username: string
@@ -18,11 +16,11 @@ interface AdminVerificationButtonProps {
 }
 
 export default function AdminVerificationButton({ username, isVerified }: Readonly<AdminVerificationButtonProps>) {
-    const [ open, setOpen ] = useState(false)
-    const [ isPending, startTransition ] = useTransition()
-    const [ error, setError ] = useState<ProblemDetails | null>(null)
+    const [open, setOpen] = useState(false)
+    const [isPending, startTransition] = useTransition()
+    const [error, setError] = useState<ProblemDetails | null>(null)
     const router = useRouter()
-    
+
     function handleUserVerification() {
         startTransition(async () => {
             const verificationState = await patchToggleUserVerification({ username })
@@ -30,7 +28,7 @@ export default function AdminVerificationButton({ username, isVerified }: Readon
                 setError(verificationState.error as ProblemDetails)
                 return
             }
-            
+
             startTransition(() => {
                 setOpen(false)
                 setError(null)
@@ -38,20 +36,20 @@ export default function AdminVerificationButton({ username, isVerified }: Readon
             })
         })
     }
-    
+
     return (
         <>
             <Button
                 className="group text-marigold-500 active:text-marigold-700 data-focus:text-marigold-700 data-hover:text-marigold-600 flex w-full cursor-pointer items-center px-4 py-2 text-sm data-focus:bg-stone-100 data-focus:outline-hidden data-hover:bg-stone-100"
-                aria-label={ isVerified ? "Un-verify user" : "Verify user" }
-                title={ isVerified ? "Un-verify user" : "Verify user" }
-                onClick={ () => setOpen(true) }
-                disabled={ isPending }>
+                aria-label={isVerified ? "Un-verify user" : "Verify user"}
+                title={isVerified ? "Un-verify user" : "Verify user"}
+                onClick={() => setOpen(true)}
+                disabled={isPending}>
                 <LuCircleCheck aria-hidden="true" className="mr-3 size-4 text-inherit" />
-                { isVerified ? "Un-verify" : "Verify" } user
+                {isVerified ? "Un-verify" : "Verify"} user
             </Button>
 
-            <Dialog open={ open } onClose={ setOpen } className="relative z-50">
+            <Dialog open={open} onClose={setOpen} className="relative z-50">
                 <DialogBackdrop
                     transition
                     className="fixed inset-0 bg-stone-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
@@ -69,41 +67,41 @@ export default function AdminVerificationButton({ username, isVerified }: Readon
                                     </div>
                                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                                         <DialogTitle as="h3" className="text-shadow-900 text-base font-semibold">
-                                            { isVerified ? "Un-verify user" : "Verify user" }
+                                            {isVerified ? "Un-verify user" : "Verify user"}
                                         </DialogTitle>
 
                                         <p className="text-shadow-500 mt-2 text-sm">
-                                            Are you sure you want to { isVerified ? "un-verify" : "verify" } user{ " " }
-                                            <strong>&ldquo;{ username }&rdquo;</strong> ?
+                                            Are you sure you want to {isVerified ? "un-verify" : "verify"} user{" "}
+                                            <strong>&ldquo;{username}&rdquo;</strong> ?
                                         </p>
-                                        
-                                        { error && (
+
+                                        {error && (
                                             <div className="mt-2 text-left">
-                                                <ApplicationRequestFormError error={ error } />
+                                                <ApplicationRequestFormError error={error} />
                                             </div>
-                                        ) }
+                                        )}
                                     </div>
                                 </div>
                             </div>
                             <div className="flex flex-row-reverse gap-2 bg-stone-50 px-4 py-3 sm:px-6">
                                 <RegularButton
                                     type="button"
-                                    pending={ isPending }
+                                    pending={isPending}
                                     buttonStyle="danger"
-                                    aria-label={ isVerified ? "Un-verify user" : "Verify user" }
-                                    title={ isVerified ? "Un-verify user" : "Verify user" }
-                                    onClick={ handleUserVerification }>
-                                    { isVerified ? "Un-verify" : "Verify" } user
+                                    aria-label={isVerified ? "Un-verify user" : "Verify user"}
+                                    title={isVerified ? "Un-verify user" : "Verify user"}
+                                    onClick={handleUserVerification}>
+                                    {isVerified ? "Un-verify" : "Verify"} user
                                 </RegularButton>
 
                                 <RegularButton
                                     type="button"
-                                    disabled={ isPending }
+                                    disabled={isPending}
                                     buttonStyle="ghost"
                                     data-autofocus
                                     aria-label="Cancel"
                                     title="Cancel"
-                                    onClick={ () => setOpen(false) }>
+                                    onClick={() => setOpen(false)}>
                                     Cancel
                                 </RegularButton>
                             </div>

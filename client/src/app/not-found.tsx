@@ -1,5 +1,5 @@
-import LinkButton   from "@/components/shared/link-button"
-import { auth }     from "auth"
+import LinkButton from "@/components/shared/link-button"
+import { auth } from "auth"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default async function NotFoundPage() {
     const session = await auth()
-    
+
     return (
         <main className="isolate grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
             <div className="text-center">
@@ -26,17 +26,17 @@ export default async function NotFoundPage() {
                     </LinkButton>
 
                     <LinkButton
-                        href={ session ? `/dashboard/${ session.user.username }` : "/auth/login" }
+                        href={session ? `/dashboard/${session.user.username}` : "/auth/login"}
                         buttonStyle="ghost">
-                        { session ? (
+                        {session ? (
                             <>
                                 Your Dashboard <span aria-hidden="true">&rarr;</span>
                             </>
                         ) : (
-                              <>
+                            <>
                                 Login <span aria-hidden="true">&rarr;</span>
                             </>
-                          ) }
+                        )}
                     </LinkButton>
                 </div>
             </div>

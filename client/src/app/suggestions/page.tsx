@@ -1,10 +1,10 @@
-import { Paginated }              from "@/@types/application"
-import { Suggestion }             from "@/@types/suggestions"
+import { Paginated } from "@/@types/application"
+import { Suggestion } from "@/@types/suggestions"
 import getAllSuggestionsPaginated from "@/actions/suggestions/get-all-suggestions-paginated"
-import LinkButton                 from "@/components/shared/link-button"
-import NavigationPagination       from "@/components/shared/navigation-pagination"
-import SuggestionCard             from "@/components/suggestions/suggestion-card"
-import { Metadata }               from "next"
+import LinkButton from "@/components/shared/link-button"
+import NavigationPagination from "@/components/shared/navigation-pagination"
+import SuggestionCard from "@/components/suggestions/suggestion-card"
+import { Metadata } from "next"
 
 interface SuggestionsPageProps {
     searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
@@ -19,16 +19,16 @@ export const metadata: Metadata = {
 export default async function SuggestionsPage({ searchParams }: Readonly<SuggestionsPageProps>) {
     const pageParams = await searchParams
     if (!pageParams) return null
-    
+
     const page = parseInt(pageParams.page as string, 10) || 0
     const perPage = parseInt(pageParams.perPage as string, 10) || 10
     const direction = (pageParams.direction as string) || "DESC"
     const orderBy = (pageParams.orderBy as string) || "createdAt"
-    
+
     const suggestionListState = await getAllSuggestionsPaginated({ page, perPage, direction, orderBy })
     const pagination = suggestionListState.response?.data as Paginated<Suggestion>
     const content = pagination.content ?? []
-    
+
     return (
         <div className="container">
             <header className="mt-4 sm:mt-8">
@@ -44,7 +44,7 @@ export default async function SuggestionsPage({ searchParams }: Readonly<Suggest
                             buttonStyle="colored">
                             Get started
                         </LinkButton>
-                        
+
                         <LinkButton
                             href="/suggestions/rules"
                             aria-label="Learn more about the rules for writing suggestions"
@@ -55,24 +55,24 @@ export default async function SuggestionsPage({ searchParams }: Readonly<Suggest
                 </div>
 
                 <p className="text-shadow-600 mt-6 max-w-2xl text-lg/8 lg:mt-2">
-                    There are currently { pagination.page.totalElements } suggestions available.{ " " }
-                    { pagination.page.totalElements > 0
-                      ? "Check them or write an article about them!"
-                      : "Be the first to suggest something!" }
+                    There are currently {pagination.page.totalElements} suggestions available.{" "}
+                    {pagination.page.totalElements > 0
+                        ? "Check them or write an article about them!"
+                        : "Be the first to suggest something!"}
                 </p>
             </header>
 
             <main className="mx-auto my-8 grid gap-y-4 border-t border-stone-200 pt-8 sm:my-14 sm:pt-14 lg:mx-0">
-                { content.map(suggestion => (
-                    <SuggestionCard key={ suggestion.id } suggestion={ suggestion } />
-                )) }
-                
-                { content.length === 0 && (
+                {content.map(suggestion => (
+                    <SuggestionCard key={suggestion.id} suggestion={suggestion} />
+                ))}
+
+                {content.length === 0 && (
                     <p className="text-shadow-400 text-lg/8">There are no suggestions available at the moment.</p>
-                ) }
+                )}
             </main>
 
-            <NavigationPagination pageInfo={ pagination.page } />
+            <NavigationPagination pageInfo={pagination.page} />
         </div>
     )
 }

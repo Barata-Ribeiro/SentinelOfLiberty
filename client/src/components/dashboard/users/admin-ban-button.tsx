@@ -1,15 +1,14 @@
 "use client"
 
-import { ProblemDetails }                                           from "@/@types/application"
-import patchToggleUserBan                                           from "@/actions/admin/patch-toggle-user-ban"
-import ApplicationRequestFormError
-                                                                    from "@/components/feedback/application-request-form-error"
-import RegularButton                                                from "@/components/shared/regular-button"
+import { ProblemDetails } from "@/@types/application"
+import patchToggleUserBan from "@/actions/admin/patch-toggle-user-ban"
+import ApplicationRequestFormError from "@/components/feedback/application-request-form-error"
+import RegularButton from "@/components/shared/regular-button"
 import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
-import { useRouter }                                                from "next/navigation"
-import { useState, useTransition }                                  from "react"
-import { FaExclamationTriangle }                                    from "react-icons/fa"
-import { LuCircleSlash2 }                                           from "react-icons/lu"
+import { useRouter } from "next/navigation"
+import { useState, useTransition } from "react"
+import { FaExclamationTriangle } from "react-icons/fa"
+import { LuCircleSlash2 } from "react-icons/lu"
 
 interface AdminBanButtonProps {
     username: string
@@ -17,11 +16,11 @@ interface AdminBanButtonProps {
 }
 
 export default function AdminBanButton({ username, isBanned }: Readonly<AdminBanButtonProps>) {
-    const [ open, setOpen ] = useState(false)
-    const [ isPending, startTransition ] = useTransition()
-    const [ error, setError ] = useState<ProblemDetails | null>(null)
+    const [open, setOpen] = useState(false)
+    const [isPending, startTransition] = useTransition()
+    const [error, setError] = useState<ProblemDetails | null>(null)
     const router = useRouter()
-    
+
     function handleUserBan() {
         startTransition(async () => {
             const banState = await patchToggleUserBan({ username, isBanned })
@@ -29,7 +28,7 @@ export default function AdminBanButton({ username, isBanned }: Readonly<AdminBan
                 setError(banState.error as ProblemDetails)
                 return
             }
-            
+
             startTransition(() => {
                 setOpen(false)
                 setError(null)
@@ -37,20 +36,20 @@ export default function AdminBanButton({ username, isBanned }: Readonly<AdminBan
             })
         })
     }
-    
+
     return (
         <>
             <Button
                 className="group flex w-full cursor-pointer items-center px-4 py-2 text-sm text-red-600 active:text-red-800 data-focus:bg-stone-100 data-focus:text-red-800 data-focus:outline-hidden data-hover:bg-stone-100 data-hover:text-red-700"
-                aria-label={ isBanned ? "Unban user" : "Ban user" }
-                title={ isBanned ? "Unban user" : "Ban user" }
-                onClick={ () => setOpen(true) }
-                disabled={ isPending }>
+                aria-label={isBanned ? "Unban user" : "Ban user"}
+                title={isBanned ? "Unban user" : "Ban user"}
+                onClick={() => setOpen(true)}
+                disabled={isPending}>
                 <LuCircleSlash2 aria-hidden="true" className="mr-3 size-4 text-inherit" />
-                { isBanned ? "Unban" : "Ban" }
+                {isBanned ? "Unban" : "Ban"}
             </Button>
 
-            <Dialog open={ open } onClose={ setOpen } className="relative z-50">
+            <Dialog open={open} onClose={setOpen} className="relative z-50">
                 <DialogBackdrop
                     transition
                     className="fixed inset-0 bg-stone-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
@@ -68,41 +67,41 @@ export default function AdminBanButton({ username, isBanned }: Readonly<AdminBan
                                     </div>
                                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                                         <DialogTitle as="h3" className="text-shadow-900 text-base font-semibold">
-                                            { isBanned ? "Unban user" : "Ban user" }
+                                            {isBanned ? "Unban user" : "Ban user"}
                                         </DialogTitle>
 
                                         <p className="text-shadow-500 mt-2 text-sm">
-                                            Are you sure you want to { isBanned ? "unban" : "ban" } user{ " " }
-                                            <strong>&ldquo;{ username }&rdquo;</strong> ?
+                                            Are you sure you want to {isBanned ? "unban" : "ban"} user{" "}
+                                            <strong>&ldquo;{username}&rdquo;</strong> ?
                                         </p>
-                                        
-                                        { error && (
+
+                                        {error && (
                                             <div className="mt-2 text-left">
-                                                <ApplicationRequestFormError error={ error } />
+                                                <ApplicationRequestFormError error={error} />
                                             </div>
-                                        ) }
+                                        )}
                                     </div>
                                 </div>
                             </div>
                             <div className="flex flex-row-reverse gap-2 bg-stone-50 px-4 py-3 sm:px-6">
                                 <RegularButton
                                     type="button"
-                                    pending={ isPending }
+                                    pending={isPending}
                                     buttonStyle="danger"
-                                    aria-label={ isBanned ? "Unban user" : "Ban user" }
-                                    title={ isBanned ? "Unban user" : "Ban user" }
-                                    onClick={ handleUserBan }>
-                                    { isBanned ? "Unban" : "Ban" } user
+                                    aria-label={isBanned ? "Unban user" : "Ban user"}
+                                    title={isBanned ? "Unban user" : "Ban user"}
+                                    onClick={handleUserBan}>
+                                    {isBanned ? "Unban" : "Ban"} user
                                 </RegularButton>
 
                                 <RegularButton
                                     type="button"
-                                    disabled={ isPending }
+                                    disabled={isPending}
                                     buttonStyle="ghost"
                                     data-autofocus
                                     aria-label="Cancel"
                                     title="Cancel"
-                                    onClick={ () => setOpen(false) }>
+                                    onClick={() => setOpen(false)}>
                                     Cancel
                                 </RegularButton>
                             </div>

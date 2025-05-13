@@ -1,22 +1,22 @@
 "use client"
 
-import { ProblemDetails }          from "@/@types/application"
-import patchOwnProfile             from "@/actions/users/patch-own-profile"
+import { ProblemDetails } from "@/@types/application"
+import patchOwnProfile from "@/actions/users/patch-own-profile"
 import ApplicationRequestFormError from "@/components/feedback/application-request-form-error"
-import InputValidationError        from "@/components/feedback/input-validation-error"
-import FormButton                  from "@/components/shared/form-button"
-import FormInput                   from "@/components/shared/form-input"
-import FormTextarea                from "@/components/shared/form-textarea"
-import { getInitialFormState }     from "@/utils/functions"
-import { Fieldset, Legend }        from "@headlessui/react"
-import { useActionState }          from "react"
-import { LuLink }                  from "react-icons/lu"
+import InputValidationError from "@/components/feedback/input-validation-error"
+import FormButton from "@/components/shared/form-button"
+import FormInput from "@/components/shared/form-input"
+import FormTextarea from "@/components/shared/form-textarea"
+import { getInitialFormState } from "@/utils/functions"
+import { Fieldset, Legend } from "@headlessui/react"
+import { useActionState } from "react"
+import { LuLink } from "react-icons/lu"
 
 export default function EditProfileForm() {
-    const [ formState, formAction, pending ] = useActionState(patchOwnProfile, getInitialFormState())
-    
+    const [formState, formAction, pending] = useActionState(patchOwnProfile, getInitialFormState())
+
     return (
-        <form action={ formAction } className="mt-6 space-y-6">
+        <form action={formAction} className="mt-6 space-y-6">
             <FormInput
                 type="password"
                 label="Current Password"
@@ -42,15 +42,15 @@ export default function EditProfileForm() {
                     label="Avatar URL"
                     pattern="https://.*"
                     placeholder="https://example.com/avatar.png"
-                    icon={ LuLink }
+                    icon={LuLink}
                     iconPlacement="start"
                 />
 
                 <FormTextarea
                     label="Biography"
                     name="biography"
-                    rows={ 2 }
-                    maxLength={ 160 }
+                    rows={2}
+                    maxLength={160}
                     placeholder="Describe yourself here..."
                     description="Use a maximum of 160 characters to describe yourself."
                 />
@@ -68,14 +68,14 @@ export default function EditProfileForm() {
                 />
                 <FormInput label="Confirm New Password" type="password" name="confirmNewPassword" />
             </Fieldset>
-            
-            { formState.error && !Array.isArray(formState.error) && (
-                <ApplicationRequestFormError error={ formState.error as ProblemDetails } />
-            ) }
-            
-            { formState.error && Array.isArray(formState.error) && <InputValidationError errors={ formState.error } /> }
-            
-            <FormButton width="full" pending={ pending }>
+
+            {formState.error && !Array.isArray(formState.error) && (
+                <ApplicationRequestFormError error={formState.error as ProblemDetails} />
+            )}
+
+            {formState.error && Array.isArray(formState.error) && <InputValidationError errors={formState.error} />}
+
+            <FormButton width="full" pending={pending}>
                 Save Changes
             </FormButton>
         </form>

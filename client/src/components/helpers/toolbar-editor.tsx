@@ -1,7 +1,7 @@
 "use client"
 
-import { Button }      from "@headlessui/react"
-import { Editor }      from "@tiptap/react"
+import { Button } from "@headlessui/react"
+import { Editor } from "@tiptap/react"
 import { useCallback } from "react"
 import {
     LuAlignCenter,
@@ -19,41 +19,41 @@ import {
     LuUnderline,
     LuUndo,
     LuVideo,
-}                      from "react-icons/lu"
+} from "react-icons/lu"
 
 export default function ToolbarEditor({ editor }: Readonly<{ editor: Editor | null }>) {
     const addImage = useCallback(() => {
         const url = window.prompt("Enter the URL of the image:")
         if (!url) return
-        
+
         const altTitle = window.prompt("Enter the description of the image:") ?? ""
-        
+
         editor?.chain().focus().setImage({ src: url, alt: altTitle, title: altTitle }).run()
-    }, [ editor ])
-    
+    }, [editor])
+
     const toggleLink = useCallback(() => {
         if (editor?.isActive("link")) {
             editor.commands.unsetLink()
         } else {
             const url = window.prompt("Enter the URL of the link:")
             const rel = "noopener noreferrer nofollow"
-            
+
             if (url) {
                 editor?.chain().focus().toggleLink({ href: url, rel, target: "_blank" }).run()
             }
         }
-    }, [ editor ])
-    
+    }, [editor])
+
     const addYoutube = useCallback(() => {
         const url = window.prompt("Enter the URL of the YouTube video")
-        
+
         if (url) {
             editor?.commands.setYoutubeVideo({ src: url, width: 470, height: 320 })
         }
-    }, [ editor ])
-    
+    }, [editor])
+
     if (!editor) return null
-    
+
     const editorOptions = [
         {
             name: "Heading Level 2",
@@ -146,20 +146,20 @@ export default function ToolbarEditor({ editor }: Readonly<{ editor: Editor | nu
             isActive: editor.isActive("redo"),
         },
     ]
-    
+
     return (
         <div className="flex flex-wrap items-center justify-between gap-2 pb-4">
-            { editorOptions.map(({ name, icon: Icon, action, isActive }, index) => (
+            {editorOptions.map(({ name, icon: Icon, action, isActive }, index) => (
                 <Button
-                    key={ String(Icon) + index }
-                    data-active={ isActive }
-                    title={ `Activate ${ name }` }
-                    aria-label={ `Activate ${ name }` }
-                    className="from-marigold-500 to-marigold-600 border-marigold-500 text-shadow-50 inline-grid p-2 place-items-center rounded-md border bg-gradient-to-tr text-center align-middle font-sans cursor-pointer text-sm leading-none font-medium transition-all duration-300 ease-in select-none hover:brightness-110 focus:shadow-none"
-                    onClick={ action }>
+                    key={String(Icon) + index}
+                    data-active={isActive}
+                    title={`Activate ${name}`}
+                    aria-label={`Activate ${name}`}
+                    className="from-marigold-500 to-marigold-600 border-marigold-500 text-shadow-50 inline-grid cursor-pointer place-items-center rounded-md border bg-gradient-to-tr p-2 text-center align-middle font-sans text-sm leading-none font-medium transition-all duration-300 ease-in select-none hover:brightness-110 focus:shadow-none"
+                    onClick={action}>
                     <Icon aria-hidden="true" className="size-4 stroke-2" />
                 </Button>
-            )) }
+            ))}
         </div>
     )
 }

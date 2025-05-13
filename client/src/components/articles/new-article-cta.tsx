@@ -1,5 +1,5 @@
-import LinkButton       from "@/components/shared/link-button"
-import Image            from "next/image"
+import LinkButton from "@/components/shared/link-button"
+import Image from "next/image"
 import articlePagePhoto from "../../../public/articles-page-photo.jpg"
 
 export default function NewArticleCta() {
@@ -9,15 +9,11 @@ export default function NewArticleCta() {
                 viewBox="0 0 1024 1024"
                 aria-hidden="true"
                 className="absolute top-1/2 left-1/2 -z-10 size-[64rem] -translate-y-1/2 [mask-image:radial-gradient(closest-side,white,transparent)] sm:left-full sm:-ml-80 lg:left-1/2 lg:ml-0 lg:-translate-x-1/2 lg:translate-y-0">
-                <circle r={ 512 }
-                        cx={ 512 }
-                        cy={ 512 }
-                        fill="url(#759c1415-0410-454c-8f7c-9a820de03641)"
-                        fillOpacity="0.7" />
+                <circle r={512} cx={512} cy={512} fill="url(#759c1415-0410-454c-8f7c-9a820de03641)" fillOpacity="0.7" />
                 <defs>
                     <radialGradient id="759c1415-0410-454c-8f7c-9a820de03641">
                         <stop stopColor="#ddb115" />
-                        <stop offset={ 1 } stopColor="#f3dd51" />
+                        <stop offset={1} stopColor="#f3dd51" />
                     </radialGradient>
                 </defs>
             </svg>
@@ -31,24 +27,24 @@ export default function NewArticleCta() {
                     published on our platform.
                 </p>
                 <div className="mt-10 flex flex-col items-center justify-center gap-6 sm:flex-row lg:justify-start">
-                    <LinkButton
-                        href="/articles/write"
-                        aria-label="Start writing your articles"
-                        buttonStyle="colored">
+                    <LinkButton href="/articles/write" aria-label="Start writing your articles" buttonStyle="colored">
                         Get started
                     </LinkButton>
                     <LinkButton
                         href="/articles/rules"
                         aria-label="Learn more about the rules for writing articles"
                         buttonStyle="inverted-ghost">
-                        Learn more <span aria-hidden="true" className="text-inherit">&rarr;</span>
+                        Learn more{" "}
+                        <span aria-hidden="true" className="text-inherit">
+                            &rarr;
+                        </span>
                     </LinkButton>
                 </div>
             </div>
             <div className="relative mt-16 h-80 lg:mt-8">
                 <Image
                     alt="Person using MacBook Pro photo. Photo by @glenncarstenspeters on Unsplash"
-                    src={ articlePagePhoto }
+                    src={articlePagePhoto}
                     className="absolute top-0 left-0 w-[57rem] max-w-none rounded-md border border-stone-900 bg-stone-500 ring-2 ring-offset-stone-50 brightness-90 grayscale-50"
                 />
             </div>

@@ -1,15 +1,15 @@
-import { Paginated }                                      from "@/@types/application"
-import { ArticleSummary }                                 from "@/@types/articles"
-import getAllOwnArticlesPaginated                         from "@/actions/articles/get-all-own-articles-paginated"
-import DeleteArticleModal                                 from "@/components/modals/delete-article-modal"
-import LinkButton                                         from "@/components/shared/link-button"
-import NavigationPagination                               from "@/components/shared/navigation-pagination"
-import { formatDisplayDate }                              from "@/utils/functions"
-import { Button, Field, Input, Label }                    from "@headlessui/react"
-import { auth }                                           from "auth"
-import { Metadata }                                       from "next"
-import Link                                               from "next/link"
-import { permanentRedirect }                              from "next/navigation"
+import { Paginated } from "@/@types/application"
+import { ArticleSummary } from "@/@types/articles"
+import getAllOwnArticlesPaginated from "@/actions/articles/get-all-own-articles-paginated"
+import DeleteArticleModal from "@/components/modals/delete-article-modal"
+import LinkButton from "@/components/shared/link-button"
+import NavigationPagination from "@/components/shared/navigation-pagination"
+import { formatDisplayDate } from "@/utils/functions"
+import { Button, Field, Input, Label } from "@headlessui/react"
+import { auth } from "auth"
+import { Metadata } from "next"
+import Link from "next/link"
+import { permanentRedirect } from "next/navigation"
 import { LuChevronDown, LuChevronUp, LuSearch, LuTrash2 } from "react-icons/lu"
 
 interface ArticlePageProps {
@@ -25,75 +25,77 @@ export const metadata: Metadata = {
 type ArticlePageParams = Pick<ArticleSummary, "id" | "title" | "subTitle" | "createdAt" | "updatedAt">
 type Direction = "ASC" | "DESC"
 
-function TableHeader(props: Readonly<{
-    href: string
-    direction: Direction
-    orderBy: keyof ArticlePageParams
-    href1: string
-    href2: string
-    href3: string
-    href4: string
-}>) {
+function TableHeader(
+    props: Readonly<{
+        href: string
+        direction: Direction
+        orderBy: keyof ArticlePageParams
+        href1: string
+        href2: string
+        href3: string
+        href4: string
+    }>,
+) {
     return (
         <thead>
             <tr>
                 <th scope="col" className="text-shadow-900 py-3.5 pr-3 pl-4 text-left text-sm font-semibold sm:pl-0">
-                    <Link href={ props.href } className="group inline-flex">
-                        Id{ " " }
+                    <Link href={props.href} className="group inline-flex">
+                        Id{" "}
                         <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
-                            { props.direction === "ASC" && props.orderBy === "id" ? (
+                            {props.direction === "ASC" && props.orderBy === "id" ? (
                                 <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
                             ) : (
-                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
-                              ) }
+                                <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                            )}
                         </span>
                     </Link>
                 </th>
                 <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
-                    <Link href={ props.href1 } className="group inline-flex">
-                        Title{ " " }
+                    <Link href={props.href1} className="group inline-flex">
+                        Title{" "}
                         <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
-                            { props.direction === "ASC" && props.orderBy === "title" ? (
+                            {props.direction === "ASC" && props.orderBy === "title" ? (
                                 <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
                             ) : (
-                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
-                              ) }
+                                <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                            )}
                         </span>
                     </Link>
                 </th>
                 <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
-                    <Link href={ props.href2 } className="group inline-flex">
-                        Subtitle{ " " }
+                    <Link href={props.href2} className="group inline-flex">
+                        Subtitle{" "}
                         <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
-                            { props.direction === "ASC" && props.orderBy === "subTitle" ? (
+                            {props.direction === "ASC" && props.orderBy === "subTitle" ? (
                                 <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
                             ) : (
-                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
-                              ) }
+                                <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                            )}
                         </span>
                     </Link>
                 </th>
                 <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
-                    <Link href={ props.href3 } className="group inline-flex">
-                        Published On{ " " }
+                    <Link href={props.href3} className="group inline-flex">
+                        Published On{" "}
                         <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
-                            { props.direction === "ASC" && props.orderBy === "createdAt" ? (
+                            {props.direction === "ASC" && props.orderBy === "createdAt" ? (
                                 <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
                             ) : (
-                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
-                              ) }
+                                <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                            )}
                         </span>
                     </Link>
                 </th>
                 <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
-                    <Link href={ props.href4 } className="group inline-flex">
-                        Edited On{ " " }
+                    <Link href={props.href4} className="group inline-flex">
+                        Edited On{" "}
                         <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
-                            { props.direction === "ASC" && props.orderBy === "updatedAt" ? (
+                            {props.direction === "ASC" && props.orderBy === "updatedAt" ? (
                                 <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
                             ) : (
-                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
-                              ) }
+                                <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                            )}
                         </span>
                     </Link>
                 </th>
@@ -106,39 +108,39 @@ function TableHeader(props: Readonly<{
 }
 
 export default async function ArticlePage({ params, searchParams }: Readonly<ArticlePageProps>) {
-    const [ session, { username }, pageParams ] = await Promise.all([ auth(), params, searchParams ])
+    const [session, { username }, pageParams] = await Promise.all([auth(), params, searchParams])
     if (!pageParams) return null
-    
+
     if (!session || !username || session?.user.role !== "ADMIN" || session?.user.username !== username) {
         return permanentRedirect("/")
     }
-    
+
     const search = (pageParams.search as string) || ""
     const page = parseInt(pageParams.page as string, 10) || 0
     const perPage = parseInt(pageParams.perPage as string, 10) || 10
     const direction = (pageParams.direction as Direction) || "DESC"
     const orderBy = (pageParams.orderBy as keyof ArticlePageParams) || "createdAt"
-    
+
     const articlesState = await getAllOwnArticlesPaginated({ page, perPage, direction, orderBy, search })
     const pagination = articlesState.response?.data as Paginated<ArticleSummary>
     const content = pagination.content ?? []
-    
-    const baseUrl = `/dashboard/${ username }/articles`
-    
+
+    const baseUrl = `/dashboard/${username}/articles`
+
     function buildUrl(item: keyof ArticlePageParams, direction: Direction) {
-        let orderUrl = `${ baseUrl }?orderBy=${ item }`
-        
+        let orderUrl = `${baseUrl}?orderBy=${item}`
+
         function getNextDirection(currentOrderBy: string) {
             const isAscDirection = direction === "ASC" ? "DESC" : "ASC"
             return orderBy === currentOrderBy ? isAscDirection : "ASC"
         }
-        
+
         if (getNextDirection(item) === "ASC") orderUrl += "&direction=ASC"
-        if (search) orderUrl += `&search=${ encodeURIComponent(search) }`
-        if (page) orderUrl += `&page=${ page }`
+        if (search) orderUrl += `&search=${encodeURIComponent(search)}`
+        if (page) orderUrl += `&page=${page}`
         return orderUrl
     }
-    
+
     return (
         <div
             className="flex h-full min-h-0 flex-col justify-between"
@@ -162,7 +164,7 @@ export default async function ArticlePage({ params, searchParams }: Readonly<Art
                 </div>
 
                 <p id="page-description" className="text-shadow-600 mt-2 text-lg/8">
-                    There are currently { pagination.page.totalElements } articles(s) written by you. Manage them here.
+                    There are currently {pagination.page.totalElements} articles(s) written by you. Manage them here.
                 </p>
             </header>
 
@@ -170,7 +172,7 @@ export default async function ArticlePage({ params, searchParams }: Readonly<Art
                 <div className="-mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <div className="flex items-center gap-2">
-                            <form action={ baseUrl } method="GET" className="max-sm:pl-4">
+                            <form action={baseUrl} method="GET" className="max-sm:pl-4">
                                 <Field className="w-full max-w-sm">
                                     <Label htmlFor="search" className="sr-only">
                                         Search
@@ -198,93 +200,93 @@ export default async function ArticlePage({ params, searchParams }: Readonly<Art
                                 aria-label="Clear url params"
                                 title="Clear url params"
                                 buttonStyle="ghost"
-                                href={ baseUrl }>
+                                href={baseUrl}>
                                 <LuTrash2 aria-hidden="true" className="size-4" />
                             </LinkButton>
                         </div>
 
                         <table className="min-w-full divide-y divide-stone-300">
                             <TableHeader
-                                href={ buildUrl("id", direction) }
-                                direction={ direction }
-                                orderBy={ orderBy }
-                                href1={ buildUrl("title", direction) }
-                                href2={ buildUrl("subTitle", direction) }
-                                href3={ buildUrl("createdAt", direction) }
-                                href4={ buildUrl("updatedAt", direction) }
+                                href={buildUrl("id", direction)}
+                                direction={direction}
+                                orderBy={orderBy}
+                                href1={buildUrl("title", direction)}
+                                href2={buildUrl("subTitle", direction)}
+                                href3={buildUrl("createdAt", direction)}
+                                href4={buildUrl("updatedAt", direction)}
                             />
 
                             <tbody className="divide-y divide-stone-200 bg-white">
-                                { content.map(article => (
-                                    <tr key={ article.id }>
+                                {content.map(article => (
+                                    <tr key={article.id}>
                                         <td className="text-shadow-900 py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap sm:pl-0">
-                                            { article.id }
+                                            {article.id}
                                         </td>
                                         <td className="px-3 py-4 text-sm whitespace-nowrap">
                                             <Link
-                                                href={ `/articles/${ article.id }/${ article.slug }` }
+                                                href={`/articles/${article.id}/${article.slug}`}
                                                 className="text-marigold-500 hover:text-marigold-600 active:text-marigold-700 hover:underline"
-                                                aria-label={ `Read article: ${ article.title }` }
-                                                title={ `Read article: ${ article.title }` }>
-                                                { article.title }
+                                                aria-label={`Read article: ${article.title}`}
+                                                title={`Read article: ${article.title}`}>
+                                                {article.title}
                                             </Link>
                                         </td>
                                         <td
                                             className="text-shadow-500 max-w-[36ch] truncate px-3 py-4 text-sm whitespace-nowrap"
-                                            title={ article.subTitle }
-                                            aria-label={ article.subTitle }>
-                                            { article.subTitle }
+                                            title={article.subTitle}
+                                            aria-label={article.subTitle}>
+                                            {article.subTitle}
                                         </td>
                                         <td className="text-shadow-500 px-3 py-4 text-sm whitespace-nowrap">
                                             <time
-                                                dateTime={ new Date(article.createdAt).toISOString() }
-                                                aria-label={ `Published on ${ formatDisplayDate(
-                                                    String(article.createdAt)) }` }
-                                                title={ `Published on ${ formatDisplayDate(
-                                                    String(article.createdAt)) }` }>
-                                                { formatDisplayDate(String(article.createdAt)) }
+                                                dateTime={new Date(article.createdAt).toISOString()}
+                                                aria-label={`Published on ${formatDisplayDate(
+                                                    String(article.createdAt),
+                                                )}`}
+                                                title={`Published on ${formatDisplayDate(String(article.createdAt))}`}>
+                                                {formatDisplayDate(String(article.createdAt))}
                                             </time>
                                         </td>
                                         <td className="text-shadow-500 px-3 py-4 text-sm whitespace-nowrap">
-                                            { article.createdAt !== article.updatedAt ? (
+                                            {article.createdAt !== article.updatedAt ? (
                                                 <time
-                                                    dateTime={ new Date(article.updatedAt).toISOString() }
-                                                    aria-label={ `Edited on ${ formatDisplayDate(
-                                                        String(article.updatedAt)) }` }
-                                                    title={ `Edited on ${ formatDisplayDate(
-                                                        String(article.updatedAt)) }` }>
-                                                    { formatDisplayDate(String(article.updatedAt)) }
+                                                    dateTime={new Date(article.updatedAt).toISOString()}
+                                                    aria-label={`Edited on ${formatDisplayDate(
+                                                        String(article.updatedAt),
+                                                    )}`}
+                                                    title={`Edited on ${formatDisplayDate(String(article.updatedAt))}`}>
+                                                    {formatDisplayDate(String(article.updatedAt))}
                                                 </time>
                                             ) : (
-                                                  <span className="text-shadow-300">Never</span>
-                                              ) }
+                                                <span className="text-shadow-300">Never</span>
+                                            )}
                                         </td>
                                         <td className="relative inline-flex gap-x-2 py-4 pr-4 pl-3 text-right text-sm whitespace-nowrap sm:pr-0">
                                             <Link
-                                                href={ `/dashboard/${ username }/articles/${ article.id }/${ article.slug }/edit` }
-                                                aria-label={ `Edit article: ${ article.title }` }
-                                                title={ `Edit article: ${ article.title }` }
+                                                href={`/dashboard/${username}/articles/${article.id}/${article.slug}/edit`}
+                                                aria-label={`Edit article: ${article.title}`}
+                                                title={`Edit article: ${article.title}`}
                                                 className="text-marigold-500 hover:text-marigold-600 active:text-marigold-700 transition-all duration-300 ease-in">
                                                 Edit
                                             </Link>
 
-                                            <DeleteArticleModal article={ article } />
+                                            <DeleteArticleModal article={article} />
                                         </td>
                                     </tr>
-                                )) }
+                                ))}
                             </tbody>
                         </table>
                     </div>
                 </div>
-                
-                { pagination.page.totalElements <= 0 && (
+
+                {pagination.page.totalElements <= 0 && (
                     <div className="flex h-96 items-center justify-center">
                         <p className="text-shadow-500 text-lg">No articles written.</p>
                     </div>
-                ) }
+                )}
             </main>
 
-            <NavigationPagination pageInfo={ pagination.page } />
+            <NavigationPagination pageInfo={pagination.page} />
         </div>
     )
 }

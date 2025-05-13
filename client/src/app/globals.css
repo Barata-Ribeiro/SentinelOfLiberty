@@ -10,7 +10,7 @@
 
     /*COLORS*/
     --color-*: initial;
-    --color-current: 'currentColor';
+    --color-current: "currentColor";
     --color-black: #0a0a0a;
     --color-white: #fafafa;
     --color-transparent: transparent;

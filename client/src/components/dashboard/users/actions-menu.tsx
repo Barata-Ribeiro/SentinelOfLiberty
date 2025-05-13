@@ -1,13 +1,13 @@
 "use client"
 
-import { User }                                  from "@/@types/user"
-import AdminBanButton                            from "@/components/dashboard/users/admin-ban-button"
-import AdminDeleteButton                         from "@/components/dashboard/users/admin-delete-button"
-import AdminVerificationButton                   from "@/components/dashboard/users/admin-verification-button"
+import { User } from "@/@types/user"
+import AdminBanButton from "@/components/dashboard/users/admin-ban-button"
+import AdminDeleteButton from "@/components/dashboard/users/admin-delete-button"
+import AdminVerificationButton from "@/components/dashboard/users/admin-verification-button"
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
-import { useSession }                            from "next-auth/react"
-import Link                                      from "next/link"
-import { LuEllipsisVertical, LuPencil }          from "react-icons/lu"
+import { useSession } from "next-auth/react"
+import Link from "next/link"
+import { LuEllipsisVertical, LuPencil } from "react-icons/lu"
 
 interface ActionsMenuProps {
     user: User
@@ -15,7 +15,7 @@ interface ActionsMenuProps {
 
 export default function ActionsMenu({ user }: Readonly<ActionsMenuProps>) {
     const { data: session } = useSession()
-    
+
     return (
         <Menu as="nav" className="inline-block text-left">
             <MenuButton
@@ -31,21 +31,21 @@ export default function ActionsMenu({ user }: Readonly<ActionsMenuProps>) {
                 <MenuItem>
                     <Link
                         className="group text-marigold-500 data-hover:text-marigold-600 data-focus:text-marigold-700 flex items-center px-4 py-2 text-sm data-focus:bg-stone-100 data-focus:outline-hidden"
-                        aria-label={ `Edit ${ user.username }` }
-                        title={ `Edit ${ user.username }` }
-                        href={ `/dashboard/${ session?.user.username }/users/${ user.username }/edit` }>
+                        aria-label={`Edit ${user.username}`}
+                        title={`Edit ${user.username}`}
+                        href={`/dashboard/${session?.user.username}/users/${user.username}/edit`}>
                         <LuPencil aria-hidden="true" className="mr-3 size-4 text-inherit" />
                         Edit
                     </Link>
                 </MenuItem>
                 <MenuItem>
-                    <AdminVerificationButton username={ user.username } isVerified={ user.isVerified } />
+                    <AdminVerificationButton username={user.username} isVerified={user.isVerified} />
                 </MenuItem>
                 <MenuItem>
-                    <AdminBanButton username={ user.username } isBanned={ user.role === "BANNED" } />
+                    <AdminBanButton username={user.username} isBanned={user.role === "BANNED"} />
                 </MenuItem>
                 <MenuItem>
-                    <AdminDeleteButton username={ user.username } />
+                    <AdminDeleteButton username={user.username} />
                 </MenuItem>
             </MenuItems>
         </Menu>

@@ -1,6 +1,6 @@
 import RegisterForm from "@/components/forms/register-form"
 import { Metadata } from "next"
-import Link         from "next/link"
+import Link from "next/link"
 
 export const metadata: Metadata = {
     title: "Register",
@@ -13,10 +13,10 @@ export default function RegisterPage() {
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
                 <div className="bg-white px-6 py-12 shadow-sm sm:rounded-md sm:px-12">
                     <div className="mb-8">
-                        <h1 id="register-heading" className="block text-2xl font-medium text-shadow-800">
+                        <h1 id="register-heading" className="text-shadow-800 block text-2xl font-medium">
                             Create an Account
                         </h1>
-                        <p className="text-sm font-light text-shadow-500">
+                        <p className="text-shadow-500 text-sm font-light">
                             Welcome! Please create an account to get started.
                         </p>
                     </div>
@@ -24,11 +24,11 @@ export default function RegisterPage() {
                     <RegisterForm />
                 </div>
 
-                <p className="mt-10 text-center text-sm text-shadow-300" role="note">
-                    Already a member?{ " " }
+                <p className="text-shadow-300 mt-10 text-center text-sm" role="note">
+                    Already a member?{" "}
                     <Link
                         href="/auth/login"
-                        className="font-semibold leading-6 text-marigold-600 hover:text-marigold-500 active:text-marigold-700">
+                        className="text-marigold-600 hover:text-marigold-500 active:text-marigold-700 leading-6 font-semibold">
                         Login to your account
                     </Link>
                 </p>

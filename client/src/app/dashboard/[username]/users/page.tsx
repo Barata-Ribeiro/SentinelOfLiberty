@@ -1,17 +1,17 @@
-import { Paginated }                                                    from "@/@types/application"
-import { User }                                                         from "@/@types/user"
-import getAllUsersPaginated                                             from "@/actions/admin/get-all-users-paginated"
-import ActionsMenu                                                      from "@/components/dashboard/users/actions-menu"
-import AvatarWithText                                                   from "@/components/shared/avatar-with-text"
-import LinkButton                                                       from "@/components/shared/link-button"
-import NavigationPagination                                             from "@/components/shared/navigation-pagination"
-import RoleBadge                                                        from "@/components/shared/role-badge"
-import { formatDisplayDate }                                            from "@/utils/functions"
-import { Button, Field, Input, Label }                                  from "@headlessui/react"
-import { auth }                                                         from "auth"
-import { Metadata }                                                     from "next"
-import Link                                                             from "next/link"
-import { permanentRedirect }                                            from "next/navigation"
+import { Paginated } from "@/@types/application"
+import { User } from "@/@types/user"
+import getAllUsersPaginated from "@/actions/admin/get-all-users-paginated"
+import ActionsMenu from "@/components/dashboard/users/actions-menu"
+import AvatarWithText from "@/components/shared/avatar-with-text"
+import LinkButton from "@/components/shared/link-button"
+import NavigationPagination from "@/components/shared/navigation-pagination"
+import RoleBadge from "@/components/shared/role-badge"
+import { formatDisplayDate } from "@/utils/functions"
+import { Button, Field, Input, Label } from "@headlessui/react"
+import { auth } from "auth"
+import { Metadata } from "next"
+import Link from "next/link"
+import { permanentRedirect } from "next/navigation"
 import { LuBadgeCheck, LuChevronDown, LuChevronUp, LuSearch, LuTrash2 } from "react-icons/lu"
 
 interface UsersPageProps {
@@ -27,16 +27,18 @@ export const metadata: Metadata = {
 type UsersPageParams = Pick<User, "username" | "email" | "role" | "isVerified" | "createdAt" | "updatedAt">
 type Direction = "ASC" | "DESC"
 
-function TableHeader(props: Readonly<{
-    href: string
-    direction: "ASC" | "DESC"
-    orderBy: "username" | "email" | "role" | "isVerified" | "createdAt" | "updatedAt"
-    href1: string
-    href2: string
-    href3: string
-    href4: string
-    href5: string
-}>) {
+function TableHeader(
+    props: Readonly<{
+        href: string
+        direction: "ASC" | "DESC"
+        orderBy: "username" | "email" | "role" | "isVerified" | "createdAt" | "updatedAt"
+        href1: string
+        href2: string
+        href3: string
+        href4: string
+        href5: string
+    }>,
+) {
     return (
         <thead>
             <tr>
@@ -44,74 +46,74 @@ function TableHeader(props: Readonly<{
                     Id
                 </th>
                 <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
-                    <Link href={ props.href } className="group inline-flex">
-                        Username{ " " }
+                    <Link href={props.href} className="group inline-flex">
+                        Username{" "}
                         <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
-                            { props.direction === "ASC" && props.orderBy === "username" ? (
+                            {props.direction === "ASC" && props.orderBy === "username" ? (
                                 <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
                             ) : (
-                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
-                              ) }
+                                <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                            )}
                         </span>
                     </Link>
                 </th>
                 <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
-                    <Link href={ props.href1 } className="group inline-flex">
-                        Email{ " " }
+                    <Link href={props.href1} className="group inline-flex">
+                        Email{" "}
                         <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
-                            { props.direction === "ASC" && props.orderBy === "email" ? (
+                            {props.direction === "ASC" && props.orderBy === "email" ? (
                                 <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
                             ) : (
-                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
-                              ) }
+                                <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                            )}
                         </span>
                     </Link>
                 </th>
                 <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
-                    <Link href={ props.href2 } className="group inline-flex">
-                        Verification{ " " }
+                    <Link href={props.href2} className="group inline-flex">
+                        Verification{" "}
                         <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
-                            { props.direction === "ASC" && props.orderBy === "isVerified" ? (
+                            {props.direction === "ASC" && props.orderBy === "isVerified" ? (
                                 <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
                             ) : (
-                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
-                              ) }
+                                <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                            )}
                         </span>
                     </Link>
                 </th>
                 <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
-                    <Link href={ props.href3 } className="group inline-flex">
-                        Role{ " " }
+                    <Link href={props.href3} className="group inline-flex">
+                        Role{" "}
                         <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
-                            { props.direction === "ASC" && props.orderBy === "role" ? (
+                            {props.direction === "ASC" && props.orderBy === "role" ? (
                                 <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
                             ) : (
-                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
-                              ) }
+                                <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                            )}
                         </span>
                     </Link>
                 </th>
                 <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
-                    <Link href={ props.href4 } className="group inline-flex">
-                        Created At{ " " }
+                    <Link href={props.href4} className="group inline-flex">
+                        Created At{" "}
                         <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
-                            { props.direction === "ASC" && props.orderBy === "createdAt" ? (
+                            {props.direction === "ASC" && props.orderBy === "createdAt" ? (
                                 <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
                             ) : (
-                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
-                              ) }
+                                <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                            )}
                         </span>
                     </Link>
                 </th>
                 <th scope="col" className="text-shadow-900 px-3 py-3.5 text-left text-sm font-semibold">
-                    <Link href={ props.href5 } className="group inline-flex">
-                        Last Update{ " " }
+                    <Link href={props.href5} className="group inline-flex">
+                        Last Update{" "}
                         <span className="text-shadow-400 invisible ml-2 flex-none rounded-sm group-hover:visible group-focus:visible">
-                            { props.direction === "ASC" && props.orderBy === "updatedAt" ? (
+                            {props.direction === "ASC" && props.orderBy === "updatedAt" ? (
                                 <LuChevronUp aria-hidden="true" className="h-5 w-full text-inherit" />
                             ) : (
-                                  <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
-                              ) }
+                                <LuChevronDown aria-hidden="true" className="h-5 w-full text-inherit" />
+                            )}
                         </span>
                     </Link>
                 </th>
@@ -124,39 +126,39 @@ function TableHeader(props: Readonly<{
 }
 
 export default async function UsersPage({ params, searchParams }: Readonly<UsersPageProps>) {
-    const [ session, { username }, pageParams ] = await Promise.all([ auth(), params, searchParams ])
+    const [session, { username }, pageParams] = await Promise.all([auth(), params, searchParams])
     if (!pageParams) return null
-    
+
     if (!session || !username || session?.user.role !== "ADMIN" || session?.user.username !== username) {
         return permanentRedirect("/")
     }
-    
+
     const search = (pageParams.search as string) || ""
     const page = parseInt(pageParams.page as string, 10) || 0
     const perPage = parseInt(pageParams.perPage as string, 10) || 10
     const direction = (pageParams.direction as Direction) || "DESC"
     const orderBy = (pageParams.orderBy as keyof UsersPageParams) || "createdAt"
-    
+
     const usersState = await getAllUsersPaginated({ search, page, perPage, direction, orderBy })
     const pagination = usersState.response?.data as Paginated<User>
     const content = pagination.content ?? []
-    
-    const baseUrl = `/dashboard/${ username }/users`
-    
+
+    const baseUrl = `/dashboard/${username}/users`
+
     function buildUrl(item: keyof UsersPageParams, direction: Direction) {
-        let orderUrl = `${ baseUrl }?orderBy=${ item }`
-        
+        let orderUrl = `${baseUrl}?orderBy=${item}`
+
         function getNextDirection(currentOrderBy: string) {
             const isAscDirection = direction === "ASC" ? "DESC" : "ASC"
             return orderBy === currentOrderBy ? isAscDirection : "ASC"
         }
-        
+
         if (getNextDirection(item) === "ASC") orderUrl += "&direction=ASC"
-        if (search) orderUrl += `&search=${ encodeURIComponent(search) }`
-        if (page) orderUrl += `&page=${ page }`
+        if (search) orderUrl += `&search=${encodeURIComponent(search)}`
+        if (page) orderUrl += `&page=${page}`
         return orderUrl
     }
-    
+
     return (
         <div
             className="flex h-full min-h-0 flex-col justify-between"
@@ -170,7 +172,7 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
                 </h1>
 
                 <p id="page-description" className="text-shadow-600 mt-2 text-lg/8">
-                    There are currently { pagination.page.totalElements } user(s) registered in the service. Manage them
+                    There are currently {pagination.page.totalElements} user(s) registered in the service. Manage them
                     here.
                 </p>
             </header>
@@ -179,7 +181,7 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
                 <div className="-mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <div className="flex items-center gap-2">
-                            <form action={ baseUrl } method="GET" className="max-sm:pl-4">
+                            <form action={baseUrl} method="GET" className="max-sm:pl-4">
                                 <Field className="w-full max-w-sm">
                                     <Label htmlFor="search" className="sr-only">
                                         Search
@@ -207,121 +209,118 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
                                 aria-label="Clear url params"
                                 title="Clear url params"
                                 buttonStyle="ghost"
-                                href={ baseUrl }>
+                                href={baseUrl}>
                                 <LuTrash2 aria-hidden="true" className="size-4" />
                             </LinkButton>
                         </div>
 
                         <table className="min-w-full divide-y divide-stone-300">
                             <TableHeader
-                                href={ buildUrl("username", direction) }
-                                direction={ direction }
-                                orderBy={ orderBy }
-                                href1={ buildUrl("email", direction) }
-                                href2={ buildUrl("isVerified", direction) }
-                                href3={ buildUrl("role", direction) }
-                                href4={ buildUrl("createdAt", direction) }
-                                href5={ buildUrl("updatedAt", direction) }
+                                href={buildUrl("username", direction)}
+                                direction={direction}
+                                orderBy={orderBy}
+                                href1={buildUrl("email", direction)}
+                                href2={buildUrl("isVerified", direction)}
+                                href3={buildUrl("role", direction)}
+                                href4={buildUrl("createdAt", direction)}
+                                href5={buildUrl("updatedAt", direction)}
                             />
 
                             <tbody className="divide-y divide-stone-200 bg-white">
-                                { content.map(user => {
+                                {content.map(user => {
                                     return (
-                                        <tr key={ user.id }>
+                                        <tr key={user.id}>
                                             <td
                                                 className="text-shadow-900 max-w-[10ch] truncate py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap sm:pl-0"
-                                                aria-label={ `User ID: ${ user.id }` }
-                                                title={ `User ID: ${ user.id }` }>
-                                                { user.id }
+                                                aria-label={`User ID: ${user.id}`}
+                                                title={`User ID: ${user.id}`}>
+                                                {user.id}
                                             </td>
                                             <td className="px-3 py-4 text-sm whitespace-nowrap">
                                                 <div className="group text-marigold-500 hover:text-marigold-600 active:text-marigold-700 inline-flex items-center gap-x-2">
                                                     <AvatarWithText
-                                                        name={ user.username }
-                                                        size={ 32 }
-                                                        src={ user.avatarUrl }
+                                                        name={user.username}
+                                                        size={32}
+                                                        src={user.avatarUrl}
                                                         type="profile"
-                                                        isPrivate={ user.isPrivate }
+                                                        isPrivate={user.isPrivate}
                                                     />
                                                 </div>
                                             </td>
                                             <td className="px-3 py-4 text-sm whitespace-nowrap">
                                                 <Link
-                                                    href={ `mailto:${ user.email }` }
+                                                    href={`mailto:${user.email}`}
                                                     className="text-marigold-500 hover:text-marigold-600 active:text-marigold-700 hover:underline"
-                                                    aria-label={ `Send email to ${ user.email }` }
-                                                    title={ `Send email to ${ user.email }` }>
-                                                    { user.email }
+                                                    aria-label={`Send email to ${user.email}`}
+                                                    title={`Send email to ${user.email}`}>
+                                                    {user.email}
                                                 </Link>
                                             </td>
                                             <td className="px-3 py-4 text-sm whitespace-nowrap">
                                                 <small
-                                                    data-verified={ user.isVerified }
-                                                    aria-label={ `User is ${
+                                                    data-verified={user.isVerified}
+                                                    aria-label={`User is ${
                                                         user.isVerified ? "verified" : "not verified"
-                                                    }` }
-                                                    title={ `User is ${ user.isVerified
-                                                                        ? "verified"
-                                                                        : "not verified" }` }
+                                                    }`}
+                                                    title={`User is ${user.isVerified ? "verified" : "not verified"}`}
                                                     className="data-[verified=true]:text-marigold-500 data-[verified=false]:text-shadow-200 inline-flex items-center gap-x-1 text-sm">
-                                                    { user.isVerified ? (
+                                                    {user.isVerified ? (
                                                         <>
-                                                            Verified{ " " }
+                                                            Verified{" "}
                                                             <LuBadgeCheck
                                                                 aria-hidden="true"
                                                                 className="size-4 text-inherit"
                                                             />
                                                         </>
                                                     ) : (
-                                                          "Not Verified"
-                                                      ) }
+                                                        "Not Verified"
+                                                    )}
                                                 </small>
                                             </td>
                                             <td className="px-3 py-4 text-sm whitespace-nowrap">
-                                                <RoleBadge role={ user.role } />
+                                                <RoleBadge role={user.role} />
                                             </td>
                                             <td className="px-3 py-4 text-sm whitespace-nowrap">
                                                 <time
-                                                    dateTime={ new Date(user.createdAt).toISOString() }
-                                                    aria-label={ `Created at ${ formatDisplayDate(user.createdAt) }` }
-                                                    title={ `Created at ${ formatDisplayDate(user.createdAt) }` }>
-                                                    { formatDisplayDate(user.createdAt) }
+                                                    dateTime={new Date(user.createdAt).toISOString()}
+                                                    aria-label={`Created at ${formatDisplayDate(user.createdAt)}`}
+                                                    title={`Created at ${formatDisplayDate(user.createdAt)}`}>
+                                                    {formatDisplayDate(user.createdAt)}
                                                 </time>
                                             </td>
                                             <td className="px-3 py-4 text-sm whitespace-nowrap">
-                                                { user.createdAt !== user.updatedAt ? (
+                                                {user.createdAt !== user.updatedAt ? (
                                                     <time
-                                                        dateTime={ new Date(user.createdAt).toISOString() }
-                                                        aria-label={ `Last updated at ${ formatDisplayDate(
+                                                        dateTime={new Date(user.createdAt).toISOString()}
+                                                        aria-label={`Last updated at ${formatDisplayDate(
                                                             user.updatedAt,
-                                                        ) }` }
-                                                        title={ `Last updated at ${ formatDisplayDate(
-                                                            user.updatedAt) }` }>
-                                                        { formatDisplayDate(user.updatedAt) }
+                                                        )}`}
+                                                        title={`Last updated at ${formatDisplayDate(user.updatedAt)}`}>
+                                                        {formatDisplayDate(user.updatedAt)}
                                                     </time>
                                                 ) : (
-                                                      <span className="text-shadow-300">No updates</span>
-                                                  ) }
+                                                    <span className="text-shadow-300">No updates</span>
+                                                )}
                                             </td>
                                             <td className="relative py-4 pr-4 pl-3 text-sm whitespace-nowrap sm:pr-0">
-                                                <ActionsMenu user={ user } />
+                                                <ActionsMenu user={user} />
                                             </td>
                                         </tr>
                                     )
-                                }) }
+                                })}
                             </tbody>
                         </table>
                     </div>
                 </div>
-                
-                { pagination.page.totalElements <= 0 && (
+
+                {pagination.page.totalElements <= 0 && (
                     <div className="flex h-96 items-center justify-center">
                         <p className="text-shadow-500 text-lg">No users registered.</p>
                     </div>
-                ) }
+                )}
             </main>
 
-            <NavigationPagination pageInfo={ pagination.page } />
+            <NavigationPagination pageInfo={pagination.page} />
         </div>
     )
 }

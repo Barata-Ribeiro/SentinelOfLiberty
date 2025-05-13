@@ -1,26 +1,26 @@
-import { Article }                     from "@/@types/articles"
-import getArticleById                  from "@/actions/articles/get-article-by-id"
-import getPopularPublicArticles        from "@/actions/articles/get-popular-public-articles"
-import getCommentTree                  from "@/actions/comments/get-comment-tree"
-import LatestArticlesListing           from "@/components/articles/latest-articles-listing"
-import MainArticleAuthor               from "@/components/articles/main-article-author"
-import MainArticleCommentTree          from "@/components/articles/main-article-comment-tree"
-import MainArticleFooter               from "@/components/articles/main-article-footer"
-import MainArticleHeader               from "@/components/articles/main-article-header"
-import MainArticleReferences           from "@/components/articles/main-article-references"
-import MainArticleSuggestion           from "@/components/articles/main-article-suggestion"
-import PopularArticlesListing          from "@/components/articles/popular-articles-listing"
-import NewCommentForm                  from "@/components/forms/new-comment-form"
-import MemoizedContent                 from "@/components/helpers/memoized-content"
-import CommentSkeleton                 from "@/components/layout/skeletons/comment-skeleton"
-import LatestArticlesItemSkeleton      from "@/components/layout/skeletons/latest-articles-item-skeleton"
-import PopularArticlesListSkeleton     from "@/components/layout/skeletons/popular-articles-list-skeleton"
-import { auth }                        from "auth"
+import { Article } from "@/@types/articles"
+import getArticleById from "@/actions/articles/get-article-by-id"
+import getPopularPublicArticles from "@/actions/articles/get-popular-public-articles"
+import getCommentTree from "@/actions/comments/get-comment-tree"
+import LatestArticlesListing from "@/components/articles/latest-articles-listing"
+import MainArticleAuthor from "@/components/articles/main-article-author"
+import MainArticleCommentTree from "@/components/articles/main-article-comment-tree"
+import MainArticleFooter from "@/components/articles/main-article-footer"
+import MainArticleHeader from "@/components/articles/main-article-header"
+import MainArticleReferences from "@/components/articles/main-article-references"
+import MainArticleSuggestion from "@/components/articles/main-article-suggestion"
+import PopularArticlesListing from "@/components/articles/popular-articles-listing"
+import NewCommentForm from "@/components/forms/new-comment-form"
+import MemoizedContent from "@/components/helpers/memoized-content"
+import CommentSkeleton from "@/components/layout/skeletons/comment-skeleton"
+import LatestArticlesItemSkeleton from "@/components/layout/skeletons/latest-articles-item-skeleton"
+import PopularArticlesListSkeleton from "@/components/layout/skeletons/popular-articles-list-skeleton"
+import { auth } from "auth"
 import { Metadata, ResolvingMetadata } from "next"
-import { headers }                     from "next/headers"
-import Link                            from "next/link"
-import { notFound }                    from "next/navigation"
-import { Suspense }                    from "react"
+import { headers } from "next/headers"
+import Link from "next/link"
+import { notFound } from "next/navigation"
+import { Suspense } from "react"
 
 interface ArticlePageProps {
     params: Promise<{
@@ -31,14 +31,14 @@ interface ArticlePageProps {
 
 export async function generateMetadata({ params }: ArticlePageProps, parent: ResolvingMetadata): Promise<Metadata> {
     const { id } = await params
-    
+
     const articleState = await getArticleById({ id: parseInt(id) })
     if (!articleState) return notFound()
-    
+
     const previousImages = (await parent).openGraph?.images ?? []
-    
+
     const article = articleState.response?.data as Article
-    
+
     return {
         title: article.title,
         description: article.summary,
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: ArticlePageProps, parent: Res
             type: "article",
             title: article.title,
             description: article.summary,
-            images: [ article.mediaUrl, ...previousImages ],
+            images: [article.mediaUrl, ...previousImages],
         },
     }
 }
@@ -54,36 +54,36 @@ export async function generateMetadata({ params }: ArticlePageProps, parent: Res
 export default async function ArticlePage({ params }: Readonly<ArticlePageProps>) {
     const { id, slug } = await params
     if (!id || !slug) return notFound()
-    
-    const [ headersList, session, articleState ] = await Promise.all([
-                                                                         headers(),
-                                                                         auth(),
-                                                                         getArticleById({ id: parseInt(id) }),
-                                                                     ])
+
+    const [headersList, session, articleState] = await Promise.all([
+        headers(),
+        auth(),
+        getArticleById({ id: parseInt(id) }),
+    ])
     if (!articleState) return notFound()
-    
+
     const pathname = headersList.get("x-current-path")
     const article = articleState.response?.data as Article
     if (article.slug !== slug) return notFound()
-    
+
     const commentTreePromise = getCommentTree({ articleId: article.id })
     const popularArticlesPromise = getPopularPublicArticles()
-    
+
     return (
         <div className="container grid grid-cols-1 gap-4">
             <article id="article" className="space-y-6">
-                <MainArticleHeader article={ article } />
+                <MainArticleHeader article={article} />
 
                 <main className="grid grid-cols-1 gap-4 md:grid-cols-[auto_1fr] md:gap-8">
                     <aside className="border-marigold-500 w-max border-t-4 pt-4">
-                        <MainArticleAuthor session={ session } author={ article.author } />
-                        <MainArticleSuggestion suggestion={ article.suggestion } />
-                        <MainArticleReferences references={ article.references } />
+                        <MainArticleAuthor session={session} author={article.author} />
+                        <MainArticleSuggestion suggestion={article.suggestion} />
+                        <MainArticleReferences references={article.references} />
                     </aside>
 
                     <div id="article-content" className="w-full !max-w-4xl">
-                        <MemoizedContent html={ article.content } />
-                        <MainArticleFooter article={ article } pathname={ pathname } />
+                        <MemoizedContent html={article.content} />
+                        <MainArticleFooter article={article} pathname={pathname} />
                     </div>
                 </main>
             </article>
@@ -100,7 +100,7 @@ export default async function ArticlePage({ params }: Readonly<ArticlePageProps>
                     </div>
 
                     <ul className="grid max-w-4xl grid-cols-1 justify-items-center gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        <Suspense fallback={ <LatestArticlesItemSkeleton /> }>
+                        <Suspense fallback={<LatestArticlesItemSkeleton />}>
                             <LatestArticlesListing />
                         </Suspense>
                     </ul>
@@ -124,8 +124,8 @@ export default async function ArticlePage({ params }: Readonly<ArticlePageProps>
                             className="text-shadow-900 mb-6 border-b border-stone-200 pb-3 text-2xl font-bold">
                             Comments
                         </h3>
-                        <Suspense fallback={ <CommentSkeleton /> }>
-                            <MainArticleCommentTree commentTreePromise={ commentTreePromise } />
+                        <Suspense fallback={<CommentSkeleton />}>
+                            <MainArticleCommentTree commentTreePromise={commentTreePromise} />
                         </Suspense>
                     </section>
                 </div>
@@ -142,8 +142,8 @@ export default async function ArticlePage({ params }: Readonly<ArticlePageProps>
                         </Link>
                     </div>
 
-                    <Suspense fallback={ <PopularArticlesListSkeleton /> }>
-                        <PopularArticlesListing articlePromise={ popularArticlesPromise } />
+                    <Suspense fallback={<PopularArticlesListSkeleton />}>
+                        <PopularArticlesListing articlePromise={popularArticlesPromise} />
                     </Suspense>
                 </aside>
             </section>

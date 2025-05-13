@@ -11,16 +11,16 @@ export default function InputValidationError({ errors }: Readonly<ValidationErro
     const verb = errorCount > 1 ? "were" : "was"
 
     return (
-        <div className="border-red-500 bg-red-50 rounded-md border p-4">
+        <div className="rounded-md border border-red-500 bg-red-50 p-4">
             <div className="flex">
                 <div className="shrink-0">
-                    <FaCircleXmark className="text-red-400 h-5 w-5" aria-hidden="true" />
+                    <FaCircleXmark className="h-5 w-5 text-red-400" aria-hidden="true" />
                 </div>
                 <div className="ml-3">
-                    <h3 className="text-red-800 text-sm font-medium">
+                    <h3 className="text-sm font-medium text-red-800">
                         There {verb} {errorCount} {errorText} with your submission
                     </h3>
-                    <ul className="list-disc space-y-1 pl-5 font-body">
+                    <ul className="font-body list-disc space-y-1 pl-5">
                         {errors.map((err, index) => (
                             <li key={`${err.path}_${index}`} className="text-red-600">
                                 {err.message}

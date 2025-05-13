@@ -1,4 +1,4 @@
-import { notFound }  from "next/navigation"
+import { notFound } from "next/navigation"
 import { ReactNode } from "react"
 
 interface DashboardLayoutProps {
@@ -9,6 +9,6 @@ interface DashboardLayoutProps {
 export default async function DashboardLayout({ children, params }: Readonly<DashboardLayoutProps>) {
     const username = (await params).username
     if (!username) return notFound()
-    
-    return <div className="container">{ children }</div>
+
+    return <div className="container">{children}</div>
 }

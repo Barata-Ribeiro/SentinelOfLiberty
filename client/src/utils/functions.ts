@@ -4,12 +4,12 @@ function formatCommentDate(date: string): string {
     const now = new Date()
     const past = new Date(date)
     const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000)
-    
+
     if (diffInSeconds < 60) return "Posted just now"
-    
+
     let value: number
     let unit: Intl.RelativeTimeFormatUnit
-    
+
     if (diffInSeconds < 3600) {
         value = -Math.floor(diffInSeconds / 60)
         unit = "minute"
@@ -26,9 +26,9 @@ function formatCommentDate(date: string): string {
         value = -Math.floor(diffInSeconds / 31536000)
         unit = "year"
     }
-    
+
     const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" })
-    return `Posted ${ rtf.format(value, unit) }`
+    return `Posted ${rtf.format(value, unit)}`
 }
 
 function formatDisplayDate(date: string, size?: "dateTime" | "date"): string {
@@ -43,7 +43,7 @@ function formatDisplayDate(date: string, size?: "dateTime" | "date"): string {
         delete options.hour
         delete options.minute
     }
-    
+
     return new Date(date).toLocaleDateString(navigator.language ?? "en-US", options)
 }
 
@@ -51,11 +51,11 @@ function getBackgroundImage(srcSet = "") {
     const imageSet = srcSet
         .split(", ")
         .map(str => {
-            const [ url, dpi ] = str.split(" ")
-            return `url("${ url }") ${ dpi }`
+            const [url, dpi] = str.split(" ")
+            return `url("${url}") ${dpi}`
         })
         .join(", ")
-    return `image-set(${ imageSet })`
+    return `image-set(${imageSet})`
 }
 
 function getInitialFormState(): State {
@@ -85,7 +85,7 @@ function textScrambler(text: string): string {
         }
         return char
     })
-    
+
     return scrambled.join("")
 }
 

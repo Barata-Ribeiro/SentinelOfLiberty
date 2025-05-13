@@ -1,7 +1,7 @@
 import NewSuggestionForm from "@/components/forms/new-suggestion-form"
-import { auth }          from "auth"
-import { Metadata }      from "next"
-import { redirect }      from "next/navigation"
+import { auth } from "auth"
+import { Metadata } from "next"
+import { redirect } from "next/navigation"
 
 export const metadata: Metadata = {
     title: "Make a Suggestion",
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default async function SuggestionsWritePage() {
     const session = await auth()
     if (!session) return redirect("/")
-    
+
     return (
         <div className="container">
             <header className="mt-4 max-w-2xl sm:mt-8">

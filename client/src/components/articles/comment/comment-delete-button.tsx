@@ -1,14 +1,14 @@
 "use client"
 
-import { Comment }                                                  from "@/@types/comments"
-import deleteComment                                                from "@/actions/comments/delete-comment"
-import RegularButton                                                from "@/components/shared/regular-button"
+import { Comment } from "@/@types/comments"
+import deleteComment from "@/actions/comments/delete-comment"
+import RegularButton from "@/components/shared/regular-button"
 import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
-import { Session }                                                  from "next-auth"
-import { useRouter }                                                from "next/navigation"
-import { useState, useTransition }                                  from "react"
-import { FaExclamationTriangle }                                    from "react-icons/fa"
-import { FaTrashCan }                                               from "react-icons/fa6"
+import { Session } from "next-auth"
+import { useRouter } from "next/navigation"
+import { useState, useTransition } from "react"
+import { FaExclamationTriangle } from "react-icons/fa"
+import { FaTrashCan } from "react-icons/fa6"
 
 interface CommentDeleteButtonProps {
     session: Session
@@ -16,10 +16,10 @@ interface CommentDeleteButtonProps {
 }
 
 export default function CommentDeleteButton({ session, comment }: Readonly<CommentDeleteButtonProps>) {
-    const [ open, setOpen ] = useState(false)
-    const [ isPending, startTransition ] = useTransition()
+    const [open, setOpen] = useState(false)
+    const [isPending, startTransition] = useTransition()
     const router = useRouter()
-    
+
     function handleCommentDeletion() {
         startTransition(async () => {
             const deleteState = await deleteComment({ articleId: comment.articleId, commentId: comment.id })
@@ -27,27 +27,27 @@ export default function CommentDeleteButton({ session, comment }: Readonly<Comme
                 setOpen(false)
                 router.refresh()
             }
-            
+
             startTransition(() => {
                 setOpen(false)
-                router.replace(`/articles/${ comment.articleId }/${ comment.articleSlug }`)
+                router.replace(`/articles/${comment.articleId}/${comment.articleSlug}`)
             })
         })
     }
-    
+
     return (
         <>
             <Button
                 type="button"
-                disabled={ session.user.id !== comment.user.id && session.user.username !== comment.user.username }
-                onClick={ () => setOpen(true) }
+                disabled={session.user.id !== comment.user.id && session.user.username !== comment.user.username}
+                onClick={() => setOpen(true)}
                 aria-label="Delete this comment"
                 title="Delete this comment"
                 className="inline-flex cursor-pointer items-center gap-x-1 rounded px-2 py-1 text-sm text-red-600 hover:text-red-700 active:text-red-800 disabled:pointer-events-none disabled:opacity-50">
                 <FaTrashCan aria-hidden="true" className="size-4 text-inherit" /> Delete
             </Button>
 
-            <Dialog open={ open } onClose={ setOpen } className="relative z-10">
+            <Dialog open={open} onClose={setOpen} className="relative z-10">
                 <DialogBackdrop
                     transition
                     className="fixed inset-0 bg-stone-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
@@ -80,22 +80,22 @@ export default function CommentDeleteButton({ session, comment }: Readonly<Comme
                             <div className="flex gap-2 bg-stone-50 px-4 py-3 sm:flex-row-reverse sm:px-6">
                                 <RegularButton
                                     type="button"
-                                    pending={ isPending }
+                                    pending={isPending}
                                     buttonStyle="danger"
                                     aria-label="Yes, delete"
                                     title="Yes, delete"
-                                    onClick={ handleCommentDeletion }>
+                                    onClick={handleCommentDeletion}>
                                     Yes, delete
                                 </RegularButton>
 
                                 <RegularButton
                                     type="button"
-                                    disabled={ isPending }
+                                    disabled={isPending}
                                     buttonStyle="ghost"
                                     data-autofocus
                                     aria-label="Cancel delete"
                                     title="Cancel delete"
-                                    onClick={ () => setOpen(false) }>
+                                    onClick={() => setOpen(false)}>
                                     Cancel
                                 </RegularButton>
                             </div>

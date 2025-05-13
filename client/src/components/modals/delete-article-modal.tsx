@@ -1,35 +1,34 @@
 "use client"
 
-import { ProblemDetails }                                           from "@/@types/application"
-import { ArticleSummary }                                           from "@/@types/articles"
-import deleteOwnArticle                                             from "@/actions/articles/delete-own-article"
-import ApplicationRequestFormError
-                                                                    from "@/components/feedback/application-request-form-error"
-import RegularButton                                                from "@/components/shared/regular-button"
+import { ProblemDetails } from "@/@types/application"
+import { ArticleSummary } from "@/@types/articles"
+import deleteOwnArticle from "@/actions/articles/delete-own-article"
+import ApplicationRequestFormError from "@/components/feedback/application-request-form-error"
+import RegularButton from "@/components/shared/regular-button"
 import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
-import { useRouter }                                                from "next/navigation"
-import { useState, useTransition }                                  from "react"
-import { FaExclamationTriangle }                                    from "react-icons/fa"
+import { useRouter } from "next/navigation"
+import { useState, useTransition } from "react"
+import { FaExclamationTriangle } from "react-icons/fa"
 
 interface DeleteArticleModalProps {
     article: ArticleSummary
 }
 
 export default function DeleteArticleModal({ article }: Readonly<DeleteArticleModalProps>) {
-    const [ open, setOpen ] = useState(false)
-    const [ isPending, startTransition ] = useTransition()
-    const [ error, setError ] = useState<ProblemDetails | null>(null)
+    const [open, setOpen] = useState(false)
+    const [isPending, startTransition] = useTransition()
+    const [error, setError] = useState<ProblemDetails | null>(null)
     const router = useRouter()
-    
+
     function handleDelete() {
         startTransition(async () => {
             const deleteState = await deleteOwnArticle({ id: 500 })
-            
+
             if (!deleteState.ok) {
                 setError(deleteState.error as ProblemDetails)
                 return
             }
-            
+
             startTransition(() => {
                 setOpen(false)
                 setError(null)
@@ -37,19 +36,19 @@ export default function DeleteArticleModal({ article }: Readonly<DeleteArticleMo
             })
         })
     }
-    
+
     return (
         <>
             <Button
                 type="button"
-                onClick={ () => setOpen(true) }
+                onClick={() => setOpen(true)}
                 aria-label="Delete article"
                 title="Delete article"
                 className="inline-flex cursor-pointer text-red-600 transition-all duration-300 ease-in hover:text-red-700 active:text-red-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
                 Delete
             </Button>
 
-            <Dialog open={ open } onClose={ setOpen } className="relative z-10">
+            <Dialog open={open} onClose={setOpen} className="relative z-10">
                 <DialogBackdrop
                     transition
                     className="fixed inset-0 bg-stone-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
@@ -73,38 +72,38 @@ export default function DeleteArticleModal({ article }: Readonly<DeleteArticleMo
                                         <p className="text-shadow-500 mt-2 text-sm">
                                             Are you sure you want to delete the article:
                                             <br />
-                                            <strong>&ldquo;{ article.title }&rdquo;</strong> ?
+                                            <strong>&ldquo;{article.title}&rdquo;</strong> ?
                                             <br />
                                             This action cannot be undone.
                                         </p>
-                                        
-                                        { error && (
+
+                                        {error && (
                                             <div className="mt-2 text-left">
-                                                <ApplicationRequestFormError error={ error } />
+                                                <ApplicationRequestFormError error={error} />
                                             </div>
-                                        ) }
+                                        )}
                                     </div>
                                 </div>
                             </div>
                             <div className="flex flex-row-reverse gap-2 bg-stone-50 px-4 py-3 sm:px-6">
                                 <RegularButton
                                     type="button"
-                                    pending={ isPending }
+                                    pending={isPending}
                                     buttonStyle="danger"
                                     aria-label="Yes, delete"
                                     title="Yes, delete"
-                                    onClick={ handleDelete }>
+                                    onClick={handleDelete}>
                                     Yes, delete
                                 </RegularButton>
 
                                 <RegularButton
                                     type="button"
-                                    disabled={ isPending }
+                                    disabled={isPending}
                                     buttonStyle="ghost"
                                     data-autofocus
                                     aria-label="Cancel delete article"
                                     title="Cancel delete article"
-                                    onClick={ () => setOpen(false) }>
+                                    onClick={() => setOpen(false)}>
                                     Cancel
                                 </RegularButton>
                             </div>

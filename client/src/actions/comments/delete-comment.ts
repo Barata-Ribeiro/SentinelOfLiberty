@@ -1,9 +1,9 @@
 "use server"
 
-import { ProblemDetails }   from "@/@types/application"
-import ResponseError        from "@/actions/application/response-error"
+import { ProblemDetails } from "@/@types/application"
+import ResponseError from "@/actions/application/response-error"
 import { deleteCommentUrl } from "@/utils/routes"
-import { auth }             from "auth"
+import { auth } from "auth"
 
 interface DeleteComment {
     articleId: number
@@ -14,21 +14,21 @@ export default async function deleteComment({ articleId, commentId }: DeleteComm
     const session = await auth()
     try {
         const URL = deleteCommentUrl(articleId, commentId)
-        
+
         const response = await fetch(URL, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${ session?.accessToken }`,
+                Authorization: `Bearer ${session?.accessToken}`,
             },
         })
-        
+
         if (!response.ok) {
             const json = await response.json()
             const problemDetails = json as ProblemDetails
             return ResponseError(problemDetails)
         }
-        
+
         return {
             ok: response.status === 204,
             error: null,

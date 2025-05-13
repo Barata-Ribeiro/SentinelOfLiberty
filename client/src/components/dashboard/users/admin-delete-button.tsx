@@ -1,26 +1,25 @@
 "use client"
 
-import { ProblemDetails }                                           from "@/@types/application"
-import deleteUser                                                   from "@/actions/admin/delete-user"
-import ApplicationRequestFormError
-                                                                    from "@/components/feedback/application-request-form-error"
-import RegularButton                                                from "@/components/shared/regular-button"
+import { ProblemDetails } from "@/@types/application"
+import deleteUser from "@/actions/admin/delete-user"
+import ApplicationRequestFormError from "@/components/feedback/application-request-form-error"
+import RegularButton from "@/components/shared/regular-button"
 import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
-import { useRouter }                                                from "next/navigation"
-import { useState, useTransition }                                  from "react"
-import { FaExclamationTriangle }                                    from "react-icons/fa"
-import { LuTrash2 }                                                 from "react-icons/lu"
+import { useRouter } from "next/navigation"
+import { useState, useTransition } from "react"
+import { FaExclamationTriangle } from "react-icons/fa"
+import { LuTrash2 } from "react-icons/lu"
 
 interface AdminDeleteButtonProps {
     username: string
 }
 
 export default function AdminDeleteButton({ username }: Readonly<AdminDeleteButtonProps>) {
-    const [ open, setOpen ] = useState(false)
-    const [ isPending, startTransition ] = useTransition()
-    const [ error, setError ] = useState<ProblemDetails | null>(null)
+    const [open, setOpen] = useState(false)
+    const [isPending, startTransition] = useTransition()
+    const [error, setError] = useState<ProblemDetails | null>(null)
     const router = useRouter()
-    
+
     function handleUserDelete() {
         startTransition(async () => {
             const deleteState = await deleteUser({ username })
@@ -28,7 +27,7 @@ export default function AdminDeleteButton({ username }: Readonly<AdminDeleteButt
                 setError(deleteState.error as ProblemDetails)
                 return
             }
-            
+
             startTransition(() => {
                 setOpen(false)
                 setError(null)
@@ -36,20 +35,20 @@ export default function AdminDeleteButton({ username }: Readonly<AdminDeleteButt
             })
         })
     }
-    
+
     return (
         <>
             <Button
                 className="group flex w-full cursor-pointer items-center px-4 py-2 text-sm text-red-600 active:text-red-800 data-focus:bg-stone-100 data-focus:text-red-800 data-focus:outline-hidden data-hover:bg-stone-100 data-hover:text-red-700"
                 aria-label="Delete user"
                 title="Delete user"
-                onClick={ () => setOpen(true) }
-                disabled={ isPending }>
+                onClick={() => setOpen(true)}
+                disabled={isPending}>
                 <LuTrash2 aria-hidden="true" className="mr-3 size-4 text-inherit" />
                 Delete User
             </Button>
 
-            <Dialog open={ open } onClose={ setOpen } className="relative z-50">
+            <Dialog open={open} onClose={setOpen} className="relative z-50">
                 <DialogBackdrop
                     transition
                     className="fixed inset-0 bg-stone-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
@@ -71,37 +70,37 @@ export default function AdminDeleteButton({ username }: Readonly<AdminDeleteButt
                                         </DialogTitle>
 
                                         <p className="text-shadow-500 mt-2 text-sm">
-                                            Are you sure you want to delete the account of{ " " }
-                                            <strong>&ldquo;{ username }&rdquo;</strong> ?
+                                            Are you sure you want to delete the account of{" "}
+                                            <strong>&ldquo;{username}&rdquo;</strong> ?
                                         </p>
-                                        
-                                        { error && (
+
+                                        {error && (
                                             <div className="mt-2 text-left">
-                                                <ApplicationRequestFormError error={ error } />
+                                                <ApplicationRequestFormError error={error} />
                                             </div>
-                                        ) }
+                                        )}
                                     </div>
                                 </div>
                             </div>
                             <div className="flex flex-row-reverse gap-2 bg-stone-50 px-4 py-3 sm:px-6">
                                 <RegularButton
                                     type="button"
-                                    pending={ isPending }
+                                    pending={isPending}
                                     buttonStyle="danger"
                                     aria-label="Delete user"
                                     title="Delete user"
-                                    onClick={ handleUserDelete }>
+                                    onClick={handleUserDelete}>
                                     Delete
                                 </RegularButton>
 
                                 <RegularButton
                                     type="button"
-                                    disabled={ isPending }
+                                    disabled={isPending}
                                     buttonStyle="ghost"
                                     data-autofocus
                                     aria-label="Cancel"
                                     title="Cancel"
-                                    onClick={ () => setOpen(false) }>
+                                    onClick={() => setOpen(false)}>
                                     Cancel
                                 </RegularButton>
                             </div>

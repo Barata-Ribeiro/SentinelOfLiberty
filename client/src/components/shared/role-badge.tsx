@@ -1,5 +1,5 @@
-import { Roles }   from "@/@types/user"
-import tw          from "@/utils/tw"
+import { Roles } from "@/@types/user"
+import tw from "@/utils/tw"
 import { twMerge } from "tailwind-merge"
 
 interface RoleBadgeProps {
@@ -13,15 +13,15 @@ export default function RoleBadge({ role }: Readonly<RoleBadgeProps>) {
         tw`border-red-400 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300`,
     )
     const readerStyles = twMerge(defaultStyles, tw`border-stone-500 bg-stone-100 text-stone-800`)
-    
+
     const isAdmin = role === "ADMIN"
-    
+
     return (
         <span
-            className={ isAdmin ? adminStyles : readerStyles }
-            aria-label={ isAdmin ? "Admin Role" : "Reader Role" }
-            title={ isAdmin ? "Admin Role" : "Reader Role" }>
-            { isAdmin ? "Admin" : "Reader" }
+            className={isAdmin ? adminStyles : readerStyles}
+            aria-label={isAdmin ? "Admin Role" : "Reader Role"}
+            title={isAdmin ? "Admin Role" : "Reader Role"}>
+            {isAdmin ? "Admin" : "Reader"}
         </span>
     )
 }

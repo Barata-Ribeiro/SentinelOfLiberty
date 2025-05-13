@@ -1,23 +1,23 @@
 "use client"
 
-import { ProblemDetails }           from "@/@types/application"
-import postNewSuggestion            from "@/actions/suggestions/post-new-suggestion"
-import ApplicationRequestFormError  from "@/components/feedback/application-request-form-error"
-import InputValidationError         from "@/components/feedback/input-validation-error"
-import FormButton                   from "@/components/shared/form-button"
-import FormInput                    from "@/components/shared/form-input"
-import FormTextarea                 from "@/components/shared/form-textarea"
-import { getInitialFormState }      from "@/utils/functions"
-import { Fieldset }                 from "@headlessui/react"
+import { ProblemDetails } from "@/@types/application"
+import postNewSuggestion from "@/actions/suggestions/post-new-suggestion"
+import ApplicationRequestFormError from "@/components/feedback/application-request-form-error"
+import InputValidationError from "@/components/feedback/input-validation-error"
+import FormButton from "@/components/shared/form-button"
+import FormInput from "@/components/shared/form-input"
+import FormTextarea from "@/components/shared/form-textarea"
+import { getInitialFormState } from "@/utils/functions"
+import { Fieldset } from "@headlessui/react"
 import { useActionState, useState } from "react"
-import placeholderImage             from "../../../public/image-error-placeholder.svg"
+import placeholderImage from "../../../public/image-error-placeholder.svg"
 
 export default function NewSuggestionForm() {
-    const [ formState, formAction, pending ] = useActionState(postNewSuggestion, getInitialFormState())
-    const [ imgUrl, setImgUrl ] = useState("")
-    
+    const [formState, formAction, pending] = useActionState(postNewSuggestion, getInitialFormState())
+    const [imgUrl, setImgUrl] = useState("")
+
     return (
-        <form action={ formAction } className="mx-auto mb-8 w-full max-w-2xl space-y-6">
+        <form action={formAction} className="mx-auto mb-8 w-full max-w-2xl space-y-6">
             <FormInput
                 type="text"
                 label="Title"
@@ -40,9 +40,9 @@ export default function NewSuggestionForm() {
             <FormTextarea
                 label="Content"
                 name="content"
-                rows={ 8 }
-                minLength={ 10 }
-                maxLength={ 500 }
+                rows={8}
+                minLength={10}
+                maxLength={500}
                 placeholder="Describe your suggestions here..."
                 description="Use at least 10 characters and a maximum of 500 characters."
                 required
@@ -59,34 +59,34 @@ export default function NewSuggestionForm() {
                     description="Add the URL of the image you want to use as a cover for your article."
                     required
                     aria-required
-                    onChange={ event => setImgUrl(event.target.value) }
+                    onChange={event => setImgUrl(event.target.value)}
                 />
-                
-                { imgUrl && (
+
+                {imgUrl && (
                     <div className="min-w-none mx-auto rounded-md shadow">
-                        {/* eslint-disable-next-line @next/next/no-img-element */ }
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                            src={ imgUrl }
+                            src={imgUrl}
                             alt="Preview"
                             title="Preview"
                             className="min-h-96 w-full rounded-md object-cover object-center"
                             sizes="100vw"
-                            onError={ event => {
+                            onError={event => {
                                 event.currentTarget.id = placeholderImage.id
                                 event.currentTarget.src = placeholderImage.src
-                            } }
+                            }}
                         />
                     </div>
-                ) }
+                )}
             </Fieldset>
-            
-            { formState.error && !Array.isArray(formState.error) && (
-                <ApplicationRequestFormError error={ formState.error as ProblemDetails } />
-            ) }
-            
-            { formState.error && Array.isArray(formState.error) && <InputValidationError errors={ formState.error } /> }
-            
-            <FormButton width="full" pending={ pending }>
+
+            {formState.error && !Array.isArray(formState.error) && (
+                <ApplicationRequestFormError error={formState.error as ProblemDetails} />
+            )}
+
+            {formState.error && Array.isArray(formState.error) && <InputValidationError errors={formState.error} />}
+
+            <FormButton width="full" pending={pending}>
                 Submit Suggestion
             </FormButton>
         </form>

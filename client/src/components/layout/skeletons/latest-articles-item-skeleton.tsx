@@ -1,9 +1,9 @@
 export default function LatestArticlesItemSkeleton() {
-    return [ ...Array(3) ].map((_, index) => (
+    return [...Array(3)].map((_, index) => (
         <li
             role="status"
             aria-label="Loading in progress... Please wait."
-            key={ index }
+            key={index}
             className="grid max-w-96 animate-pulse grid-cols-1 gap-2">
             <div className="relative min-h-48">
                 <div className="size-48 rounded-md bg-stone-600"></div>

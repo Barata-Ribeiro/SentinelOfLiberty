@@ -1,8 +1,8 @@
 export default function CommentSkeleton() {
     return (
         <div role="status" aria-label="Loading in progress... Please wait." className="mb-6 max-w-3xl space-y-6">
-            { [ ...Array(3) ].map((_, index) => (
-                <div key={ index } className="flex animate-pulse rounded-md border border-stone-200 p-4 shadow">
+            {[...Array(3)].map((_, index) => (
+                <div key={index} className="flex animate-pulse rounded-md border border-stone-200 p-4 shadow">
                     <div className="shrink-0">
                         <span className="block size-12 rounded-full bg-stone-400 dark:bg-stone-700"></span>
                     </div>
@@ -18,7 +18,7 @@ export default function CommentSkeleton() {
                         </ul>
                     </div>
                 </div>
-            )) }
+            ))}
         </div>
     )
 }

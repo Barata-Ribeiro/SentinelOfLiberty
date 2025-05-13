@@ -1,12 +1,12 @@
-import { Article, Category }         from "@/@types/articles"
-import getAllAvailableCategories     from "@/actions/articles/get-all-available-categories"
-import getArticleById                from "@/actions/articles/get-article-by-id"
-import EditArticleForm               from "@/components/forms/edit-article-form"
+import { Article, Category } from "@/@types/articles"
+import getAllAvailableCategories from "@/actions/articles/get-all-available-categories"
+import getArticleById from "@/actions/articles/get-article-by-id"
+import EditArticleForm from "@/components/forms/edit-article-form"
 import ArticleSuggestionCardSkeleton from "@/components/layout/skeletons/article-suggestion-card-skeleton"
-import ArticleSuggestionCard         from "@/components/suggestions/article-suggestion-card"
-import { auth }                      from "auth"
-import { notFound, redirect }        from "next/navigation"
-import { Suspense }                  from "react"
+import ArticleSuggestionCard from "@/components/suggestions/article-suggestion-card"
+import { auth } from "auth"
+import { notFound, redirect } from "next/navigation"
+import { Suspense } from "react"
 
 interface EditArticlePageProps {
     params: Promise<{
@@ -17,21 +17,21 @@ interface EditArticlePageProps {
 
 export default async function EditArticlePage({ params }: Readonly<EditArticlePageProps>) {
     const { id, slug } = await params
-    
-    const [ session, articleState, categoriesState ] = await Promise.all([
-                                                                             auth(),
-                                                                             getArticleById({ id }),
-                                                                             getAllAvailableCategories(),
-                                                                         ])
-    
+
+    const [session, articleState, categoriesState] = await Promise.all([
+        auth(),
+        getArticleById({ id }),
+        getAllAvailableCategories(),
+    ])
+
     if (!session) return redirect("/auth/login")
     if (session.user.role !== "ADMIN") return redirect("/")
     if (!articleState) return notFound()
-    
+
     const article = articleState.response?.data as Article
     if (article.slug !== slug) return notFound()
     const categories = categoriesState.response?.data as Category[]
-    
+
     return (
         <div className="container">
             <header className="mt-4 max-w-2xl sm:mt-8">
@@ -45,11 +45,11 @@ export default async function EditArticlePage({ params }: Readonly<EditArticlePa
             </header>
 
             <main className="mt-8 border-t border-stone-200 pt-8 sm:mt-14 sm:pt-14">
-                <Suspense fallback={ <ArticleSuggestionCardSkeleton /> }>
-                    { article.suggestion && <ArticleSuggestionCard suggestionId={ article.suggestion.id } /> }
+                <Suspense fallback={<ArticleSuggestionCardSkeleton />}>
+                    {article.suggestion && <ArticleSuggestionCard suggestionId={article.suggestion.id} />}
                 </Suspense>
 
-                <EditArticleForm categories={ categories } article={ article } />
+                <EditArticleForm categories={categories} article={article} />
             </main>
         </div>
     )
