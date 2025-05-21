@@ -36,20 +36,17 @@ The backend leverages the power of Spring Boot to provide a scalable and secure 
 - **H2 \& PostgreSQL**: Uses H2 for in-memory dev/test environments and PostgreSQL for production-grade persistence.
 - **Swagger\/OpenAPI \(springdoc\-openapi\)**: Automatically generates interactive API documentation, easing API consumption and testing.
 - **ModelMapper, Lombok**: Reduces boilerplate with efficient object mappings and code generation through annotations.
--
 
 ## 🛠️ Project Setup
 
 1. **Clone repository**
-
    ```shell
    git clone https://github.com/Barata-Ribeiro/SentinelOfLiberty.git
    cd SentinelOfLiberty
    ```
 
 2. **Environment variables**
-
-   - Frontend: copy `client/.env.local.example` to `client/.env.local` and fill in:
+   - Frontend: copy `client/.env.example` to `client/.env.local` and fill in:
      ```dotenv
      NEXT_PUBLIC_AUTH_TOKEN_NAME="TOKEN_NAME"
      AUTH_SECRET=AUTO_GEN_AUTH_JS_KEY
@@ -63,7 +60,6 @@ The backend leverages the power of Spring Boot to provide a scalable and secure 
      files.
 
 3. **Using Docker & Docker Compose**
-
    - **Build & run all services**
      ```shell
      docker compose -f compose.yaml up --build
