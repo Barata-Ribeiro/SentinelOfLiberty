@@ -1,10 +1,12 @@
 import { Profile } from "@/@types/user"
 import getProfileByUsername from "@/actions/users/get-profile-by-username"
+import ProfileArticlesWrittenList from "@/components/profile/ProfileArticlesWrittenList"
 import { formatDisplayDate, getBackgroundImage, textScrambler } from "@/utils/functions"
 import tw from "@/utils/tw"
 import Image, { getImageProps } from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { Suspense } from "react"
 import { FaCircleCheck } from "react-icons/fa6"
 import { LuCalendarRange, LuLink2, LuMapPin } from "react-icons/lu"
 import { twMerge } from "tailwind-merge"
@@ -192,6 +194,12 @@ export default async function ProfilePage({ params }: Readonly<ProfilePageProps>
                             <br />
                             No content to display.
                         </p>
+                    )}
+
+                    {account.role === "ADMIN" && (
+                        <Suspense fallback={"Loading..."}>
+                            <ProfileArticlesWrittenList username={account.username} />
+                        </Suspense>
                     )}
                 </section>
             </main>
