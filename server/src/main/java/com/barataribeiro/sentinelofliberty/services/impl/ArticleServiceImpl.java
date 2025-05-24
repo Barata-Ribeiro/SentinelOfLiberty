@@ -71,6 +71,17 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<ArticleSummaryDTO> getAllArticlesByAuthorUsername(int page, int perPage, String direction,
+                                                                  String orderBy,
+                                                                  String username) {
+        final PageRequest pageable = getPageRequest(page, perPage, direction, orderBy);
+        return articleRepository.findAllByAuthor_Username(username, pageable)
+                                .map(articleMapper::toArticleSummaryDTO);
+
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<ArticleSummaryDTO> getAllArticlesByCategory(String category, int page, int perPage, String direction,
                                                             String orderBy) {
         final PageRequest pageable = getPageRequest(page, perPage, direction, orderBy);

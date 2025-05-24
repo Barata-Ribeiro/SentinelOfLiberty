@@ -71,6 +71,24 @@ public class ArticleController {
                                                               response));
     }
 
+    @Operation(summary = "Get all articles by user",
+               description = "This endpoint allows an user to get all articles by user, summarised. These articles " +
+                       "are usually suggested to be displayed on the profile page, through infinite scrolling or " +
+                       "pagination.")
+    @GetMapping("/public/author/{username}")
+    public ResponseEntity<ApplicationResponseDTO<Page<ArticleSummaryDTO>>> getAllArticles(
+            @PathVariable String username,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int perPage,
+            @RequestParam(defaultValue = "ASC") String direction,
+            @RequestParam(defaultValue = "createdAt") String orderBy) {
+        Page<ArticleSummaryDTO> response = articleService
+                .getAllArticlesByAuthorUsername(page, perPage, direction, orderBy, username);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully retrieved all articles",
+                                                              response));
+    }
+
     @Operation(summary = "Get all articles by category",
                description = "This endpoint allows an user to get all articles by category, summarised. These " +
                        "articles are usually suggested to be displayed on the listing page, through infinite " +

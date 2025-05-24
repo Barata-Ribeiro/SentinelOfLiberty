@@ -15,6 +15,9 @@ public interface ArticleService {
 
     Page<ArticleSummaryDTO> getAllArticles(int page, int perPage, String direction, String orderBy);
 
+    Page<ArticleSummaryDTO> getAllArticlesByAuthorUsername(int page, int perPage, String direction, String orderBy,
+                                                           String username);
+
     Page<ArticleSummaryDTO> getAllArticlesByCategory(String category, int page, int perPage, String direction,
                                                      String orderBy);
 
