@@ -81,6 +81,17 @@ export function getAllArticlesUrl(page: number, perPage: number, direction: stri
     return `${API_URL}/articles/public${queryString}`
 }
 
+export function getAllArticlesByAuthorUsernameUrl(
+    username: string,
+    page: number,
+    perPage: number,
+    direction: string,
+    orderBy: string,
+): string {
+    const queryString = buildQueryParams({ page, perPage, direction, orderBy })
+    return `${API_URL}/articles/public/author/${username}${queryString}`
+}
+
 export function getAllArticlesByCategoryUrl(
     category: string,
     page: number,
