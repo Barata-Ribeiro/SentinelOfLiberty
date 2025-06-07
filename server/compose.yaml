@@ -14,3 +14,12 @@ services:
       - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - sentinel-of-liberty_network
+volumes:
+  pgdata:
+    driver: local
+
+networks:
+  sentinel-of-liberty_network:
+    driver: bridge
