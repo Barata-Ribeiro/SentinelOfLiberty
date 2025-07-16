@@ -3,7 +3,7 @@
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";
 
-@theme {
+@theme inline {
     /*FONT*/
     --font-heading: var(--font-lora), serif;
     --font-body: var(--font-merriWeather), serif;
