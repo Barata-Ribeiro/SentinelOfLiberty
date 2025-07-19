@@ -3,6 +3,7 @@ import getProfileByUsername from "@/actions/users/get-profile-by-username"
 import ProfileArticlesWrittenList from "@/components/profile/ProfileArticlesWrittenList"
 import { formatDisplayDate, getBackgroundImage, textScrambler } from "@/utils/functions"
 import tw from "@/utils/tw"
+import { Metadata } from "next"
 import Image, { getImageProps } from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -16,7 +17,7 @@ interface ProfilePageProps {
     params: Promise<{ username: string }>
 }
 
-export async function generateMetadata({ params }: Readonly<ProfilePageProps>) {
+export async function generateMetadata({ params }: Readonly<ProfilePageProps>): Promise<Metadata> {
     const username = (await params).username
     return {
         title: `Profile of ${username}`,

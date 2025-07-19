@@ -8,6 +8,7 @@ import DashboardSiteInteractions from "@/components/dashboard/dashboard-site-int
 import DashboardUserProfile from "@/components/dashboard/dashboard-user-profile"
 import LogoutButton from "@/components/dashboard/logout-button"
 import LinkButton from "@/components/shared/link-button"
+import { Metadata } from "next"
 import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 import { LuInfo, LuMailbox, LuNewspaper, LuUserSearch } from "react-icons/lu"
@@ -16,7 +17,7 @@ interface DashboardHomePageProps {
     params: Promise<{ username: string }>
 }
 
-export async function generateMetadata({ params }: Readonly<DashboardHomePageProps>) {
+export async function generateMetadata({ params }: Readonly<DashboardHomePageProps>): Promise<Metadata> {
     const username = (await params).username
     return {
         title: `${username}`,
