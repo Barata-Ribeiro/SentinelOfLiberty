@@ -1,10 +1,10 @@
 import { JSDOM } from "jsdom"
-import { z } from "zod"
+import { z } from "zod/v4"
 
 // AUTH
 const authLoginSchema = z.object({
-    username: z.string({ message: "Username is required" }).trim().min(3, "Username must be at least 3 characters"),
-    password: z.string({ message: "Password is required" }).min(8, "Password must be at least 8 characters"),
+    username: z.string({ error: "Username is required" }).trim().min(3, "Username must be at least 3 characters"),
+    password: z.string({ error: "Password is required" }).min(8, "Password must be at least 8 characters"),
     rememberMe: z.preprocess(val => val === "on", z.boolean().optional()),
 })
 
@@ -16,7 +16,7 @@ const authRegisterSchema = z
             .min(3, "Username must be at least 3 characters")
             .max(50, "Username must be at most 50 characters")
             .regex(/^[a-z]+$/, "Username must contain only lowercase letters"),
-        email: z.string().trim().email(),
+        email: z.email("Email is required"),
         displayName: z
             .string()
             .trim()
@@ -32,14 +32,16 @@ const authRegisterSchema = z
                 /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%¨^&*()\-_=+])(?=\S+$).{8,}$/,
                 "Password must contain at least one digit, one lowercase letter, one uppercase letter, one special character and no whitespace.",
             ),
-        confirmPassword: z.string({ message: "Password confirmation is required" }).trim(),
+        confirmPassword: z.string({ error: "Password confirmation is required" }).trim(),
     })
-    .superRefine(({ confirmPassword, password }, ctx) => {
+    .check(ctx => {
+        const { password, confirmPassword } = ctx.value
         if (confirmPassword !== password) {
-            ctx.addIssue({
+            ctx.issues.push({
                 code: "custom",
-                message: "Passwords do not match",
+                error: "Passwords do not match",
                 path: ["confirmPassword"],
+                input: "confirmPassword",
             })
         }
     })
@@ -48,7 +50,7 @@ const authRegisterSchema = z
 const userProfileUpdateSchema = z
     .object({
         username: z
-            .string({ message: "Username is required" })
+            .string("Username is required")
             .trim()
             .min(3, "Username must be at least 3 characters")
             .max(50, "Username must be at most 50 characters")
@@ -56,22 +58,21 @@ const userProfileUpdateSchema = z
             .nullish()
             .or(z.literal("")),
         displayName: z
-            .string({ message: "Display Name is required" })
+            .string("Display Name is required")
             .trim()
-            .min(3, "Display Name must be at least 3" + " characters")
+            .min(3, "Display Name must be at least 3 characters")
             .max(50, "Display Name must be at most 50 characters")
             .regex(/^[a-zA-Z\s]*$/, "Display Name must contain only letters and spaces")
             .nullish()
             .or(z.literal("")),
-        email: z.string({ message: "Email is required" }).trim().email().nullish().or(z.literal("")),
+        email: z.email("Email is required").nullish().or(z.literal("")),
         avatarUrl: z
-            .string()
-            .url("Invalid URL format.")
+            .url()
             .regex(/^(https?):\/\/[^\s/$.?#].\S*$/, "Url must be a valid URL.")
             .nullish()
             .or(z.literal("")),
         biography: z.string().max(160, "Biography must be at most 160 characters").nullish().or(z.literal("")),
-        currentPassword: z.string({ message: "Current password is required" }),
+        currentPassword: z.string("Current password is required"),
         newPassword: z
             .string()
             .min(8, "Password must be at least 8 characters")
@@ -85,12 +86,14 @@ const userProfileUpdateSchema = z
             .or(z.literal("")),
         confirmNewPassword: z.string().optional().or(z.literal("")),
     })
-    .superRefine(({ newPassword, confirmNewPassword }, ctx) => {
+    .check(ctx => {
+        const { newPassword, confirmNewPassword } = ctx.value
         if (newPassword && newPassword !== confirmNewPassword) {
-            ctx.addIssue({
+            ctx.issues.push({
                 code: "custom",
-                message: "Passwords do not match",
+                error: "Passwords do not match",
                 path: ["confirmNewPassword"],
+                input: "confirmNewPassword",
             })
         }
     })
@@ -117,7 +120,7 @@ const userAccountDetailsSchema = z
                     return undefined
                 },
 
-                z.date({ required_error: "Birth date is required." }).refine(
+                z.date({ error: "Birth date is required." }).refine(
                     date => {
                         const today = new Date()
                         let age = today.getFullYear() - date.getFullYear()
@@ -127,23 +130,22 @@ const userAccountDetailsSchema = z
 
                         return age >= 18
                     },
-                    { message: "User must be over 18 years old." },
+                    { error: "User must be over 18 years old." },
                 ),
             )
             .nullish()
             .or(z.literal("")),
         location: z.string().trim().nullish().or(z.literal("")),
         website: z
-            .string()
             .url("Invalid URL format.")
             .regex(/^(https?):\/\/[^\s/$.?#].\S*$/, "Url must be a valid URL.")
             .nullish()
             .or(z.literal("")),
-        socialMedia: z.string().url().nullish().or(z.literal("")),
+        socialMedia: z.url("Invalid URL format.").nullish().or(z.literal("")),
         videoChannel: z.string().trim().nullish().or(z.literal("")),
         streamingChannel: z.string().trim().nullish().or(z.literal("")),
         isPrivate: z.string().optional().transform(Boolean),
-        currentPassword: z.string({ message: "Current password is required" }),
+        currentPassword: z.string({ error: "Current password is required" }),
         fullName: z.string().optional(),
     })
     .transform((data, ctx) => {
@@ -153,7 +155,7 @@ const userAccountDetailsSchema = z
             if (!/^[a-zA-Z ]*$/.test(fullName)) {
                 ctx.addIssue({
                     code: "custom",
-                    message: "Invalid name format.",
+                    error: "Invalid name format.",
                 })
 
                 return z.NEVER
@@ -176,9 +178,9 @@ const userAccountDetailsSchema = z
 
 const adminAccountUpdateSchema = z
     .object({
-        currentUsername: z.string({ message: "Current username is required" }).trim().optional(),
+        currentUsername: z.string({ error: "Current username is required" }).trim().optional(),
         username: z
-            .string({ message: "Username is required" })
+            .string({ error: "Username is required" })
             .trim()
             .min(3, "Username must be at least 3 characters")
             .max(50, "Username must be at most 50 characters")
@@ -186,14 +188,14 @@ const adminAccountUpdateSchema = z
             .nullish()
             .or(z.literal("")),
         displayName: z
-            .string({ message: "Display Name is required" })
+            .string({ error: "Display Name is required" })
             .trim()
             .min(3, "Display Name must be at least 3" + " characters")
             .max(50, "Display Name must be at most 50 characters")
             .regex(/^[a-zA-Z\s]*$/, "Display Name must contain only letters and spaces")
             .nullish()
             .or(z.literal("")),
-        email: z.string({ message: "Email is required" }).trim().email().nullish().or(z.literal("")),
+        email: z.email("Email is required").nullish().or(z.literal("")),
         biography: z.string().max(160, "Biography must be at most 160 characters").nullish().or(z.literal("")),
         firstName: z.string().trim().nullish().or(z.literal("")),
         lastName: z.string().trim().nullish().or(z.literal("")),
@@ -204,7 +206,7 @@ const adminAccountUpdateSchema = z
                     return undefined
                 },
 
-                z.date({ required_error: "Birth date is required." }).refine(
+                z.date({ error: "Birth date is required." }).refine(
                     date => {
                         const today = new Date()
                         let age = today.getFullYear() - date.getFullYear()
@@ -214,31 +216,30 @@ const adminAccountUpdateSchema = z
 
                         return age >= 18
                     },
-                    { message: "User must be over 18 years old." },
+                    { error: "User must be over 18 years old." },
                 ),
             )
             .nullish()
             .or(z.literal("")),
         location: z.string().trim().nullish().or(z.literal("")),
         website: z
-            .string()
             .url("Invalid URL format.")
             .regex(/^(https?):\/\/[^\s/$.?#].\S*$/, "Url must be a valid URL.")
             .nullish()
             .or(z.literal("")),
-        socialMedia: z.string().url().nullish().or(z.literal("")),
+        socialMedia: z.url("Invalid URL format.").nullish().or(z.literal("")),
         videoChannel: z.string().trim().nullish().or(z.literal("")),
         streamingChannel: z.string().trim().nullish().or(z.literal("")),
         isPrivate: z.string().optional().transform(Boolean),
         fullName: z.string().optional(),
-        currentPassword: z.string({ message: "Current password is required" }),
+        currentPassword: z.string({ error: "Current password is required" }),
     })
     .transform((data, ctx) => {
         if (data.username === "") delete data.username
         if (data.username === data.currentUsername) {
             ctx.addIssue({
                 code: "custom",
-                message: "Username must be different from current username.",
+                error: "Username must be different from current username.",
             })
 
             return z.NEVER
@@ -253,7 +254,7 @@ const adminAccountUpdateSchema = z
             if (!/^[a-zA-Z ]*$/.test(fullName)) {
                 ctx.addIssue({
                     code: "custom",
-                    message: "Invalid name format.",
+                    error: "Invalid name format.",
                 })
 
                 return z.NEVER
@@ -287,7 +288,7 @@ const noticeRequestSchema = z
             .trim()
             .nullish()
             .or(z.literal("")),
-        message: z
+        error: z
             .string()
             .min(10, "Message must be at least 10 characters.")
             .max(100, "Message must be at most 100 characters.")
@@ -305,18 +306,12 @@ const suggestionRequestSchema = z.object({
         .string()
         .min(3, "Title must be between 3 and 100 characters.")
         .max(100, "Title must be between 3 and 100 characters."),
-    sourceUrl: z
-        .string()
-        .url("Invalid URL format.")
-        .regex(/^(https?):\/\/[^\s/$.?#].\S*$/, "Url must be a valid URL."),
+    sourceUrl: z.url("Invalid URL format.").regex(/^(https?):\/\/[^\s/$.?#].\S*$/, "Url must be a valid URL."),
     content: z
         .string()
         .min(10, "Content must be at least 10 characters.")
         .max(500, "Content must be at most 500 characters."),
-    mediaUrl: z
-        .string()
-        .url("Invalid URL format.")
-        .regex(/^(https?):\/\/[^\s/$.?#].\S*$/, "Url must be a valid URL."),
+    mediaUrl: z.url("Invalid URL format.").regex(/^(https?):\/\/[^\s/$.?#].\S*$/, "Url must be a valid URL."),
 })
 
 // ARTICLES
@@ -337,21 +332,24 @@ const articleRequestSchema = z.object({
     content: z.string().transform((data, ctx) => {
         const parsedDom = new JSDOM(data)
         if (!parsedDom?.window.document.body.textContent) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: "Invalid content format.",
+            ctx.issues.push({
+                code: "custom",
+                error: "Invalid content format.",
+                path: ["content"],
+                input: "content",
             })
 
             return z.NEVER
         }
 
         if (parsedDom?.window.document.body.textContent.length < 100) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.too_small,
-                message: "Content must be at least 100 characters.",
+            ctx.issues.push({
+                code: "too_small",
+                error: "Content must be at least 100 characters.",
                 minimum: 100,
-                inclusive: true,
-                type: "string",
+                input: data,
+                origin: "string",
+                path: ["content"],
             })
 
             return z.NEVER
@@ -359,10 +357,7 @@ const articleRequestSchema = z.object({
 
         return data
     }),
-    mediaUrl: z
-        .string()
-        .url("Invalid URL format.")
-        .regex(/^(https?):\/\/[^\s/$.?#].\S*$/, "Invalid URL format."),
+    mediaUrl: z.url("Invalid URL format.").regex(/^(https?):\/\/[^\s/$.?#].\S*$/, "Invalid URL format."),
     references: z
         .string()
         .transform(val =>
