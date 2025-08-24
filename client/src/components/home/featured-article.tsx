@@ -7,6 +7,21 @@ interface FeaturedArticleProps {
 }
 
 export default function FeaturedArticle({ latestArticle }: Readonly<FeaturedArticleProps>) {
+    if (!latestArticle) {
+        return (
+            <article className="relative flex h-[30rem] w-full flex-wrap items-center justify-center rounded-lg bg-stone-50 max-md:p-5 md:px-10 md:py-32">
+                <div className="w-full text-center">
+                    <h2 className="text-shadow-900 mb-2 text-xl font-medium lg:text-2xl">
+                        No featured article available
+                    </h2>
+                    <p className="prose text-shadow-800 mx-auto leading-relaxed">
+                        Please check back later for the latest updates.
+                    </p>
+                </div>
+            </article>
+        )
+    }
+
     return (
         <article className="relative flex h-[30rem] w-full flex-wrap rounded-lg bg-stone-50 max-md:p-5 md:px-10 md:py-32">
             <Image
