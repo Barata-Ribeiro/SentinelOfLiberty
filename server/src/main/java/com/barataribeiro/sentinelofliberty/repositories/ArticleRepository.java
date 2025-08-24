@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
@@ -18,6 +19,8 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     @Override
     @EntityGraph(attributePaths = {"author", "suggestion.user", "categories", "references"})
     @NotNull Optional<Article> findById(@Param("id") @NotNull Long id);
+
+    Page<Article> findAllByIdIsIn(Collection<Long> id, Pageable pageable);
 
     @EntityGraph(attributePaths = {"author", "categories", "references"})
     Page<Article> findAllByAuthor_Username(String username, Pageable pageable);

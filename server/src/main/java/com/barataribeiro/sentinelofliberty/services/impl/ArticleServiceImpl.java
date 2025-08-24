@@ -15,8 +15,13 @@ import com.barataribeiro.sentinelofliberty.repositories.UserRepository;
 import com.barataribeiro.sentinelofliberty.services.ArticleService;
 import com.barataribeiro.sentinelofliberty.utils.ApplicationConstants;
 import com.barataribeiro.sentinelofliberty.utils.StringNormalizer;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.search.engine.search.query.SearchResult;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,6 +45,7 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleMapper articleMapper;
     private final ArticleRepository articleRepository;
     private final SuggestionRepository suggestionRepository;
+    private final EntityManagerFactory entityManagerFactory;
 
     @Override
     @Transactional(readOnly = true)
@@ -67,6 +73,47 @@ public class ArticleServiceImpl implements ArticleService {
     public Page<ArticleSummaryDTO> getAllArticles(int page, int perPage, String direction, String orderBy) {
         final PageRequest pageable = getPageRequest(page, perPage, direction, orderBy);
         return articleRepository.findAll(pageable).map(articleMapper::toArticleSummaryDTO);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ArticleSummaryDTO> searchArticles(String search, int page, int perPage, String direction,
+                                                  String orderBy) {
+        try (EntityManager entityManager = entityManagerFactory.createEntityManager(); entityManager) {
+            final PageRequest pageable = getPageRequest(page, perPage, direction, orderBy);
+            entityManager.getTransaction().begin();
+
+            SearchSession searchSession = Search.session(entityManager);
+            SearchResult<Article> result = searchSession.search(Article.class)
+                                                        .where(f -> {
+                                                            boolean hasSpace = search != null && search.contains(" ");
+                                                            String[] fields = new String[]{"title", "subTitle",
+                                                                                           "summary", "content",
+                                                                                           "author.username",
+                                                                                           "categories.name"};
+                                                            return hasSpace
+                                                                   ? f.match().fields(fields).matching(search)
+                                                                   : f.wildcard().fields(fields)
+                                                                      .matching("*" + search + "*");
+                                                        })
+                                                        .sort(f -> {
+                                                            final String createdAt = ApplicationConstants.CREATED_AT;
+
+                                                            if (orderBy.equalsIgnoreCase(createdAt)) {
+                                                                return direction.equalsIgnoreCase("ASC") ?
+                                                                       f.field(createdAt).asc() :
+                                                                       f.field(createdAt).desc();
+                                                            } else return f.score();
+                                                        })
+                                                        .fetch(page * perPage, perPage);
+            List<Article> hits = result.hits();
+
+            Page<Article> managedHits = articleRepository
+                    .findAllByIdIsIn(hits.stream().map(Article::getId).toList(), pageable);
+            entityManager.getTransaction().commit();
+
+            return managedHits.map(articleMapper::toArticleSummaryDTO);
+        }
     }
 
     @Override

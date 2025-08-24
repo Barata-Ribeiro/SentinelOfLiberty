@@ -2,6 +2,7 @@ package com.barataribeiro.sentinelofliberty.controllers;
 
 import com.barataribeiro.sentinelofliberty.dtos.ApplicationResponseDTO;
 import com.barataribeiro.sentinelofliberty.dtos.article.ArticleDTO;
+import com.barataribeiro.sentinelofliberty.dtos.article.ArticleSummaryDTO;
 import com.barataribeiro.sentinelofliberty.dtos.article.ArticleUpdateRequestDTO;
 import com.barataribeiro.sentinelofliberty.dtos.suggestion.SuggestionDTO;
 import com.barataribeiro.sentinelofliberty.dtos.suggestion.SuggestionUpdateRequestDTO;
@@ -31,6 +32,18 @@ public class AdminController {
     private final UserService userService;
     private final SuggestionService suggestionService;
     private final ArticleService articleService;
+
+    @GetMapping("/public/test/articles")
+    public ResponseEntity<ApplicationResponseDTO<Page<ArticleSummaryDTO>>> publicTestArticlesEndpoint(
+            @RequestParam String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int perPage,
+            @RequestParam(defaultValue = "ASC") String direction,
+            @RequestParam(defaultValue = "createdAt") String orderBy) {
+        Page<ArticleSummaryDTO> response = articleService.searchArticles(search, page, perPage, direction, orderBy);
+        return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
+                                                              "You have successfully tested the search", response));
+    }
 
     @Operation(summary = "Get all users", description = "This endpoint allows an admin to get all users in the " +
             "system, regardless of verification, ban status, or role. The listing is paginated.")
@@ -81,7 +94,7 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApplicationResponseDTO<UserProfileDTO>> adminBanOrUnbanAnUser(
             @PathVariable String username,
-            @RequestParam(required = true, defaultValue = "ban") String action) {
+            @RequestParam(defaultValue = "ban") String action) {
         UserProfileDTO response = userService.adminBanOrUnbanAnUser(username, action);
         String messageAction = action.equals("ban") ? "banned" : "unbanned";
         return ResponseEntity.ok(new ApplicationResponseDTO<>(HttpStatus.OK, HttpStatus.OK.value(),
