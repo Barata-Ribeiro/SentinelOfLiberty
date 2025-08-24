@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,9 +41,11 @@ public class User implements UserDetails, Serializable {
     @Column(updatable = false, nullable = false, unique = true)
     private UUID id;
 
+    @FullTextField
     @Column(name = "username", nullable = false, unique = true)
     private String username;
 
+    @FullTextField
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
@@ -58,9 +61,11 @@ public class User implements UserDetails, Serializable {
 
     // Profile Fields
 
+    @FullTextField
     @Column(name = "display_name", nullable = false)
     private String displayName;
 
+    @FullTextField
     @Column(name = "full_name")
     private String fullName;
 

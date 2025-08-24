@@ -5,6 +5,8 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.search.engine.backend.types.Sortable;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -18,6 +20,7 @@ import java.util.*;
 @Setter
 @ToString
 @Entity
+@Indexed
 @Table(name = "tb_articles", indexes = {
         @Index(name = "idx_article_title", columnList = "title")
 }, uniqueConstraints = {
@@ -32,21 +35,27 @@ public class Article implements Serializable {
     @Column(updatable = false, nullable = false, unique = true)
     private Long id;
 
+    @FullTextField
     @Column(nullable = false, unique = true)
     private String title;
 
+    @FullTextField
     @Column(name = "sub_title")
     private String subTitle;
 
     @Lob
+    @FullTextField
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @FullTextField
     @Column(nullable = false)
     private String summary;
 
     @Builder.Default
+    @KeywordField
     @ElementCollection
+    @Column(name = "reference_list", nullable = false)
     private Collection<String> references = new ArrayList<>();
 
     @Column(name = "media_url")
@@ -61,6 +70,7 @@ public class Article implements Serializable {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "author_id", nullable = false)
+    @IndexedEmbedded
     private User author;
 
 
@@ -69,6 +79,7 @@ public class Article implements Serializable {
     @JoinTable(name = "tb_articles_categories",
                joinColumns = @JoinColumn(name = "articles_id"),
                inverseJoinColumns = @JoinColumn(name = "categories_id"))
+    @IndexedEmbedded
     private Set<Category> categories = new LinkedHashSet<>();
 
     @Builder.Default
@@ -80,10 +91,12 @@ public class Article implements Serializable {
     @JoinColumn(name = "suggestion_id")
     private Suggestion suggestion;
 
+    @GenericField(sortable = Sortable.YES)
     @Column(updatable = false)
     @CreationTimestamp
     private Instant createdAt;
 
+    @GenericField(sortable = Sortable.YES)
     @UpdateTimestamp
     private Instant updatedAt;
 

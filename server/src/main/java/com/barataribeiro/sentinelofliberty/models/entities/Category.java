@@ -3,6 +3,8 @@ package com.barataribeiro.sentinelofliberty.models.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -23,15 +25,17 @@ import java.util.Set;
 public class Category implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(updatable = false, nullable = false, unique = true)
     private Long id;
 
+    @KeywordField
     @Column(nullable = false, unique = true)
     private String name;
 
+    @FullTextField
     @Column(nullable = false)
     private String description;
 
