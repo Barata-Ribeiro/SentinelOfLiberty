@@ -24,11 +24,15 @@ import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedHashSet;
@@ -47,6 +51,10 @@ public class ArticleServiceImpl implements ArticleService {
     private final SuggestionRepository suggestionRepository;
     private final EntityManagerFactory entityManagerFactory;
 
+    @Lazy
+    @Autowired
+    private ArticleService articleService;
+
     @Override
     @Transactional(readOnly = true)
     public ArticleDTO getArticle(Long articleId) {
@@ -59,7 +67,16 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     @Transactional(readOnly = true)
     public Set<ArticleSummaryDTO> getLatestArticles() {
-        return articleMapper.toArticleSummaryDTOs(articleRepository.findTop10ByOrderByCreatedAtDesc());
+        Page<Long> articleIdsPage = articleRepository
+                .findEntityIds(PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, ApplicationConstants.CREATED_AT)));
+
+        List<Long> articleIds = articleIdsPage.getContent();
+        if (articleIds.isEmpty()) return Set.of();
+
+        Specification<Article> specification = (root, _, _) -> root.get("id").in(articleIds);
+        List<Article> articles = articleRepository.findAll(specification);
+
+        return articleMapper.toArticleSummaryDTOs(new LinkedHashSet<>(articles));
     }
 
     @Override
@@ -72,7 +89,16 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional(readOnly = true)
     public Page<ArticleSummaryDTO> getAllArticles(int page, int perPage, String direction, String orderBy) {
         final PageRequest pageable = getPageRequest(page, perPage, direction, orderBy);
-        return articleRepository.findAll(pageable).map(articleMapper::toArticleSummaryDTO);
+        Page<Long> articleIdsPage = articleRepository.findEntityIds(pageable);
+        List<Long> articleIds = articleIdsPage.getContent();
+        if (articleIds.isEmpty()) return Page.empty(pageable);
+        Specification<Article> specification = (root, _, _) -> root.get("id").in(articleIds);
+        List<Article> articles = articleRepository.findAll(specification);
+        return PageableExecutionUtils.getPage(
+                List.copyOf(articleMapper.toArticleSummaryDTOs(new LinkedHashSet<>(articles))),
+                pageable,
+                articleIdsPage::getTotalElements
+        );
     }
 
     @Override
@@ -107,24 +133,40 @@ public class ArticleServiceImpl implements ArticleService {
                                                         })
                                                         .fetch(page * perPage, perPage);
             List<Article> hits = result.hits();
+            if (hits.isEmpty()) {
+                entityManager.getTransaction().commit();
+                return Page.empty(pageable);
+            }
 
-            Page<Article> managedHits = articleRepository
-                    .findAllByIdIsIn(hits.stream().map(Article::getId).toList(), pageable);
+            Specification<Article> specification = (root, _, _) -> root.get("id")
+                                                                       .in(hits.parallelStream()
+                                                                               .map(Article::getId)
+                                                                               .toList());
+            List<Article> articles = articleRepository.findAll(specification);
             entityManager.getTransaction().commit();
-
-            return managedHits.map(articleMapper::toArticleSummaryDTO);
+            return PageableExecutionUtils.getPage(
+                    List.copyOf(articleMapper.toArticleSummaryDTOs(new LinkedHashSet<>(articles))),
+                    pageable,
+                    () -> result.total().hitCount()
+            );
         }
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<ArticleSummaryDTO> getAllArticlesByAuthorUsername(int page, int perPage, String direction,
-                                                                  String orderBy,
-                                                                  String username) {
+                                                                  String orderBy, String username) {
         final PageRequest pageable = getPageRequest(page, perPage, direction, orderBy);
-        return articleRepository.findAllByAuthor_Username(username, pageable)
-                                .map(articleMapper::toArticleSummaryDTO);
-
+        Page<Long> articleIdsPage = articleRepository.findIdsByAuthor_Username(username, pageable);
+        List<Long> articleIds = articleIdsPage.getContent();
+        if (articleIds.isEmpty()) return Page.empty(pageable);
+        Specification<Article> specification = (root, _, _) -> root.get("id").in(articleIds);
+        List<Article> articles = articleRepository.findAll(specification);
+        return PageableExecutionUtils.getPage(
+                List.copyOf(articleMapper.toArticleSummaryDTOs(new LinkedHashSet<>(articles))),
+                pageable,
+                articleIdsPage::getTotalElements
+        );
     }
 
     @Override
@@ -132,7 +174,17 @@ public class ArticleServiceImpl implements ArticleService {
     public Page<ArticleSummaryDTO> getAllArticlesByCategory(String category, int page, int perPage, String direction,
                                                             String orderBy) {
         final PageRequest pageable = getPageRequest(page, perPage, direction, orderBy);
-        return articleRepository.findAllByCategories_Name(category, pageable).map(articleMapper::toArticleSummaryDTO);
+
+        Page<Long> articleIdsPage = articleRepository.findIdsByCategories_Name(category, pageable);
+        List<Long> articleIds = articleIdsPage.getContent();
+        if (articleIds.isEmpty()) return Page.empty(pageable);
+        Specification<Article> specification = (root, _, _) -> root.get("id").in(articleIds);
+        List<Article> articles = articleRepository.findAll(specification);
+        return PageableExecutionUtils.getPage(
+                List.copyOf(articleMapper.toArticleSummaryDTOs(new LinkedHashSet<>(articles))),
+                pageable,
+                articleIdsPage::getTotalElements
+        );
     }
 
     @Override
@@ -143,20 +195,26 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     public Page<ArticleSummaryDTO> getAllOwnArticles(String search, int page, int perPage, String direction,
                                                      String orderBy, Authentication authentication) {
         final PageRequest pageable = getPageRequest(page, perPage, direction, orderBy);
 
         Page<ArticleSummaryDTO> articlesPage;
         if (search != null && !search.isBlank()) {
-            articlesPage = articleRepository
-                    .findAllByAuthor_UsernameAndSearchParams(authentication.getName(), search, pageable)
-                    .map(articleMapper::toArticleSummaryDTO);
+            articlesPage = articleService.searchArticles(search, page, perPage, direction, orderBy);
         } else {
-            articlesPage = articleRepository
-                    .findAllByAuthor_Username(authentication.getName(), pageable)
-                    .map(articleMapper::toArticleSummaryDTO);
+            Page<Long> articleIdsPage = articleRepository
+                    .findIdsByAuthor_Username(authentication.getName(), pageable);
+            List<Long> articleIds = articleIdsPage.getContent();
+            if (articleIds.isEmpty()) return Page.empty(pageable);
+            Specification<Article> specification = (root, _, _) -> root.get("id").in(articleIds);
+            List<Article> articles = articleRepository.findAll(specification);
+            articlesPage = PageableExecutionUtils.getPage(
+                    List.copyOf(articleMapper.toArticleSummaryDTOs(new LinkedHashSet<>(articles))),
+                    pageable,
+                    articleIdsPage::getTotalElements
+            );
         }
 
         return articlesPage;

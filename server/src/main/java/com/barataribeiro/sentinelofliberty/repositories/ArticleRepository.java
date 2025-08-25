@@ -1,58 +1,53 @@
 package com.barataribeiro.sentinelofliberty.repositories;
 
 import com.barataribeiro.sentinelofliberty.models.entities.Article;
+import com.barataribeiro.sentinelofliberty.repositories.specifications.RepositorySpecificationExecutor;
 import jakarta.persistence.QueryHint;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public interface ArticleRepository extends JpaRepository<Article, Long> {
+public interface ArticleRepository extends JpaRepository<Article, Long>, RepositorySpecificationExecutor<Article,
+        Long> {
     @Override
     @EntityGraph(attributePaths = {"author", "suggestion.user", "categories", "references"})
     @NotNull Optional<Article> findById(@Param("id") @NotNull Long id);
 
-    Page<Article> findAllByIdIsIn(Collection<Long> id, Pageable pageable);
+    @Override
+    @EntityGraph(attributePaths = {"author", "suggestion.user", "comments", "categories", "references"})
+    @NotNull List<Article> findAll(@Nullable Specification<Article> spec);
 
-    @EntityGraph(attributePaths = {"author", "categories", "references"})
-    Page<Article> findAllByAuthor_Username(String username, Pageable pageable);
-
-    @EntityGraph(attributePaths = {"author", "categories", "references"})
-    @Query("""
-           SELECT a FROM Article a WHERE a.author.username = :username
-           AND (LOWER(a.title) LIKE LOWER(CONCAT('%', :term, '%'))
-                OR LOWER(a.subTitle) LIKE LOWER(CONCAT('%', :term, '%'))
-                OR a.content LIKE CONCAT('%', :term, '%'))
-           """)
+    @Query("SELECT a.id FROM Article a JOIN a.author WHERE a.author.username = :username")
     @QueryHints({
             @QueryHint(name = "org.hibernate.readOnly", value = "true"),
             @QueryHint(name = "org.hibernate.fetchSize", value = "20"),
-            @QueryHint(name = "org.hibernate.cacheable", value = "true"),
-            @QueryHint(name = "jakarta.persistence.cache.retrieveMode", value = "USE"),
-            @QueryHint(name = "jakarta.persistence.cache.storeMode", value = "USE")
+            @QueryHint(name = "org.hibernate.cacheable", value = "true")
     })
-    Page<Article> findAllByAuthor_UsernameAndSearchParams(@Param("username") String username,
-                                                          @Param("term") String term, Pageable pageable);
+    Page<Long> findIdsByAuthor_Username(@Param("username") String username, Pageable pageable);
 
     @EntityGraph(attributePaths = {"author", "categories", "references"})
     Set<Article> findByCategories_Name(String name);
 
-    @EntityGraph(attributePaths = {"author", "categories", "references"})
-    Page<Article> findAllByCategories_Name(String name, Pageable pageable);
+    @Query("SELECT a.id FROM Article a JOIN a.categories c WHERE c.name = :name")
+    @QueryHints({
+            @QueryHint(name = "org.hibernate.readOnly", value = "true"),
+            @QueryHint(name = "org.hibernate.fetchSize", value = "20"),
+            @QueryHint(name = "org.hibernate.cacheable", value = "true")
+    })
+    Page<Long> findIdsByCategories_Name(@Param("name") String name, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"author", "categories", "references"})
     Optional<Article> findTopByAuthor_UsernameOrderByCreatedAtDesc(String username);
-
-    @EntityGraph(attributePaths = {"author", "categories", "references"})
-    Set<Article> findTop10ByOrderByCreatedAtDesc();
 
     @EntityGraph(attributePaths = {"author", "categories", "references"})
     @Query("""
