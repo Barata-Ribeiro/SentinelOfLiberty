@@ -19,6 +19,7 @@ import com.barataribeiro.sentinelofliberty.services.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Streamable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,8 +70,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional(readOnly = true)
     public List<CommentDTO> getArticleCommentsTree(Long articleId) {
-        List<Comment> comments = commentRepository.findCommentsRecursivelyByArticleId(articleId);
-        List<CommentDTO> commentDTOS = commentMapper.toCommentDTOList(comments);
+        Streamable<Comment> comments = commentRepository.findCommentsByArticle_Id(articleId);
+        List<CommentDTO> commentDTOS = commentMapper.toCommentDTOList(comments.toList());
 
         Map<Long, CommentDTO> dtoById = new LinkedHashMap<>();
         commentDTOS.parallelStream().forEach(dto -> {

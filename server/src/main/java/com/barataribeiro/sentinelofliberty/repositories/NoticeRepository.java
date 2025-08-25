@@ -4,7 +4,6 @@ import com.barataribeiro.sentinelofliberty.models.entities.Notice;
 import jakarta.persistence.QueryHint;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
@@ -15,10 +14,8 @@ import java.util.Set;
 public interface NoticeRepository extends JpaRepository<Notice, Long> {
     Set<Notice> findTop5ByIsActiveTrueOrderByCreatedAtDesc();
 
-    @EntityGraph(attributePaths = {"user"})
     Page<Notice> findByUser_Username(String username, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"user"})
     @Query("""
            SELECT n FROM Notice n WHERE n.user.username = :username
            AND (LOWER(n.title) LIKE LOWER(CONCAT('%', :term, '%'))

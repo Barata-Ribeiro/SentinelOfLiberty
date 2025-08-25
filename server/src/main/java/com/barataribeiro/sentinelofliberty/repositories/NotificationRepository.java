@@ -17,7 +17,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @EntityGraph(attributePaths = {"recipient"})
     List<Notification> findTop5ByRecipient_UsernameOrderByCreatedAtDesc(@Param("username") String username);
 
-    @EntityGraph(attributePaths = {"recipient"})
     Page<Notification> findAllByRecipient_Username(@Param("username") String username, Pageable pageable);
 
     @EntityGraph(attributePaths = {"recipient"})
