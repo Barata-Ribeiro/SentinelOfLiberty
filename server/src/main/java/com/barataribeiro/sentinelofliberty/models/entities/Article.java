@@ -22,7 +22,11 @@ import java.util.*;
 @Entity
 @Indexed
 @Table(name = "tb_articles", indexes = {
-        @Index(name = "idx_article_title", columnList = "title")
+        @Index(name = "idx_article_title", columnList = "title"),
+        @Index(name = "idx_article_title_was_edit", columnList = "title, was_edit"),
+        @Index(name = "idx_article_id_slug", columnList = "id, slug"),
+        @Index(name = "idx_article_id_title", columnList = "id, title"),
+        @Index(name = "idx_article_title_slug", columnList = "title, slug")
 }, uniqueConstraints = {
         @UniqueConstraint(name = "uc_article_title_slug", columnNames = {"title", "slug"})
 })
@@ -68,7 +72,7 @@ public class Article implements Serializable {
     @Column(name = "was_edit", columnDefinition = "BOOLEAN default 'false'", nullable = false)
     private Boolean wasEdit = false;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id", nullable = false)
     @IndexedEmbedded
     private User author;

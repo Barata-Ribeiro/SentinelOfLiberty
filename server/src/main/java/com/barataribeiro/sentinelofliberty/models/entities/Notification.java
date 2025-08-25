@@ -41,7 +41,7 @@ public class Notification implements Serializable {
     private NotificationType type = NotificationType.INFO;
 
     @ToString.Exclude
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "recipient_id", nullable = false)
     private User recipient;
 

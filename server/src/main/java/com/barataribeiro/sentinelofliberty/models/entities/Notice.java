@@ -35,7 +35,7 @@ public class Notice implements Serializable {
     @Column(name = "is_active", columnDefinition = "BOOLEAN default 'true'", nullable = false)
     private Boolean isActive = true;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 

@@ -41,7 +41,7 @@ public class Category implements Serializable {
 
     @ToString.Exclude
     @Builder.Default
-    @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "categories")
     private Set<Article> articles = new LinkedHashSet<>();
 
     @Override

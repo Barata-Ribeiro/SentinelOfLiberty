@@ -43,7 +43,7 @@ public class Suggestion implements Serializable {
     private String sourceUrl;
 
     @ToString.Exclude
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
