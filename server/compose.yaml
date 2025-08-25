@@ -5,20 +5,13 @@ services:
     image: 'elasticsearch:9.1.2'
     container_name: 'sentinel-of-liberty_elasticsearch'
     environment:
+      - bootstrap.memory_lock=true
       - discovery.type=single-node
       - ELASTIC_PASSWORD=j@rV1s
       - xpack.security.enabled=true
-      - xpack.security.http.ssl.enabled=false
-      - xpack.security.transport.ssl.enabled=false
-      - ES_JAVA_OPTS=-Xms1g -Xmx1g
-      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
     ports:
       - '9200:9200'
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:9200/ || exit 1" ]
-      interval: 10s
-      timeout: 5s
-      retries: 12
     ulimits:
       memlock:
         soft: -1
@@ -41,6 +34,10 @@ services:
       - pgdata:/var/lib/postgresql/data
     networks:
       - sentinel-of-liberty_network
+    links:
+      - sentinel-of-liberty_elasticsearch
+    depends_on:
+      - sentinel-of-liberty_elasticsearch
 volumes:
   pgdata:
     driver: local
