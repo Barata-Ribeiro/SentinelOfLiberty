@@ -30,10 +30,13 @@ The frontend of MediManage is built using modern technologies to ensure a respon
 
 The backend leverages the power of Spring Boot to provide a scalable and secure foundation for the application.
 
-- **Spring Boot 3.4 \+ Java 23**: Provides a modern, robust framework and leverages the latest Java features for efficient application development.
+- **Spring Boot 3.5 \+ Java 23**: Provides a modern, robust framework and leverages the latest Java features for 
+  efficient application development.
 - **Spring Security**: Implements customizable security measures for authentication and authorization.
 - **Spring Data JPA \(Hibernate\)**: Simplifies database interactions by mapping Java objects to relational data using Hibernate as the JPA provider.
-- **H2 \& PostgreSQL**: Uses H2 for in-memory dev/test environments and PostgreSQL for production-grade persistence.
+- **Hibernate Search (Elasticsearch backend)**: Full-text search capabilities integrated with Hibernate ORM, using Elasticsearch as the search engine.
+- **WebSockets \& STOMP**: Enables real-time, bidirectional communication between the client and server using the STOMP protocol over WebSockets.
+- **H2 \& PostgreSQL**: Uses H2 for in-memory test environments and PostgreSQL for dev/production-grade persistence.
 - **Swagger\/OpenAPI \(springdoc\-openapi\)**: Automatically generates interactive API documentation, easing API consumption and testing.
 - **ModelMapper, Lombok**: Reduces boilerplate with efficient object mappings and code generation through annotations.
 
