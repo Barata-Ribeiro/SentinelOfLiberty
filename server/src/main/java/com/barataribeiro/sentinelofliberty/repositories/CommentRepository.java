@@ -13,25 +13,25 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Set;
 
 public interface CommentRepository extends JpaRepository<Comment, Long>, RepositorySpecificationExecutor<Comment,
         Long> {
     long countDistinctByArticle_Id(Long id);
 
     @Query("""
-           SELECT DISTINCT c.id
-           FROM Comment c JOIN c.article a
+           SELECT c.id
+           FROM Comment c LEFT JOIN c.article a
            WHERE a.id = :articleId
            ORDER BY c.parent.id NULLS FIRST, c.createdAt DESC
            """)
     Page<Long> findIdsByArticle_Id(@Param("articleId") Long articleId, Pageable pageable);
 
+    @Query("SELECT c.id FROM Comment c LEFT JOIN c.user u WHERE u.username = :username")
+    Page<Long> findIdsByUser_Username(@Param("username") String username, Pageable pageable);
+
     @Override
     @EntityGraph(attributePaths = {"user", "article.references", "parent.user", "children.user"})
     @NotNull List<Comment> findAll(@Nullable Specification<Comment> spec);
-
-    Set<Comment> findTop3ByUser_UsernameOrderByCreatedAtDesc(String username);
 
     long deleteByIdAndArticle_IdAndUser_UsernameAllIgnoreCase(Long id, Long id1, String username);
 
