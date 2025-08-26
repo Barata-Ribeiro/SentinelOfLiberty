@@ -19,7 +19,9 @@ import com.barataribeiro.sentinelofliberty.services.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Streamable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,8 +72,15 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional(readOnly = true)
     public List<CommentDTO> getArticleCommentsTree(Long articleId) {
-        Streamable<Comment> comments = commentRepository.findCommentsByArticle_Id(articleId);
-        List<CommentDTO> commentDTOS = commentMapper.toCommentDTOList(comments.toList());
+        Page<Long> commentIds = commentRepository.findIdsByArticle_Id(articleId, PageRequest.of(0, 1000));
+
+        List<Long> ids = commentIds.getContent();
+        if (ids.isEmpty()) return List.of();
+
+        Specification<Comment> specification = (root, _, _) -> root.get("id").in(ids);
+        List<Comment> comments = commentRepository.findAll(specification);
+
+        List<CommentDTO> commentDTOS = commentMapper.toCommentDTOList(comments);
 
         Map<Long, CommentDTO> dtoById = new LinkedHashMap<>();
         commentDTOS.parallelStream().forEach(dto -> {
