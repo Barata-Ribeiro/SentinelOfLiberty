@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,9 +46,17 @@ public class SuggestionServiceImpl implements SuggestionService {
     @Override
     @Transactional(readOnly = true)
     public Set<SuggestionDTO> getLatestSuggestions() {
-        return suggestionRepository.findTop10ByOrderByCreatedAtDesc().parallelStream()
-                                   .map(suggestionMapper::toSuggestionDTO)
-                                   .collect(Collectors.toUnmodifiableSet());
+        Page<Long> suggestionIdsPage = suggestionRepository
+                .findEntityIds(PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, ApplicationConstants.CREATED_AT)));
+
+        List<Long> suggestionIds = suggestionIdsPage.getContent();
+        if (suggestionIds.isEmpty()) return Set.of();
+
+        Specification<Suggestion> specification = (root, _, _) -> root.get("id").in(suggestionIds);
+        List<Suggestion> suggestions = suggestionRepository.findAll(specification);
+
+        return suggestions.parallelStream().map(suggestionMapper::toSuggestionDTO)
+                          .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
