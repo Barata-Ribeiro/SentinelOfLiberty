@@ -11,6 +11,8 @@ import com.barataribeiro.sentinelofliberty.dtos.user.*;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.EntityNotFoundException;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.IllegalRequestException;
 import com.barataribeiro.sentinelofliberty.exceptions.throwables.InvalidCredentialsException;
+import com.barataribeiro.sentinelofliberty.models.entities.Comment;
+import com.barataribeiro.sentinelofliberty.models.entities.Suggestion;
 import com.barataribeiro.sentinelofliberty.models.entities.User;
 import com.barataribeiro.sentinelofliberty.models.enums.Roles;
 import com.barataribeiro.sentinelofliberty.repositories.ArticleRepository;
@@ -18,19 +20,24 @@ import com.barataribeiro.sentinelofliberty.repositories.CommentRepository;
 import com.barataribeiro.sentinelofliberty.repositories.SuggestionRepository;
 import com.barataribeiro.sentinelofliberty.repositories.UserRepository;
 import com.barataribeiro.sentinelofliberty.services.UserService;
+import com.barataribeiro.sentinelofliberty.utils.ApplicationConstants;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
@@ -82,27 +89,75 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public DashboardDTO getOwnDashboardInformation(@NotNull Authentication authentication) {
-        ArticleSummaryDTO latestWrittenArticle = articleRepository
-                .findTopByAuthor_UsernameOrderByCreatedAtDesc(authentication.getName())
-                .map(articleMapper::toArticleSummaryDTO).orElse(null);
+        final String username = authentication.getName();
 
-        LinkedHashSet<SuggestionDTO> latestThreeSuggestions = suggestionRepository
-                .findTop3ByUser_UsernameOrderByCreatedAtDesc(authentication.getName())
-                .parallelStream()
-                .map(suggestionMapper::toSuggestionDTO)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        CompletableFuture<ArticleSummaryDTO> latestWrittenArticleFuture = CompletableFuture.supplyAsync(() -> {
+            final PageRequest articlePageable = PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC,
+                                                                             ApplicationConstants.CREATED_AT));
+            Page<Long> articleIdsPage = articleRepository.findIdsByAuthor_Username(username, articlePageable);
+            if (articleIdsPage.isEmpty()) return null;
+            return articleRepository.findById(articleIdsPage.getContent().getFirst())
+                                    .map(articleMapper::toArticleSummaryDTO)
+                                    .orElse(null);
+        });
 
-        LinkedHashSet<CommentDTO> latestThreeComments = commentRepository
-                .findTop3ByUser_UsernameOrderByCreatedAtDesc(authentication.getName())
-                .parallelStream().map(commentMapper::toCommentDTO)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        CompletableFuture<LinkedHashSet<SuggestionDTO>> latestThreeSuggestionsFuture = CompletableFuture.supplyAsync(
+                () -> {
+                    final PageRequest suggestionPageable = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC,
+                                                                                        ApplicationConstants.CREATED_AT));
+                    Page<Long> suggestionIdsPage = suggestionRepository
+                            .findIdsByUser_Username(username, suggestionPageable);
+                    Specification<Suggestion> suSpecification = (root, _, _) -> root.get("id").in(
+                            suggestionIdsPage.getContent());
+                    List<Suggestion> suggestions = suggestionRepository.findAll(suSpecification);
+                    return suggestions.parallelStream()
+                                      .map(suggestionMapper::toSuggestionDTO)
+                                      .collect(Collectors.toCollection(LinkedHashSet::new));
+                });
 
-        Long totalWrittenArticles = articleRepository.countDistinctByAuthor_Username(authentication.getName());
-        Long totalWrittenSuggestions = suggestionRepository.countDistinctByUser_Username(authentication.getName());
-        Long totalWrittenComments = commentRepository.countDistinctByUser_Username(authentication.getName());
+        CompletableFuture<LinkedHashSet<CommentDTO>> latestThreeCommentsFuture = CompletableFuture.supplyAsync(() -> {
+            final PageRequest commentPageable = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC,
+                                                                             ApplicationConstants.CREATED_AT));
+            Page<Long> commentIdsPage = commentRepository.findIdsByUser_Username(username, commentPageable);
+            Specification<Comment> cSpecification = (root, _, _) -> root.get("id").in(
+                    commentIdsPage.getContent());
+            List<Comment> comments = commentRepository.findAll(cSpecification);
+            return comments.parallelStream()
+                           .map(commentMapper::toCommentDTO)
+                           .collect(Collectors.toCollection(LinkedHashSet::new));
+        });
 
-        return new DashboardDTO(latestWrittenArticle, latestThreeSuggestions, latestThreeComments, totalWrittenArticles,
-                                totalWrittenSuggestions, totalWrittenComments);
+        CompletableFuture<long[]> totalCountsFuture = CompletableFuture.supplyAsync(() -> {
+            long articles = articleRepository.countDistinctByAuthor_Username(username);
+            long suggestions = suggestionRepository.countDistinctByUser_Username(username);
+            long comments = commentRepository.countDistinctByUser_Username(username);
+            return new long[]{articles, suggestions, comments};
+        });
+
+        try {
+            ArticleSummaryDTO latestWrittenArticle = latestWrittenArticleFuture.get();
+            LinkedHashSet<SuggestionDTO> latestThreeSuggestions = latestThreeSuggestionsFuture.get();
+            LinkedHashSet<CommentDTO> latestThreeComments = latestThreeCommentsFuture.get();
+
+            long[] totals = totalCountsFuture.get();
+            Long totalWrittenArticles = totals[0];
+            Long totalWrittenSuggestions = totals[1];
+            Long totalWrittenComments = totals[2];
+
+            return new DashboardDTO(
+                    latestWrittenArticle,
+                    latestThreeSuggestions,
+                    latestThreeComments,
+                    totalWrittenArticles,
+                    totalWrittenSuggestions,
+                    totalWrittenComments
+            );
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Thread was interrupted while fetching dashboard information", e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException("Failed to fetch dashboard information in parallel", e);
+        }
     }
 
     @Override
