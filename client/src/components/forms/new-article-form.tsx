@@ -145,8 +145,7 @@ export default function NewArticleForm({ categories, suggestionId }: Readonly<Ne
                     name="references"
                     rows={8}
                     placeholder="Write your references here..."
-                    description="Add the references of your article in case you used any external sources. Separate each reference
-                    with a comma."
+                    description="Add the references of your article in case you used any external sources. Separate each reference with a comma."
                     required
                     aria-required
                 />
