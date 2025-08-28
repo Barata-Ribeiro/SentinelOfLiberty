@@ -98,12 +98,12 @@ export default function ProfileArticlesWrittenList({ articlesPromise }: Readonly
                             {article.mediaUrl ? (
                                 <Image
                                     src={article.mediaUrl}
-                                    alt={article.title || "Article image"}
+                                    alt={article.title ?? "Article image"}
                                     fill
                                     sizes="(max-width: 768px) 100vw, (min-width: 769px) 200px"
                                     className="rounded object-cover transition-transform group-hover:scale-105"
                                     priority={false}
-                                    aria-label={article.title || "Article image"}
+                                    aria-label={article.title ?? "Article image"}
                                 />
                             ) : (
                                 <span
@@ -117,7 +117,7 @@ export default function ProfileArticlesWrittenList({ articlesPromise }: Readonly
                         <article className="flex flex-1 flex-col" aria-labelledby={`article-title-${article.id}`}>
                             <header>
                                 <Link
-                                    href={`/articles/${article.id}`}
+                                    href={`/articles/${article.id}/${article.slug}`}
                                     className="text-marigold-500 group-hover:text-marigold-600 active:text-marigold-700 line-clamp-2 text-lg font-semibold group-hover:underline"
                                     title={article.title}
                                     id={`article-title-${article.id}`}
