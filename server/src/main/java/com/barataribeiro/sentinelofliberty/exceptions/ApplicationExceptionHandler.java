@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
@@ -35,7 +36,7 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ProblemDetail handleMethodArgumentNotValid(@NotNull MethodArgumentNotValidException ex) {
         List<InvalidParam> fieldErrors = ex.getFieldErrors()
-                                           .stream()
+                                           .parallelStream()
                                            .map(f -> new InvalidParam(f.getField(), f.getDefaultMessage()))
                                            .toList();
 
@@ -53,7 +54,7 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     protected ProblemDetail handleConstraintViolation(@NotNull ConstraintViolationException ex) {
         List<InvalidParam> fieldErrors = ex.getConstraintViolations()
-                                           .stream()
+                                           .parallelStream()
                                            .map(f -> new InvalidParam(f.getPropertyPath().toString(), f.getMessage()))
                                            .toList();
 
@@ -75,6 +76,4 @@ public class ApplicationExceptionHandler {
         log.atError().log("Invalid request: {}", ex.getMessage());
         return problemDetail;
     }
-
-    private record InvalidParam(String fieldName, String reason) {}
 }
