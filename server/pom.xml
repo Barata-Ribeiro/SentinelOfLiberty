@@ -133,7 +133,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
+            <version>26.0.2-1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -168,7 +168,6 @@
             <artifactId>hibernate-search-bom</artifactId>
             <version>8.1.1.Final</version>
             <type>pom</type>
-            <scope>import</scope>
         </dependency>
         <dependency>
             <groupId>org.hibernate.search</groupId>
@@ -179,6 +178,11 @@
             <groupId>org.hibernate.search</groupId>
             <artifactId>hibernate-search-backend-elasticsearch</artifactId>
             <version>8.1.1.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpasyncclient</artifactId>
+            <version>4.1.5</version>
         </dependency>
     </dependencies>
 
