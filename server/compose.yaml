@@ -22,7 +22,7 @@ services:
   sentinel-of-liberty_database:
     image: 'postgres:latest'
     container_name: 'sentinel-of-liberty_database'
-    restart: 'always'
+    restart: 'on-failure'
     environment:
       POSTGRES_DB: sentinel-of-liberty_db
       POSTGRES_USER: postgres
