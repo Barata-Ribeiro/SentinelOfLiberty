@@ -19,14 +19,16 @@ import com.barataribeiro.sentinelofliberty.services.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -72,33 +74,33 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional(readOnly = true)
     public List<CommentDTO> getArticleCommentsTree(Long articleId) {
-        Page<Long> commentIds = commentRepository.findIdsByArticle_Id(articleId, PageRequest.of(0, 1000));
+        List<Comment> comments = commentRepository.findByArticleIdWithUserAndArticle(articleId);
 
-        List<Long> ids = commentIds.getContent();
-        if (ids.isEmpty()) return List.of();
+        List<CommentDTO> allDTOs = comments.parallelStream()
+                                           .map(commentMapper::toCommentDTO)
+                                           .toList();
 
-        Specification<Comment> specification = (root, _, _) -> root.get("id").in(ids);
-        List<Comment> comments = commentRepository.findAll(specification);
-
-        List<CommentDTO> commentDTOS = commentMapper.toCommentDTOList(comments);
-
-        Map<Long, CommentDTO> dtoById = new LinkedHashMap<>();
-        commentDTOS.parallelStream().forEach(dto -> {
-            dto.setChildren(new ArrayList<>());
-            dtoById.put(dto.getId(), dto);
-        });
+        Map<Long, CommentDTO> byId = allDTOs.parallelStream()
+                                            .filter(dto -> dto.getId() != null)
+                                            .collect(Collectors.toMap(CommentDTO::getId, Function.identity()));
 
         List<CommentDTO> roots = new ArrayList<>();
-        commentDTOS.parallelStream().forEach(dto -> {
-            if (dto.getParentId() == null) roots.add(dto);
+        for (CommentDTO dto : allDTOs) {
+            Long parentId = dto.getParentId();
+            if (parentId == null) roots.add(dto);
             else {
-                CommentDTO parentDTO = dtoById.get(dto.getParentId());
-                if (parentDTO != null) parentDTO.getChildren().add(dto);
+                CommentDTO parent = byId.get(parentId);
+                if (parent != null) {
+                    if (parent.getChildren() == null) parent.setChildren(new ArrayList<>());
+                    parent.getChildren().add(dto);
+                } else roots.add(dto);
+
             }
-        });
+        }
 
         return roots;
     }
+
 
     @Override
     @Transactional

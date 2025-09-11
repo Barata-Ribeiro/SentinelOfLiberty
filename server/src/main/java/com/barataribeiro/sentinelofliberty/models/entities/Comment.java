@@ -23,7 +23,9 @@ import java.util.Set;
 @Table(name = "tb_comments", indexes = {
         @Index(name = "idx_comment_user_id", columnList = "user_id"),
         @Index(name = "idx_comment_article_id", columnList = "article_id"),
-        @Index(name = "idx_comment_parent_id", columnList = "parent_id")
+        @Index(name = "idx_comment_parent_id", columnList = "parent_id"),
+        @Index(name = "idx_comment_createdat", columnList = "createdAt"),
+        @Index(name = "idx_comment_id_user_id", columnList = "id, user_id")
 })
 public class Comment implements Serializable {
     @Serial
@@ -34,7 +36,7 @@ public class Comment implements Serializable {
     @Column(updatable = false, nullable = false, unique = true)
     private Long id;
 
-    @Column(nullable = false, length = 500)
+    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @ToString.Exclude
@@ -54,7 +56,7 @@ public class Comment implements Serializable {
 
     @Builder.Default
     @ToString.Exclude
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Comment> children = new LinkedHashSet<>();
 
     @Column(updatable = false)

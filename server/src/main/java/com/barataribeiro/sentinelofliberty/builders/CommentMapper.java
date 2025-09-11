@@ -1,19 +1,27 @@
 package com.barataribeiro.sentinelofliberty.builders;
 
 import com.barataribeiro.sentinelofliberty.dtos.comment.CommentDTO;
+import com.barataribeiro.sentinelofliberty.dtos.user.AuthorDTO;
 import com.barataribeiro.sentinelofliberty.models.entities.Comment;
+import com.barataribeiro.sentinelofliberty.models.enums.Roles;
+import jakarta.annotation.Nullable;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.nio.ByteBuffer;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -29,7 +37,7 @@ public class CommentMapper {
 
                 using(ctx -> {
                     Set<?> children = (Set<?>) ctx.getSource();
-                    return children == null ? 0L : (long) children.size();
+                    return Hibernate.isInitialized(children) ? (long) children.size() : 0L;
                 }).map(source.getChildren(), destination.getChildrenCount());
 
                 map(source.getArticle().getId(), destination.getArticleId());
@@ -42,9 +50,5 @@ public class CommentMapper {
 
     public CommentDTO toCommentDTO(Comment comment) {
         return modelMapper.map(comment, CommentDTO.class);
-    }
-
-    public List<CommentDTO> toCommentDTOList(@NotNull List<Comment> comments) {
-        return comments.stream().map(this::toCommentDTO).collect(Collectors.toCollection(ArrayList::new));
     }
 }
