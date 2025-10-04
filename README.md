@@ -1,8 +1,11 @@
-<div align="center">
+<div style="text-align:center">
     <img alt="The main logo of Sentinel Of Liberty" width="400" src="client/public/sentinel-of-liberty-final.svg" title="Sentinel of Liberty Logo"/>
 </div>
 
 Sentinel of Liberty is a full‑stack application providing JWT‑based authentication, rich‑text editing, and real‑time communication via WebSockets. Built to be a place where users can suggest news from third-party news providers, and through this list, the interaction between the ecosystem starts. An admin can freely write an article about said proposed suggestions, offering their opinion/alternate view about it. The project can be fully customized to fit your needs.
+
+## Animated Demo
+![SentinelOfLiberty](client/public/screenshot.gif "Sentinel of Liberty Demo")
 
 ## 📚 Features
 
@@ -41,6 +44,80 @@ The backend leverages the power of Spring Boot to provide a scalable and secure 
 - **ModelMapper, Lombok**: Reduces boilerplate with efficient object mappings and code generation through annotations.
 
 ## 🛠️ Project Setup
+
+### Prerequisites & verification (Windows cmd.exe)
+
+Before you start, verify the tools required to run the frontend and backend. The commands below are written for Windows `cmd.exe`. If you use PowerShell or a Unix shell, replace `\` with `/` and execute the appropriate wrapper (for example `./mvnw` on macOS/Linux).
+
+Minimum recommended versions (project was developed with these):
+- Java 23 (required to build/run the backend)
+- Node.js 20+ (Next.js requires a modern Node)
+- pnpm (used to install frontend deps)
+- Docker & Docker Compose (or Docker Desktop)
+- Git
+
+Verification commands (run in `cmd.exe`) and expected results:
+
+- Java (runtime and compiler):
+  ```bat
+  java -version
+  javac -version
+  ```
+  Expected: shows Java 23 (or compatible JDK). If `java` or `javac` is not found, install a JDK (Adoptium/Temurin, 
+  Oracle, or OpenJDK) and ensure JAVA_HOME is set.
+
+- Maven wrapper (optional if you prefer system Maven):
+  ```bat
+  .\mvnw.cmd -v
+  ```
+  The project ships a Maven wrapper (`mvnw.cmd`) so you do not need Maven installed globally. Running the wrapper prints the Maven version used.
+
+- Docker and Docker Compose (verify containers):
+  ```bat
+  docker --version
+  docker compose version
+  docker ps
+  ```
+  Expected: Docker running and `docker ps` lists active containers. On Windows, Docker Desktop with WSL2 is recommended.
+
+- Node / npm / pnpm:
+  ```bat
+  node -v
+  npm -v
+  pnpm -v
+  ```
+  If `pnpm` is missing, install it with:
+  ```bat
+  npm install -g pnpm
+  ```
+
+- Git:
+  ```bat
+  git --version
+  ```
+
+Quick diagnostic (copy and paste into `cmd.exe` to run basic checks):
+
+```bat
+java -version
+javac -version
+.\mvnw.cmd -v
+node -v
+npm -v
+pnpm -v || echo pnpm not found
+docker --version
+docker compose version
+docker ps
+git --version
+```
+
+Common troubleshooting tips
+- Java errors: make sure JAVA_HOME points to a JDK installation and that `java`/`javac` are on PATH. On Windows you can set JAVA_HOME in System Properties → Environment Variables.
+- mvnw permission or execution problems: use `mvnw.cmd` on Windows (`.\mvnw.cmd spring-boot:run`). On Unix/macOS use `./mvnw spring-boot:run`.
+- Docker on Windows: install Docker Desktop and enable WSL2 backend. Ensure the Docker service is running and you have sufficient permissions.
+- Port conflicts: default ports are 3000 (frontend), 8080 (backend), 5432 (Postgres), 9200 (ElasticSearch). If any 
+  port is busy, stop the occupying service or change the port in the corresponding config.
+- pnpm / Node problems: ensure Node and pnpm are compatible with the Next.js version used. If builds fail, try clearing pnpm cache (`pnpm store prune`) and reinstalling (`pnpm install`).
 
 1. **Clone repository**
    ```shell
